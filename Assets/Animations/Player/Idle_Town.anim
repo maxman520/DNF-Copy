@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Idle
+  m_Name: Idle_Town
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -316,11 +316,11 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: 76a8b827cd7d8e74a91304728cff0aa7, type: 3}
-    - time: 0.25
+    - time: 0.2
       value: {fileID: 21300000, guid: f88697aa3374a4e498dd46f87d7f7bd8, type: 3}
-    - time: 0.5
+    - time: 0.4
       value: {fileID: 21300000, guid: 13c9017b6442185449e5ee4931b9da60, type: 3}
-    - time: 0.75
+    - time: 0.6
       value: {fileID: 21300000, guid: 58df27ae07d2c0f4ea8b826bead633e4, type: 3}
     attribute: m_Sprite
     path: Body
@@ -331,11 +331,11 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: c7e97974d27f8e94183729fc3c06b6cf, type: 3}
-    - time: 0.25
+    - time: 0.2
       value: {fileID: 21300000, guid: 4c5dd2bcced5e6b4899f7ab3c4bb7f29, type: 3}
-    - time: 0.5
+    - time: 0.4
       value: {fileID: 21300000, guid: e3c10995a4acfce4fb4986f4160b38e0, type: 3}
-    - time: 0.75
+    - time: 0.6
       value: {fileID: 21300000, guid: 566d9d9a3ceb41441a67ff4c68536bc8, type: 3}
     attribute: m_Sprite
     path: Hair
@@ -346,11 +346,11 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: b4359e1f6fad2164ebc6b7b7ee1a8ee5, type: 3}
-    - time: 0.25
+    - time: 0.2
       value: {fileID: 21300000, guid: b7ec0c324fd03044b941a71ffab3ca95, type: 3}
-    - time: 0.5
+    - time: 0.4
       value: {fileID: 21300000, guid: c1939ad704d3ce64497e41c1c74a39e8, type: 3}
-    - time: 0.75
+    - time: 0.6
       value: {fileID: 21300000, guid: eab83c0c2bb0c534ea97e80df7d17c25, type: 3}
     attribute: m_Sprite
     path: Coat
@@ -361,11 +361,11 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: 4676e608571e0d247b8d5912abe82949, type: 3}
-    - time: 0.25
+    - time: 0.2
       value: {fileID: 21300000, guid: 0d1c98d77de8cc644a209f4ff36a2930, type: 3}
-    - time: 0.5
+    - time: 0.4
       value: {fileID: 21300000, guid: 98edf769af5c6bb42b67f5772887ea01, type: 3}
-    - time: 0.75
+    - time: 0.6
       value: {fileID: 21300000, guid: 30e8cae67537b314ca4d2cf881241b90, type: 3}
     attribute: m_Sprite
     path: Pants
@@ -376,11 +376,11 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: 90714d2f44b7b4b429de2477ebef9d16, type: 3}
-    - time: 0.25
+    - time: 0.2
       value: {fileID: 21300000, guid: 034b0c6f946aceb42ae22e1fa5ca6948, type: 3}
-    - time: 0.5
+    - time: 0.4
       value: {fileID: 21300000, guid: 8a8d4f95fd0357b41989462da98a3795, type: 3}
-    - time: 0.75
+    - time: 0.6
       value: {fileID: 21300000, guid: 4a14fc59c39bf0e45a816c9bac225277, type: 3}
     attribute: m_Sprite
     path: Shoes
@@ -391,11 +391,11 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: cc3cccb93d6d7454888f08dc3e82a537, type: 3}
-    - time: 0.25
+    - time: 0.2
       value: {fileID: 21300000, guid: 520b8edc734a23345b954dc471d71764, type: 3}
-    - time: 0.5
+    - time: 0.4
       value: {fileID: 21300000, guid: c02512c7780606f498b5ca9117daca89, type: 3}
-    - time: 0.75
+    - time: 0.6
       value: {fileID: 21300000, guid: b3f15fc7bbedde54b81b55617ad70e1e, type: 3}
     attribute: m_Sprite
     path: LeftHand
@@ -406,18 +406,18 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 21300000, guid: 7984830e4f5ac514f81e01a24092a775, type: 3}
-    - time: 0.25
+    - time: 0.2
       value: {fileID: 21300000, guid: 9d2880acf69a5994aa9e2c02c3faf256, type: 3}
-    - time: 0.5
+    - time: 0.4
       value: {fileID: 21300000, guid: 9ff6c2c3c0cc7c4459fd2de7fe4d2490, type: 3}
-    - time: 0.75
+    - time: 0.6
       value: {fileID: 21300000, guid: 3b14390b3bebcc2449821672106b9176, type: 3}
     attribute: m_Sprite
     path: RightHand
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 4
+  m_SampleRate: 5
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -647,7 +647,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 1
+    m_StopTime: 0.8
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
