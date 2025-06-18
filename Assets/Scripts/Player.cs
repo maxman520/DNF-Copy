@@ -1,26 +1,35 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Singleton<Player>
 {
     private PlayerStateInterface currentState; // 현재 상태
-    public readonly PlayerStateInterface townState = new InTownState(); // 마을 상태 인스턴스
-    // public readonly IPlayerState dungeonState = new InDungeonState(); // 나중에 추가할 던전 상태
+    public readonly PlayerStateInterface townState = new InTownState(); // 마을 상태
+    public readonly PlayerStateInterface dungeonState = new InDungeonState(); // 던전 상태
 
     public Rigidbody2D Rigidbody { get; private set; }
     public Animator Animator { get; private set; }
-    public float walkSpeed = 3f;
-    public float runSpeed = 6f; // 나중에 사용
+    public float walkSpeed;
+    public float runSpeed;
 
     [HideInInspector] public Vector2 moveInput;
-
-    // === Input System ===
     [HideInInspector] public PlayerInputActions inputActions;
 
-    private void Awake()
+    protected override void Awake()
     {
+        // 싱글턴 패턴
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        // 컴포넌트 초기화
         Rigidbody = GetComponent<Rigidbody2D>();
         Animator = GetComponentInChildren<Animator>();
-
         inputActions = new PlayerInputActions();
         inputActions.Player.Enable();
     }
@@ -33,19 +42,29 @@ public class Player : MonoBehaviour
             this.walkSpeed = PlayerStats.Instance.walkSpeed;
             this.runSpeed = PlayerStats.Instance.runSpeed;
         }
-        // 게임 시작 시 초기 상태를 '마을'로 설정
-        ChangeState(townState);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Debug.Log("'1' 키 입력: HP 10 감소 테스트");
-            GameManager.Instance.TakeDamage(10);
-        }
         // 모든 업데이트 로직을 현재 상태 객체에게 위임
         currentState?.Update(this);
+
+        // === UI 작동 테스트용 코드 ===
+        // '1'번 키를 누르면 GameManager에게 데미지를 받았다고 알림
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("HP -10 테스트");
+            GameManager.Instance.TakeDamage(10);
+        }
+
+        // '2'번 키를 누르면 GameManager에게 마나를 사용했다고 알림
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Debug.Log("MP -10 테스트");
+            GameManager.Instance.UseMana(10);
+        }
+        // === 테스트용 코드 ===
+
     }
 
     private void FixedUpdate()
@@ -54,7 +73,7 @@ public class Player : MonoBehaviour
         currentState?.FixedUpdate(this);
     }
 
-    // 상태를 변경하는 공용 메서드
+    // 상태를 변경하는 메소드
     public void ChangeState(PlayerStateInterface newState)
     {
         // 이전 상태의 Exit 로직 실행

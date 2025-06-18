@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SetSpriteModeToSingleAndPPU : EditorWindow
 {
-    [MenuItem("Tools/Set Sprites to Single & PPU 60")]
+    [MenuItem("Tools/Set Sprites to Single and PPU 60")]
     private static void SetToSingleAndPPU()
     {
         var textures = Selection.GetFiltered<Texture2D>(SelectionMode.DeepAssets);

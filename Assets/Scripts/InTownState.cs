@@ -4,16 +4,14 @@ public class InTownState : PlayerStateInterface
 {
     public void Enter(Player player)
     {
-        Debug.Log("마을 상태에 진입합니다.");
+        Debug.Log("마을 상태에 진입");
         player.Animator.Play("Idle_Town");
     }
 
     public void Update(Player player)
     {
-        // 이동 입력을 받아와서 플레이어의 moveInput 변수에 저장
         player.moveInput = player.inputActions.Player.Move.ReadValue<Vector2>();
 
-        // 이동 벡터의 크기가 0보다 크면 걷기 애니메이션, 아니면 마을 Idle 애니메이션
         if (player.moveInput.magnitude > 0)
         {
             player.Animator.SetBool("IsWalking", true);
@@ -32,7 +30,7 @@ public class InTownState : PlayerStateInterface
 
     public void FixedUpdate(Player player)
     {
-        // 플레이어의 속도를 걷는 속도로 설정하고 이동
+        // 플레이어 걷기
         player.Rigidbody.linearVelocity = player.moveInput.normalized * player.walkSpeed;
     }
 
