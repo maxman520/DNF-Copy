@@ -3,7 +3,7 @@ using UnityEngine;
 // ΩÃ±€≈Ê ∆–≈œ
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
-    public static T Instance { get; protected set; }
+    public static T Instance { get; private set; }
 
     protected virtual void Awake()
     {

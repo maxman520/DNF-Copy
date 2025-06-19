@@ -9,7 +9,7 @@ public class PlayerStats : Singleton<PlayerStats>
     public float walkSpeed = 3f;
     public float runSpeed = 6f;
 
-    public float MaxHealth = 100f;
-    public float MaxMana = 100f;
+    public float MaxHP = 100f;
+    public float MaxMP = 100f;
 
 }

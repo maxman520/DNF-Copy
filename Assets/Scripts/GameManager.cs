@@ -14,12 +14,12 @@ public class GameManager : Singleton<GameManager>
     }
     public void InitializePlayerState()
     {
-        currentHealth = PlayerStats.Instance.MaxHealth;
-        currentMana = PlayerStats.Instance.MaxMana;
+        currentHealth = PlayerStats.Instance.MaxHP;
+        currentMana = PlayerStats.Instance.MaxMP;
 
         // UI 매니저에게 초기 UI 업데이트 요청
-        UIManager.Instance.UpdateHP(PlayerStats.Instance.MaxHealth, currentHealth);
-        UIManager.Instance.UpdateMP(PlayerStats.Instance.MaxMana, currentMana);
+        UIManager.Instance.UpdateHP(PlayerStats.Instance.MaxHP, currentHealth);
+        UIManager.Instance.UpdateMP(PlayerStats.Instance.MaxMP, currentMana);
     }
 
     private void OnEnable()
@@ -50,8 +50,8 @@ public class GameManager : Singleton<GameManager>
             Debug.Log("마을 씬 로드");
             player.ChangeState(player.townState);
             // 마을로 이동시 체력, 마나 회복
-            currentHealth = PlayerStats.Instance.MaxHealth;
-            currentMana = PlayerStats.Instance.MaxMana;
+            currentHealth = PlayerStats.Instance.MaxHP;
+            currentMana = PlayerStats.Instance.MaxMP;
         }
 
         // 플레이어를 시작 지점으로 이동
@@ -92,7 +92,7 @@ public class GameManager : Singleton<GameManager>
         if (currentHealth < 0) currentHealth = 0;
 
         // UI 업데이트 요청
-        UIManager.Instance.UpdateHP(PlayerStats.Instance.MaxHealth, currentHealth);
+        UIManager.Instance.UpdateHP(PlayerStats.Instance.MaxHP, currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -108,6 +108,6 @@ public class GameManager : Singleton<GameManager>
         if (currentMana < 0) currentMana = 0;
 
         // UI 업데이트 요청
-        UIManager.Instance.UpdateMP(PlayerStats.Instance.MaxMana, currentMana);
+        UIManager.Instance.UpdateMP(PlayerStats.Instance.MaxMP, currentMana);
     }
 }

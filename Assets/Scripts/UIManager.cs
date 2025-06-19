@@ -11,20 +11,20 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private Image mpGauge;
 
     // HP 게이지 업데이트
-    public void UpdateHP(float maxHealth, float currentHealth)
+    public void UpdateHP(float maxHP, float currentHP)
     {
         if (hpGauge != null)
         {
-            hpGauge.fillAmount = currentHealth / maxHealth;
+            hpGauge.fillAmount = currentHP / maxHP;
         }
     }
 
     // MP 게이지 업데이트
-    public void UpdateMP(float maxMana, float currentMana)
+    public void UpdateMP(float maxMP, float currentMP)
     {
         if (mpGauge != null)
         {
-            mpGauge.fillAmount = currentMana / maxMana;
+            mpGauge.fillAmount = currentMP / maxMP;
         }
     }
 }

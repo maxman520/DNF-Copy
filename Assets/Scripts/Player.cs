@@ -6,8 +6,8 @@ public class Player : Singleton<Player>
     public readonly PlayerStateInterface townState = new InTownState(); // 마을 상태
     public readonly PlayerStateInterface dungeonState = new InDungeonState(); // 던전 상태
 
-    public Rigidbody2D Rigidbody { get; private set; }
-    public Animator Animator { get; private set; }
+    public Rigidbody2D rb { get; private set; }
+    public Animator anim { get; private set; }
     public float walkSpeed;
     public float runSpeed;
 
@@ -17,19 +17,11 @@ public class Player : Singleton<Player>
     protected override void Awake()
     {
         // 싱글턴 패턴
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
 
         // 컴포넌트 초기화
-        Rigidbody = GetComponent<Rigidbody2D>();
-        Animator = GetComponentInChildren<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponentInChildren<Animator>();
         inputActions = new PlayerInputActions();
         inputActions.Player.Enable();
     }
@@ -48,22 +40,6 @@ public class Player : Singleton<Player>
     {
         // 모든 업데이트 로직을 현재 상태 객체에게 위임
         currentState?.Update(this);
-
-        // === UI 작동 테스트용 코드 ===
-        // '1'번 키를 누르면 GameManager에게 데미지를 받았다고 알림
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Debug.Log("HP -10 테스트");
-            GameManager.Instance.TakeDamage(10);
-        }
-
-        // '2'번 키를 누르면 GameManager에게 마나를 사용했다고 알림
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            Debug.Log("MP -10 테스트");
-            GameManager.Instance.UseMana(10);
-        }
-        // === 테스트용 코드 ===
 
     }
 

@@ -5,7 +5,7 @@ public class InTownState : PlayerStateInterface
     public void Enter(Player player)
     {
         Debug.Log("마을 상태에 진입");
-        player.Animator.Play("Idle_Town");
+        player.anim.Play("Idle_Town");
     }
 
     public void Update(Player player)
@@ -14,11 +14,11 @@ public class InTownState : PlayerStateInterface
 
         if (player.moveInput.magnitude > 0)
         {
-            player.Animator.SetBool("IsWalking", true);
+            player.anim.SetBool("isWalking", true);
         }
         else
         {
-            player.Animator.SetBool("IsWalking", false);
+            player.anim.SetBool("isWalking", false);
         }
 
         // 캐릭터 방향 전환
@@ -31,13 +31,13 @@ public class InTownState : PlayerStateInterface
     public void FixedUpdate(Player player)
     {
         // 플레이어 걷기
-        player.Rigidbody.linearVelocity = player.moveInput.normalized * player.walkSpeed;
+        player.rb.linearVelocity = player.moveInput.normalized * player.walkSpeed;
     }
 
     public void Exit(Player player)
     {
         Debug.Log("마을 상태를 벗어납니다.");
         // 다음 상태로 가기 전, 걷기 애니메이션 상태를 초기화
-        player.Animator.SetBool("IsWalking", false);
+        player.anim.SetBool("isWalking", false);
     }
 }

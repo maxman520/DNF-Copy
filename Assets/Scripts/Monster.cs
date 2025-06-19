@@ -1,0 +1,97 @@
+using UnityEngine;
+
+public abstract class Monster : MonoBehaviour
+{
+    [Header("[Reference] Monster Data")]
+    [SerializeField]
+    private MonsterData monsterData; // 몬스터의 원본 데이터를 담는 ScriptableObject
+
+    protected float currentHP;
+    protected float maxHP;
+    protected float moveSpeed;
+    protected float atk;
+    protected float recognitionRange;
+    protected float attackRange;
+
+    protected Rigidbody2D rb;
+    protected Animator anim;
+    // protected SpriteRenderer spriteRenderer; // 필요하다면 추가
+
+    // protected Transform playerTransform; // 플레이어 추적을 위해 추가 예정
+
+    protected virtual void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponentInChildren<Animator>();
+        // spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        // 데이터 초기화
+        if (monsterData != null)
+        {
+            currentHP = monsterData.maxHP;
+            moveSpeed = monsterData.moveSpeed;
+            atk = monsterData.atk;
+            recognitionRange = monsterData.recognitionRange;
+            attackRange = monsterData.attackRange;
+        }
+        else
+        {
+            Debug.LogError($"{gameObject.name}: MonsterData가 할당되지 않았음");
+        }
+    }
+
+    // Start는 첫 번째 프레임 업데이트 전에 호출된다.
+    // 다른 오브젝트를 찾아야 할 때 사용하기 좋다.
+    protected virtual void Start()
+    {
+        // 추후 플레이어를 찾아서 playerTransform에 할당하는 로직을 여기에 추가할 수 있다.
+        // GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        // if (playerObject != null)
+        // {
+        //     playerTransform = playerObject.transform;
+        // }
+    }
+
+    // 이 몬스터가 데미지를 입었을 때 호출될 공통 함수
+    public virtual void TakeDamage(float damage)
+    {
+        currentHP -= damage;
+        Debug.Log($"{monsterData.monsterName}이(가) {damage}의 데미지를 입음. 현재 체력: {currentHP}");
+
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            // 피격 애니메이션 재생, 넉백 등 공통 피격 반응 로직
+            anim.SetTrigger("HitReaction");
+        }
+    }
+
+    protected virtual void Die()
+    {
+        Debug.Log($"{monsterData.monsterName}이(가) 죽었습니다.");
+
+        // 여기에 죽음 애니메이션, 아이템 드랍, 경험치 제공 등의 로직을 추가
+
+        // 예시: 2초 후에 오브젝트 파괴
+        Destroy(gameObject, 2f);
+    }
+
+    // 모든 몬스터는 '공격'이라는 행동을 가져야 하지만, 몬스터마다 다르므로 (고블린의 칼 휘두르기, 슬라임의 점프 공격 등).
+    // abstract(추상) 메서드로 선언하여, 자식 클래스에서 반드시 구현하도록 강제
+    public abstract void Attack();
+
+    // 에디터에서만 보이는 기즈모(Gizmo)를 그려서 AI 범위를 시각적으로 확인합니다.
+    // 개발 편의성을 크게 높여줍니다.
+    protected virtual void OnDrawGizmosSelected()
+    {
+        // 현재 위치를 기준으로 기즈모 그리기
+        Gizmos.color = Color.yellow; // 인식 범위는 노란색
+        Gizmos.DrawWireSphere(transform.position, recognitionRange);
+
+        Gizmos.color = Color.red; // 공격 범위는 빨간색
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+}
