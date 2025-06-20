@@ -1,69 +1,98 @@
 using UnityEngine;
+using System.Collections;
 
 public class Player : Singleton<Player>
 {
-    private PlayerStateInterface currentState; // 현재 상태
-    public readonly PlayerStateInterface townState = new InTownState(); // 마을 상태
-    public readonly PlayerStateInterface dungeonState = new InDungeonState(); // 던전 상태
-
-    public Rigidbody2D rb { get; private set; }
-    public Animator anim { get; private set; }
     public float walkSpeed;
     public float runSpeed;
 
+    // 상태 관리
+    private PlayerStateInterface currentState;
+    public InTownState townState { get; private set; }
+    public InDungeonState dungeonState { get; private set; }
+
+    // 컴포넌트 참조
+    public Rigidbody2D rb { get; private set; }
+    public Animator anim { get; private set; }
+    public Collider2D playerGround { get; private set; }
+    public Transform visualsTransform { get; private set; }
+
+    // 상태 변수
+    public bool isGrounded { get; set; } = true;
+    public bool isRunning { get; set; } = false;
+    public bool isJumping { get; set; } = false;
+
+    // 입력 관리
     [HideInInspector] public Vector2 moveInput;
     [HideInInspector] public PlayerInputActions inputActions;
+
 
     protected override void Awake()
     {
         // 싱글턴 패턴
         base.Awake();
 
-        // 컴포넌트 초기화
+        // 컴포넌트 참조 변수 초기화
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
+        playerGround = transform.Find("PlayerGround").GetComponent<BoxCollider2D>();
+        visualsTransform = transform.Find("Visuals");
+
+        if (playerGround == null)
+            Debug.LogError("PlayerGround를 찾을 수 없습니다.", this);
+        if (visualsTransform == null)
+            Debug.LogError("Visuals Transform을 찾을 수 없습니다.", this);
+
+        // 상태 초기화
+        townState = new InTownState(this);
+        dungeonState = new InDungeonState(this);
         inputActions = new PlayerInputActions();
         inputActions.Player.Enable();
     }
 
     private void Start()
     {
-        // PlayerStats로부터 행동에 필요한 데이터 복사
+        // PlayerStats 로드
         if (PlayerStats.Instance != null)
         {
-            this.walkSpeed = PlayerStats.Instance.walkSpeed;
-            this.runSpeed = PlayerStats.Instance.runSpeed;
+            this.walkSpeed = PlayerStats.Instance.moveSpeed * 1.0f;
+            this.runSpeed = PlayerStats.Instance.moveSpeed * 2.0f;
         }
     }
 
     private void Update()
     {
-        // 모든 업데이트 로직을 현재 상태 객체에게 위임
-        currentState?.Update(this);
-
+        currentState?.Update();
     }
 
     private void FixedUpdate()
     {
-        // 모든 물리 로직을 현재 상태 객체에게 위임
-        currentState?.FixedUpdate(this);
+        currentState?.FixedUpdate();
     }
 
-    // 상태를 변경하는 메소드
     public void ChangeState(PlayerStateInterface newState)
     {
-        // 이전 상태의 Exit 로직 실행
-        currentState?.Exit(this);
-
-        // 새로운 상태로 교체하고 Enter 로직 실행
+        if (newState == null)
+        {
+            Debug.LogError("새로운 상태가 null입니다.");
+            return;
+        }
+        currentState?.Exit();
         currentState = newState;
-        currentState.Enter(this);
+        currentState.Enter();
+    }
+    public Coroutine StartCoroutineFromState(IEnumerator coroutine)
+    {
+        return StartCoroutine(coroutine);
     }
 
-    // 오브젝트가 비활성화될 때 Input Actions도 비활성화
     private void OnDisable()
     {
-        inputActions.Player.Disable();
+        inputActions?.Player.Disable();
     }
 
+    private void OnDestroy()
+    {
+        inputActions?.Dispose();
+    }
 }
