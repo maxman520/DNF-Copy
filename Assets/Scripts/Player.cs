@@ -3,28 +3,28 @@ using System.Collections;
 
 public class Player : Singleton<Player>
 {
-    public float walkSpeed;
-    public float runSpeed;
+    public float WalkSpeed;
+    public float RunSpeed;
 
     // 상태 관리
-    private PlayerStateInterface currentState;
-    public InTownState townState { get; private set; }
-    public InDungeonState dungeonState { get; private set; }
+    private IPlayerState currentState;
+    public InTownState TownState { get; private set; }
+    public InDungeonState DungeonState { get; private set; }
 
     // 컴포넌트 참조
-    public Rigidbody2D rb { get; private set; }
-    public Animator anim { get; private set; }
-    public Collider2D playerGround { get; private set; }
-    public Transform visualsTransform { get; private set; }
+    public Rigidbody2D Rb { get; private set; }
+    public Animator Anim { get; private set; }
+    public Collider2D PlayerGround { get; private set; }
+    public Transform VisualsTransform { get; private set; }
 
     // 상태 변수
-    public bool isGrounded { get; set; } = true;
-    public bool isRunning { get; set; } = false;
-    public bool isJumping { get; set; } = false;
+    public bool IsGrounded { get; set; } = true;
+    public bool IsRunning { get; set; } = false;
+    public bool IsJumping { get; set; } = false;
 
     // 입력 관리
-    [HideInInspector] public Vector2 moveInput;
-    [HideInInspector] public PlayerInputActions inputActions;
+    [HideInInspector] public Vector2 MoveInput;
+    [HideInInspector] public PlayerInputActions InputActions;
 
 
     protected override void Awake()
@@ -33,21 +33,21 @@ public class Player : Singleton<Player>
         base.Awake();
 
         // 컴포넌트 참조 변수 초기화
-        rb = GetComponent<Rigidbody2D>();
-        anim = GetComponentInChildren<Animator>();
-        playerGround = transform.Find("PlayerGround").GetComponent<BoxCollider2D>();
-        visualsTransform = transform.Find("Visuals");
+        Rb = GetComponent<Rigidbody2D>();
+        Anim = GetComponentInChildren<Animator>();
+        PlayerGround = transform.Find("PlayerGround").GetComponent<BoxCollider2D>();
+        VisualsTransform = transform.Find("Visuals");
 
-        if (playerGround == null)
+        if (PlayerGround == null)
             Debug.LogError("PlayerGround를 찾을 수 없습니다.", this);
-        if (visualsTransform == null)
+        if (VisualsTransform == null)
             Debug.LogError("Visuals Transform을 찾을 수 없습니다.", this);
 
         // 상태 초기화
-        townState = new InTownState(this);
-        dungeonState = new InDungeonState(this);
-        inputActions = new PlayerInputActions();
-        inputActions.Player.Enable();
+        TownState = new InTownState(this);
+        DungeonState = new InDungeonState(this);
+        InputActions = new PlayerInputActions();
+        InputActions.Player.Enable();
     }
 
     private void Start()
@@ -55,8 +55,8 @@ public class Player : Singleton<Player>
         // PlayerStats 로드
         if (PlayerStats.Instance != null)
         {
-            this.walkSpeed = PlayerStats.Instance.moveSpeed * 1.0f;
-            this.runSpeed = PlayerStats.Instance.moveSpeed * 2.0f;
+            this.WalkSpeed = PlayerStats.Instance.MoveSpeed * 1.0f;
+            this.RunSpeed = PlayerStats.Instance.MoveSpeed * 2.0f;
         }
     }
 
@@ -70,7 +70,7 @@ public class Player : Singleton<Player>
         currentState?.FixedUpdate();
     }
 
-    public void ChangeState(PlayerStateInterface newState)
+    public void ChangeState(IPlayerState newState)
     {
         if (newState == null)
         {
@@ -88,11 +88,11 @@ public class Player : Singleton<Player>
 
     private void OnDisable()
     {
-        inputActions?.Player.Disable();
+        InputActions?.Player.Disable();
     }
 
     private void OnDestroy()
     {
-        inputActions?.Dispose();
+        InputActions?.Dispose();
     }
 }

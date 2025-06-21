@@ -17,7 +17,7 @@ public abstract class Monster : MonoBehaviour
     protected Animator anim;
     // protected SpriteRenderer spriteRenderer; // 필요하다면 추가
 
-    // protected Transform playerTransform; // 플레이어 추적을 위해 추가 예정
+    protected Transform playerTransform; // 플레이어 추적을 위해
 
     protected virtual void Awake()
     {
@@ -28,11 +28,11 @@ public abstract class Monster : MonoBehaviour
         // 데이터 초기화
         if (monsterData != null)
         {
-            currentHP = monsterData.maxHP;
-            moveSpeed = monsterData.moveSpeed;
-            atk = monsterData.atk;
-            recognitionRange = monsterData.recognitionRange;
-            attackRange = monsterData.attackRange;
+            currentHP = monsterData.MaxHP;
+            moveSpeed = monsterData.MoveSpeed;
+            atk = monsterData.Atk;
+            recognitionRange = monsterData.RecognitionRange;
+            attackRange = monsterData.AttackRange;
         }
         else
         {
@@ -50,13 +50,17 @@ public abstract class Monster : MonoBehaviour
         // {
         //     playerTransform = playerObject.transform;
         // }
+        if (Player.Instance != null)
+        {
+            playerTransform = Player.Instance.transform;
+        }
     }
 
     // 이 몬스터가 데미지를 입었을 때 호출될 공통 함수
     public virtual void TakeDamage(float damage)
     {
         currentHP -= damage;
-        Debug.Log($"{monsterData.monsterName}이(가) {damage}의 데미지를 입음. 현재 체력: {currentHP}");
+        Debug.Log($"{monsterData.MonsterName}이(가) {damage}의 데미지를 입음. 현재 체력: {currentHP}");
 
         if (currentHP <= 0)
         {
@@ -71,7 +75,7 @@ public abstract class Monster : MonoBehaviour
 
     protected virtual void Die()
     {
-        Debug.Log($"{monsterData.monsterName}이(가) 죽었습니다.");
+        Debug.Log($"{monsterData.MonsterName}이(가) 죽었습니다.");
 
         // 여기에 죽음 애니메이션, 아이템 드랍, 경험치 제공 등의 로직을 추가
 
@@ -83,11 +87,9 @@ public abstract class Monster : MonoBehaviour
     // abstract(추상) 메서드로 선언하여, 자식 클래스에서 반드시 구현하도록 강제
     public abstract void Attack();
 
-    // 에디터에서만 보이는 기즈모(Gizmo)를 그려서 AI 범위를 시각적으로 확인합니다.
-    // 개발 편의성을 크게 높여줍니다.
+    // 에디터에서만 보이는 기즈모(Gizmo)를 그려서 AI 범위를 시각적으로 확인
     protected virtual void OnDrawGizmosSelected()
     {
-        // 현재 위치를 기준으로 기즈모 그리기
         Gizmos.color = Color.yellow; // 인식 범위는 노란색
         Gizmos.DrawWireSphere(transform.position, recognitionRange);
 

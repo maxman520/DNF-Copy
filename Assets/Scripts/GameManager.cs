@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    public float currentHealth { get; private set; }
-    public float currentMana { get; private set; }
+    public float CurrentHealth { get; private set; }
+    public float CurrentMana { get; private set; }
 
     private void Start()
     {
@@ -14,12 +14,12 @@ public class GameManager : Singleton<GameManager>
     }
     public void InitializePlayerState()
     {
-        currentHealth = PlayerStats.Instance.MaxHP;
-        currentMana = PlayerStats.Instance.MaxMP;
+        CurrentHealth = PlayerStats.Instance.MaxHP;
+        CurrentMana = PlayerStats.Instance.MaxMP;
 
         // UI 매니저에게 초기 UI 업데이트 요청
-        UIManager.Instance.UpdateHP(PlayerStats.Instance.MaxHP, currentHealth);
-        UIManager.Instance.UpdateMP(PlayerStats.Instance.MaxMP, currentMana);
+        UIManager.Instance.UpdateHP(PlayerStats.Instance.MaxHP, CurrentHealth);
+        UIManager.Instance.UpdateMP(PlayerStats.Instance.MaxMP, CurrentMana);
     }
 
     private void OnEnable()
@@ -43,15 +43,15 @@ public class GameManager : Singleton<GameManager>
         if (scene.name == "Dungeon1_Scene")
         {
             Debug.Log("던전 씬 로드");
-            player.ChangeState(player.dungeonState);
+            player.ChangeState(player.DungeonState);
         }
         else if (scene.name == "Town_Scene")
         {
             Debug.Log("마을 씬 로드");
-            player.ChangeState(player.townState);
+            player.ChangeState(player.TownState);
             // 마을로 이동시 체력, 마나 회복
-            currentHealth = PlayerStats.Instance.MaxHP;
-            currentMana = PlayerStats.Instance.MaxMP;
+            CurrentHealth = PlayerStats.Instance.MaxHP;
+            CurrentMana = PlayerStats.Instance.MaxMP;
         }
 
         // 플레이어를 시작 지점으로 이동
@@ -88,13 +88,13 @@ public class GameManager : Singleton<GameManager>
     // 데미지를 받는 공용 메서드
     public void TakeDamage(float damage)
     {
-        currentHealth -= damage;
-        if (currentHealth < 0) currentHealth = 0;
+        CurrentHealth -= damage;
+        if (CurrentHealth < 0) CurrentHealth = 0;
 
         // UI 업데이트 요청
-        UIManager.Instance.UpdateHP(PlayerStats.Instance.MaxHP, currentHealth);
+        UIManager.Instance.UpdateHP(PlayerStats.Instance.MaxHP, CurrentHealth);
 
-        if (currentHealth <= 0)
+        if (CurrentHealth <= 0)
         {
             // Die(); // 사망 처리 로직 (나중에 구현)
             Debug.Log("플레이어 사망!");
@@ -104,10 +104,10 @@ public class GameManager : Singleton<GameManager>
     // 마나를 사용하는 공용 메서드
     public void UseMana(float amount)
     {
-        currentMana -= amount;
-        if (currentMana < 0) currentMana = 0;
+        CurrentMana -= amount;
+        if (CurrentMana < 0) CurrentMana = 0;
 
         // UI 업데이트 요청
-        UIManager.Instance.UpdateMP(PlayerStats.Instance.MaxMP, currentMana);
+        UIManager.Instance.UpdateMP(PlayerStats.Instance.MaxMP, CurrentMana);
     }
 }

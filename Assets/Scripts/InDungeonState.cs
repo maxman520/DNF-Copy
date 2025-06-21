@@ -2,15 +2,19 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 
-public class InDungeonState : PlayerStateInterface
+public class InDungeonState : IPlayerState
 {
     private readonly Player player;
-    private MovementController movementController;
-    private AnimationController animationController;
+    private readonly MovementController movementController;
+    private readonly AnimationController animationController;
 
     public InDungeonState(Player player)
     {
-        this.player = player ?? throw new System.ArgumentNullException(nameof(player));
+        this.player = player;
+        if (player == null) {
+            Debug.Log("Player를 찾을 수 없음");
+            return;
+        }
 
         movementController = new MovementController(player);
         animationController = new AnimationController(player);
@@ -19,8 +23,8 @@ public class InDungeonState : PlayerStateInterface
     public void Enter()
     {
         Debug.Log("던전 상태에 진입");
-        player.anim.Play("Idle_Dungeon");
-        player.isRunning = false;
+        player.Anim.Play("Idle_Dungeon");
+        player.IsRunning = false;
         movementController.SubscribeToEvents();
     }
 
@@ -39,7 +43,7 @@ public class InDungeonState : PlayerStateInterface
     public void Exit()
     {
         Debug.Log("던전 상태를 벗어남");
-        player.isRunning = false;
+        player.IsRunning = false;
         movementController.UnsubscribeFromEvents();
         movementController.ForceStopJump();
         animationController.ResetAnimations();
@@ -56,8 +60,6 @@ public class MovementController
     private const float JUMP_DURATION = 1.0f;
     private const float JUMP_HEIGHT = 3.0f;
 
-    public bool IsJumping => player.isJumping;
-
     public MovementController(Player player)
     {
         this.player = player;
@@ -66,7 +68,7 @@ public class MovementController
 
     public void HandleInput()
     {
-        if (player.inputActions.Player.Jump.WasPressedThisFrame())
+        if (player.InputActions.Player.Jump.WasPressedThisFrame())
         {
             StartJump();
         }
@@ -74,58 +76,58 @@ public class MovementController
 
     public void SubscribeToEvents()
     {
-        player.inputActions.Player.Run.performed += OnRunPerformed;
-        player.inputActions.Player.Move.canceled += OnMoveCanceled;
+        player.InputActions.Player.Run.performed += OnRunPerformed;
+        player.InputActions.Player.Move.canceled += OnMoveCanceled;
     }
 
     public void UnsubscribeFromEvents()
     {
-        player.inputActions.Player.Run.performed -= OnRunPerformed;
-        player.inputActions.Player.Move.canceled -= OnMoveCanceled;
+        player.InputActions.Player.Run.performed -= OnRunPerformed;
+        player.InputActions.Player.Move.canceled -= OnMoveCanceled;
     }
 
     public void UpdateMovement()
     {
         // 입력 처리
-        Vector2 moveInput = player.inputActions.Player.Move.ReadValue<Vector2>();
-        player.moveInput = moveInput;
+        Vector2 moveInput = player.InputActions.Player.Move.ReadValue<Vector2>();
+        player.MoveInput = moveInput;
 
         // 캐릭터 방향 설정
-        if (!player.isJumping && Mathf.Abs(player.moveInput.x) > 0.1f)
+        if (!player.IsJumping && Mathf.Abs(player.MoveInput.x) > 0.1f)
         {
-            float direction = Mathf.Sign(player.moveInput.x);
+            float direction = Mathf.Sign(player.MoveInput.x);
             player.transform.localScale = new Vector3(direction, 1f, 1f);
         }
     }
 
     public void ApplyMovement()
     {
-        float currentSpeed = player.isRunning ? player.runSpeed : player.walkSpeed;
-        Vector2 velocity = player.moveInput.normalized * currentSpeed;
+        float currentSpeed = player.IsRunning ? player.RunSpeed : player.WalkSpeed;
+        Vector2 velocity = player.MoveInput.normalized * currentSpeed;
 
-        if (player.isJumping)
+        if (player.IsJumping)
         {
             velocity.y *= JUMP_MOVEMENT_PENALTY;
         }
 
-        player.rb.linearVelocity = velocity;
+        player.Rb.linearVelocity = velocity;
     }
 
     private void OnRunPerformed(InputAction.CallbackContext context)
     {
         // 달리기 시작
-        if (!player.isJumping) player.isRunning = true;
+        if (!player.IsJumping) player.IsRunning = true;
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
         // 달리기 중지
-        player.isRunning = false;
+        player.IsRunning = false;
     }
 
     public void StartJump()
     {
-        if (!player.isGrounded || player.isJumping) return;
+        if (!player.IsGrounded || player.IsJumping) return;
 
         jumpCoroutine = player.StartCoroutineFromState(JumpRoutine());
     }
@@ -136,29 +138,31 @@ public class MovementController
         {
             player.StopCoroutine(jumpCoroutine);
             jumpCoroutine = null;
-            player.isJumping = false;
-            player.isGrounded = true;
+            player.IsJumping = false;
+            player.IsGrounded = true;
 
-            if (player.playerGround != null)
-                player.playerGround.enabled = true;
+            if (player.PlayerGround != null)
+                player.PlayerGround.enabled = true;
         }
     }
 
     private IEnumerator JumpRoutine()
     {
         // 점프 시작 설정
-        player.isGrounded = false;
-        player.isJumping = true;
+        player.IsGrounded = false;
+        player.IsJumping = true;
 
-        if (player.playerGround != null)
-            player.playerGround.enabled = false;
+        /*
+        if (player.PlayerGround != null)
+            player.PlayerGround.enabled = false;
+        */
 
-        player.anim.SetBool(animHashes.IsGrounded, false);
-        player.anim.SetTrigger(animHashes.Jump);
+        player.Anim.SetBool(animHashes.IsGrounded, false);
+        player.Anim.SetTrigger(animHashes.Jump);
 
         // 점프 중
         float elapsedTime = 0f;
-        Vector3 startVisualPos = player.visualsTransform.localPosition;
+        Vector3 startVisualPos = player.VisualsTransform.localPosition;
         float previousHeight = 0f;
 
         while (elapsedTime < JUMP_DURATION)
@@ -167,11 +171,11 @@ public class MovementController
             float currentHeight = Mathf.Sin(progress * Mathf.PI) * JUMP_HEIGHT;
 
             // 비주얼 위치 업데이트
-            player.visualsTransform.localPosition = new Vector3(startVisualPos.x, currentHeight, startVisualPos.z);
+            player.VisualsTransform.localPosition = new Vector3(startVisualPos.x, currentHeight, startVisualPos.z);
 
             // 애니메이션 업데이트
             float yVelocity = (currentHeight - previousHeight) / Time.deltaTime;
-            player.anim.SetFloat(animHashes.YVelocity, yVelocity);
+            player.Anim.SetFloat(animHashes.YVelocity, yVelocity);
 
             previousHeight = currentHeight;
             elapsedTime += Time.deltaTime;
@@ -179,17 +183,19 @@ public class MovementController
         }
 
         // 점프 완료 처리
-        player.visualsTransform.localPosition = startVisualPos;
+        player.VisualsTransform.localPosition = startVisualPos;
 
-        if (player.playerGround != null)
-            player.playerGround.enabled = true;
+        /*
+        if (player.PlayerGround != null)
+            player.PlayerGround.enabled = true;
+        */
 
-        player.isJumping = false;
-        player.isGrounded = true;
-        player.isRunning = false;
+        player.IsJumping = false;
+        player.IsGrounded = true;
+        player.IsRunning = false;
 
-        player.anim.SetBool(animHashes.IsGrounded, true);
-        player.anim.SetFloat(animHashes.YVelocity, 0);
+        player.Anim.SetBool(animHashes.IsGrounded, true);
+        player.Anim.SetFloat(animHashes.YVelocity, 0);
 
         jumpCoroutine = null;
     }
@@ -208,16 +214,16 @@ public class AnimationController
 
     public void UpdateAnimations()
     {
-        bool isMoving = player.moveInput.magnitude > 0;
+        bool isMoving = player.MoveInput.magnitude > 0;
 
-        player.anim.SetBool(animHashes.IsWalking, isMoving && !player.isRunning);
-        player.anim.SetBool(animHashes.IsRunning, isMoving && player.isRunning);
+        player.Anim.SetBool(animHashes.IsWalking, isMoving && !player.IsRunning);
+        player.Anim.SetBool(animHashes.IsRunning, isMoving && player.IsRunning);
     }
 
     public void ResetAnimations()
     {
-        player.anim.SetBool(animHashes.IsWalking, false);
-        player.anim.SetBool(animHashes.IsRunning, false);
+        player.Anim.SetBool(animHashes.IsWalking, false);
+        player.Anim.SetBool(animHashes.IsRunning, false);
     }
 }
 

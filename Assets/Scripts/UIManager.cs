@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI; // Image, Slider 등을 사용하기 위해 필수
+using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {

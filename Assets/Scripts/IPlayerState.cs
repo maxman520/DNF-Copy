@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface PlayerStateInterface
+public interface IPlayerState
 {
     // 이 상태에 진입했을 때 호출될 함수
     void Enter();
