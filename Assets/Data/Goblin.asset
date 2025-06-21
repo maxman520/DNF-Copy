@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac02e4ae3a2691d409f951306e13c7db, type: 3}
   m_Name: Goblin
   m_EditorClassIdentifier: 
-  monsterName: "\uACE0\uBE14\uB9B0"
-  prefab: {fileID: 0}
-  maxHP: 100
-  atk: 10
-  moveSpeed: 2
-  recognitionRange: 3
-  attackRange: 1
+  MonsterName: "\uACE0\uBE14\uB9B0"
+  Prefab: {fileID: 0}
+  MaxHP: 100
+  Atk: 10
+  Def: 10
+  MoveSpeed: 2
+  RecognitionRange: 3
+  AttackRange: 1

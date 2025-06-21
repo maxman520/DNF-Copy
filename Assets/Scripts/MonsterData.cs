@@ -16,4 +16,6 @@ public class MonsterData : ScriptableObject
     [Header("AI 관련 스탯")]
     public float RecognitionRange; // 플레이어 인식 범위
     public float AttackRange;      // 공격 가능 범위
+
+
 }

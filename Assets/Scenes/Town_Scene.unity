@@ -994,10 +994,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b8e0faee2af324aa8a826c07a82809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  atk: 10
-  def: 10
-  walkSpeed: 3
-  runSpeed: 6
+  Atk: 10
+  Def: 10
+  MoveSpeed: 3
   MaxHP: 100
   MaxMP: 100
 --- !u!4 &346155119
@@ -3739,11 +3738,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10e69ac6b1eca1a4bbe654d879f168ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 3
-  runSpeed: 6
-  jumpHeight: 3
-  jumpDuration: 1
-  moveInput: {x: 0, y: 0}
+  WalkSpeed: 0
+  RunSpeed: 0
 --- !u!50 &1448341288
 Rigidbody2D:
   serializedVersion: 5

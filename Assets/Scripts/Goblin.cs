@@ -6,7 +6,6 @@ public class Goblin : Monster
     private enum AIPhase { Unaware, Aware } // 플레이어 비인식, 인식 상태
     private AIPhase currentPhase = AIPhase.Unaware; // 기본은 비인식 상태
 
-    private Transform playerTransform;
     private Coroutine currentActionCoroutine;
 
     [Header("AI 행동 패턴 설정")]
@@ -24,10 +23,6 @@ public class Goblin : Monster
         initialPosition = transform.position; // 초기 위치 저장
         patrolAreaCenter += (Vector2)initialPosition; // 순찰 중심점을 월드 좌표로 변환
 
-        if (Player.Instance != null)
-        {
-            playerTransform = Player.Instance.transform;
-        }
 
         // AI 행동 루프 시작
         StartCoroutine(AILoop());
@@ -38,6 +33,8 @@ public class Goblin : Monster
     {
         while (currentHP > 0)
         {
+            // ★★★ AILoop이 매 턴 살아있는지 확인하는 로그 ★★★
+            Debug.Log($"<color=orange>--- AILoop 턴 시작 (현재 상태: {currentPhase}) ---</color>");
             switch (currentPhase)
             {
                 case AIPhase.Unaware:
@@ -47,7 +44,11 @@ public class Goblin : Monster
                     yield return StartCoroutine(AwarePhase());
                     break;
             }
+            // ★★★ 턴이 끝난 후 잠깐의 딜레이를 줘서 로그 확인을 쉽게 함 ★★★
+            yield return new WaitForSeconds(0.1f);
         }
+        // 만약 루프가 끝났다면 왜 끝났는지 로그를 남김
+        Debug.LogError($"AILoop 종료됨! (currentHP: {currentHP})");
     }
 
     // 비인식 상태의 행동 패턴
@@ -76,11 +77,13 @@ public class Goblin : Monster
     {
         // 행동 결정 전 잠시 대기
         float interval = Random.Range(minActionInterval, maxActionInterval);
+        Debug.Log($"<color=cyan>AI 생각 중... {interval}초 후 행동 결정.</color>"); // 1. 생각 시작
         yield return new WaitForSeconds(interval);
 
         // 플레이어가 공격 범위 안에 있는가?
         if (IsPlayerInAttackRange())
         {
+            Debug.Log("<color=red>플레이어가 공격 범위 안에 있음!</color>"); // 2. 공격 범위 감지
             // 공격 가능 시: 70% 확률로 공격, 30% 확률로 다른 행동(후퇴/대기)
             if (Random.value > 0.3f)
             {
@@ -88,6 +91,7 @@ public class Goblin : Monster
             }
             else
             {
+                Debug.Log("<color=yellow>플레이어가 공격 범위 밖에 있음. 추격/후퇴/대기 결정.</color>"); // 3. 공격 범위 밖
                 // 다른 행동 선택 (후퇴 또는 대기)
                 if (Random.value > 0.5f)
                     yield return StartCoroutine(AwareRetreat());
@@ -119,7 +123,7 @@ public class Goblin : Monster
     private IEnumerator UnawareIdle()
     {
         rb.linearVelocity = Vector2.zero;
-        anim.SetBool("isWalking", false);
+        anim.SetBool(animHashes.IsWalking, false);
         yield return new WaitForSeconds(Random.Range(1f, 3f)); // 1~3초간 대기
     }
 
@@ -132,7 +136,7 @@ public class Goblin : Monster
         );
         Vector2 destination = patrolAreaCenter + randomOffset;
 
-        anim.SetBool("isWalking", true);
+        anim.SetBool(animHashes.IsWalking, true);
         while (Vector2.Distance(transform.position, destination) > 0.1f)
         {
             // 만약 순찰 중 플레이어를 발견하면 즉시 중단
@@ -148,21 +152,22 @@ public class Goblin : Monster
             yield return null; // 다음 프레임까지 이동
         }
         rb.linearVelocity = Vector2.zero;
-        anim.SetBool("isWalking", false);
+        anim.SetBool(animHashes.IsWalking, false);
     }
 
     // --- Aware Actions ---
     private IEnumerator AwareIdle()
     {
         rb.linearVelocity = Vector2.zero;
-        anim.SetBool("isWalking", false);
+        anim.SetBool(animHashes.IsWalking, false);
         FlipTowardsPlayer();
         yield return null; // 행동 결정 주기까지 이 상태를 유지
     }
 
     private IEnumerator AwareWalk()
     {
-        anim.SetBool("isWalking", true);
+        Debug.Log(">> 행동 실행: AwareWalk (추격)"); // 5. 실제 행동 실행 로그
+        anim.SetBool(animHashes.IsWalking, true);
         Vector2 direction = (playerTransform.position - transform.position).normalized;
         rb.linearVelocity = direction * moveSpeed; // MonsterData의 moveSpeed 사용
         Flip(rb.linearVelocity.x);
@@ -171,7 +176,7 @@ public class Goblin : Monster
 
     private IEnumerator AwareRetreat()
     {
-        anim.SetBool("isWalking", true);
+        anim.SetBool(animHashes.IsWalking, true);
         Vector2 direction = (transform.position - playerTransform.position).normalized;
         rb.linearVelocity = direction * moveSpeed;
         FlipTowardsPlayer();
@@ -181,7 +186,7 @@ public class Goblin : Monster
     private IEnumerator AwareAttack()
     {
         rb.linearVelocity = Vector2.zero;
-        anim.SetBool("isWalking", false);
+        anim.SetBool(animHashes.IsWalking, false);
         FlipTowardsPlayer();
         Attack(); // Monster 클래스의 Attack() 호출
         // 공격 애니메이션 시간만큼 대기 (AILoop의 대기시간이 쿨타임 역할을 함)
@@ -218,7 +223,7 @@ public class Goblin : Monster
 
     public override void Attack()
     {
-        anim.SetTrigger("attack");
+        anim.SetTrigger(animHashes.Attack);
         Debug.Log("Attack!!!!!");
     }
 

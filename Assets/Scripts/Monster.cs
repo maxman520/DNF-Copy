@@ -15,9 +15,9 @@ public abstract class Monster : MonoBehaviour
 
     protected Rigidbody2D rb;
     protected Animator anim;
+    protected readonly AnimHashes animHashes = new();
     // protected SpriteRenderer spriteRenderer; // 필요하다면 추가
-
-    protected Transform playerTransform; // 플레이어 추적을 위해
+    protected Transform playerTransform; // 인스펙터에 노출시켜 직접 할당받음
 
     protected virtual void Awake()
     {
@@ -38,6 +38,7 @@ public abstract class Monster : MonoBehaviour
         {
             Debug.LogError($"{gameObject.name}: MonsterData가 할당되지 않았음");
         }
+
     }
 
     // Start는 첫 번째 프레임 업데이트 전에 호출된다.

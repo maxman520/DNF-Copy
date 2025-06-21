@@ -43,12 +43,12 @@ public class GameManager : Singleton<GameManager>
         if (scene.name == "Dungeon1_Scene")
         {
             Debug.Log("던전 씬 로드");
-            player.ChangeState(player.DungeonState);
+            player.SetState(Player.PlayerState.Dungeon);
         }
         else if (scene.name == "Town_Scene")
         {
             Debug.Log("마을 씬 로드");
-            player.ChangeState(player.TownState);
+            player.SetState(Player.PlayerState.Town);
             // 마을로 이동시 체력, 마나 회복
             CurrentHealth = PlayerStats.Instance.MaxHP;
             CurrentMana = PlayerStats.Instance.MaxMP;
