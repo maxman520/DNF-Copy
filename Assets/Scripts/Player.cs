@@ -55,10 +55,10 @@ public class Player : Singleton<Player>
     private void Start()
     {
         // PlayerStats ·Îµå
-        if (PlayerStats.Instance != null)
+        if (PlayerStat.Instance != null)
         {
-            this.WalkSpeed = PlayerStats.Instance.MoveSpeed * 1.0f;
-            this.RunSpeed = PlayerStats.Instance.MoveSpeed * 2.0f;
+            this.WalkSpeed = PlayerStat.Instance.MoveSpeed * 1.0f;
+            this.RunSpeed = PlayerStat.Instance.MoveSpeed * 2.0f;
         }
     }
 
@@ -88,7 +88,6 @@ public class Player : Singleton<Player>
                 break;
         }
         IsRunning = false;
-        // moveController.SubscribeToEvents();
     }
     public void ExitCurrentState(PlayerState currentState)
     {

@@ -12,5 +12,5 @@ EditorBuildSettings:
     path: Assets/Scenes/Dungeon1_Scene.unity
     guid: d3f65e251db1d8d4fba48fa103573ace
   m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: b9d3e2460e857a94bb7ef4be6f709f3e, type: 3}
   m_UseUCBPForAssetBundles: 0

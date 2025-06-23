@@ -23,21 +23,19 @@ public class MoveController
     {
         inputHander.OnRunPerformed += OnRunPerformed;
         inputHander.OnMoveCanceled += OnMoveCanceled;
+        inputHander.OnJumpPerformed += OnJumpPerformed;
     }
 
     public void UnsubscribeFromEvents()
     {
         inputHander.OnRunPerformed -= OnRunPerformed;
         inputHander.OnMoveCanceled -= OnMoveCanceled;
+        inputHander.OnJumpPerformed -= OnJumpPerformed;
     }
 
     // 캐릭터 점프, 방향 조절
     public void Tick()
     {
-        if (inputHander.WasJumpPressedThisFrame)
-        {
-            StartJump();
-        }
 
         if (!player.IsJumping && Mathf.Abs(inputHander.MoveInput.x) > 0.1f)
         {
@@ -70,6 +68,11 @@ public class MoveController
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {        
         player.IsRunning = false;
+    }
+
+    private void OnJumpPerformed(InputAction.CallbackContext context)
+    {
+        StartJump();
     }
 
     #region 점프
