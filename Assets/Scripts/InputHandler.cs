@@ -14,7 +14,7 @@ public class InputHandler : System.IDisposable
     public event Action<InputAction.CallbackContext> OnRunPerformed;
     public event Action<InputAction.CallbackContext> OnMoveCanceled;
     public event Action<InputAction.CallbackContext> OnJumpPerformed;
-
+    public event Action<InputAction.CallbackContext> OnAttackPerformed;
 
     public InputHandler()
     {
@@ -25,6 +25,7 @@ public class InputHandler : System.IDisposable
         inputActions.Player.Run.performed += ctx => OnRunPerformed?.Invoke(ctx);
         inputActions.Player.Move.canceled += ctx => OnMoveCanceled?.Invoke(ctx);
         inputActions.Player.Jump.performed += ctx => OnJumpPerformed?.Invoke(ctx);
+        inputActions.Player.Attack.performed += ctx => OnAttackPerformed?.Invoke(ctx);
     }
 
     // Update에서 호출될 메서드
@@ -33,7 +34,10 @@ public class InputHandler : System.IDisposable
         if (isDisposed) return;
 
         MoveInput = inputActions.Player.Move.ReadValue<Vector2>();
+
+        return;
     }
+
 
     // Player가 파괴될 때 호출될 정리 메서드
     public void Dispose()

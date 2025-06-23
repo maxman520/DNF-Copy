@@ -8,8 +8,9 @@ public class Player : Singleton<Player>
     public float RunSpeed;
 
     private InputHandler inputHandler;
-    private MoveController moveController;
+    private BehaviourController behaviourController;
     private AnimController animController;
+    private Vector2 moveInput;
 
     // 상태 관리
     public enum PlayerState
@@ -29,6 +30,7 @@ public class Player : Singleton<Player>
     public bool IsGrounded { get; set; } = true;
     public bool IsRunning { get; set; } = false;
     public bool IsJumping { get; set; } = false;
+    public bool IsAttacking { get; set; } = false;
 
     protected override void Awake()
     {
@@ -37,7 +39,7 @@ public class Player : Singleton<Player>
 
         // 컨트롤러 초기화
         inputHandler = new InputHandler();
-        moveController = new MoveController(this, inputHandler);
+        behaviourController = new BehaviourController(this, inputHandler);
         animController = new AnimController(this, inputHandler);
 
         // 컴포넌트 참조 변수 초기화
@@ -65,13 +67,13 @@ public class Player : Singleton<Player>
     private void Update()
     {
         inputHandler.ReadInput(); // 1. 먼저 입력을 읽고
-        moveController.Tick(); // 2. 입력을 바탕으로 게임 로직(점프, 방향 전환) 처리
-        animController.UpdateAnimations(); // 3. 애니메이션 처리           
+        behaviourController.Flip(); // 3. 입력을 바탕으로 게임 로직(점프, 방향 전환) 처리
+        animController.UpdateAnimations(); // 4. 애니메이션 처리           
     }
 
     private void FixedUpdate()
     {
-        moveController.ApplyMovement(); // 물리 계산
+        behaviourController.ApplyMovement(); // 물리 계산
     }
     public void EnterNewState(PlayerState currentState)
     {
@@ -84,7 +86,7 @@ public class Player : Singleton<Player>
             case PlayerState.Dungeon:
                 Debug.Log("던전 상태에 진입");
                 Anim.Play("Idle_Dungeon");
-                moveController.SubscribeToEvents();
+                behaviourController.SubscribeToEvents();
                 break;
         }
         IsRunning = false;
@@ -101,10 +103,10 @@ public class Player : Singleton<Player>
             case PlayerState.Dungeon:
                 Debug.Log("던전 상태를 벗어남");
                 IsRunning = false;
-                moveController.ForceStopJump();
+                behaviourController.ForceStopJump();
                 break;
         }
-        moveController.UnsubscribeFromEvents();
+        behaviourController.UnsubscribeFromEvents();
         animController.ResetAnimations();
     }
 
@@ -131,4 +133,21 @@ public class Player : Singleton<Player>
     {
         inputHandler?.Dispose();
     }
+    #region Animation Event Receivers
+    public void AnimEvent_OnAttackStart()
+    {
+        behaviourController?.OnAttackStart();
+    }
+
+    public void AnimEvent_OnComboWindowOpen()
+    {
+        behaviourController?.OnComboWindowOpen();
+    }
+
+
+    public void AnimEvent_OnAttackEnd()
+    {
+        behaviourController?.OnAttackEnd();
+    }
+    #endregion
 }
