@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - CameraBound
+  - PlayerAttack
+  - MonsterAttack
+  - Monster
   layers:
   - Default
   - TransparentFX

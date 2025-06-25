@@ -26,8 +26,18 @@ public class AnimEventReceiver : MonoBehaviour
         player?.AnimEvent_OnComboWindowOpen();
     }
 
+    public void OnComboWindowClose()
+    {
+        player?.AnimEvent_OnComboWindowClose();
+    }
+
     public void OnAttackEnd()
     {
         player?.AnimEvent_OnAttackEnd();
+    }
+
+    public void OnHurtEnd()
+    {
+        player?.AnimEvent_OnHurtEnd();
     }
 }

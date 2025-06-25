@@ -16,14 +16,12 @@ public abstract class Monster : MonoBehaviour
     protected Rigidbody2D rb;
     protected Animator anim;
     protected readonly AnimHashes animHashes = new();
-    // protected SpriteRenderer spriteRenderer; // 필요하다면 추가
     protected Transform playerTransform; // 인스펙터에 노출시켜 직접 할당받음
 
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
-        // spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         // 데이터 초기화
         if (monsterData != null)
@@ -40,9 +38,6 @@ public abstract class Monster : MonoBehaviour
         }
 
     }
-
-    // Start는 첫 번째 프레임 업데이트 전에 호출된다.
-    // 다른 오브젝트를 찾아야 할 때 사용하기 좋다.
     protected virtual void Start()
     {
         // 추후 플레이어를 찾아서 playerTransform에 할당하는 로직을 여기에 추가할 수 있다.
@@ -55,6 +50,11 @@ public abstract class Monster : MonoBehaviour
         {
             playerTransform = Player.Instance.transform;
         }
+    }
+
+    public float GetAtk()
+    {
+        return this.atk;
     }
 
     // 이 몬스터가 데미지를 입었을 때 호출될 공통 함수
@@ -70,7 +70,7 @@ public abstract class Monster : MonoBehaviour
         else
         {
             // 피격 애니메이션 재생, 넉백 등 공통 피격 반응 로직
-            anim.SetTrigger("HitReaction");
+            anim.SetTrigger("Hurt");
         }
     }
 
@@ -84,8 +84,6 @@ public abstract class Monster : MonoBehaviour
         Destroy(gameObject, 2f);
     }
 
-    // 모든 몬스터는 '공격'이라는 행동을 가져야 하지만, 몬스터마다 다르므로 (고블린의 칼 휘두르기, 슬라임의 점프 공격 등).
-    // abstract(추상) 메서드로 선언하여, 자식 클래스에서 반드시 구현하도록 강제
     public abstract void Attack();
 
     // 에디터에서만 보이는 기즈모(Gizmo)를 그려서 AI 범위를 시각적으로 확인

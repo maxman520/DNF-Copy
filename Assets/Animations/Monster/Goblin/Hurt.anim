@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Walk
+  m_Name: Hurt
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -31,7 +31,46 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.75
+        time: 0.2
+        value: 1
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.70000005
+        value: 1
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_IsActive
+    path: Hurtbox
+    classID: 1
+    script: {fileID: 0}
+    flags: 16
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.70000005
         value: 1
         inSlope: Infinity
         outSlope: Infinity
@@ -51,29 +90,30 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 5431c1c2002f69647be9a29244c9ab1c, type: 3}
-    - time: 0.125
-      value: {fileID: 21300000, guid: 10f9ce5f82d85ce4d9b04977e366a66d, type: 3}
-    - time: 0.25
-      value: {fileID: 21300000, guid: 6a9c3b63d413e5445873c51686cc2020, type: 3}
-    - time: 0.375
-      value: {fileID: 21300000, guid: a19ab266d8a19ab4dab79950cfebdf05, type: 3}
-    - time: 0.5
-      value: {fileID: 21300000, guid: 51fdc00ef10a70f48970643108470036, type: 3}
-    - time: 0.625
-      value: {fileID: 21300000, guid: b5c306ad278252741b61dcc17b984f79, type: 3}
+      value: {fileID: 21300000, guid: b7b9d813dcf98f54c9affc20855ba09a, type: 3}
+    - time: 0.6
+      value: {fileID: 21300000, guid: b7b9d813dcf98f54c9affc20855ba09a, type: 3}
     attribute: m_Sprite
     path: Body
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 8
+  m_SampleRate: 10
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_ClipBindingConstant:
     genericBindings:
+    - serializedVersion: 2
+      path: 566259038
+      attribute: 2086281974
+      script: {fileID: 0}
+      typeID: 1
+      customType: 0
+      isPPtrCurve: 0
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
     - serializedVersion: 2
       path: 3579746941
       attribute: 2086281974
@@ -93,18 +133,14 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 5431c1c2002f69647be9a29244c9ab1c, type: 3}
-    - {fileID: 21300000, guid: 10f9ce5f82d85ce4d9b04977e366a66d, type: 3}
-    - {fileID: 21300000, guid: 6a9c3b63d413e5445873c51686cc2020, type: 3}
-    - {fileID: 21300000, guid: a19ab266d8a19ab4dab79950cfebdf05, type: 3}
-    - {fileID: 21300000, guid: 51fdc00ef10a70f48970643108470036, type: 3}
-    - {fileID: 21300000, guid: b5c306ad278252741b61dcc17b984f79, type: 3}
+    - {fileID: 21300000, guid: b7b9d813dcf98f54c9affc20855ba09a, type: 3}
+    - {fileID: 21300000, guid: b7b9d813dcf98f54c9affc20855ba09a, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.75
+    m_StopTime: 0.70000005
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -134,7 +170,46 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.75
+        time: 0.2
+        value: 1
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.70000005
+        value: 1
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_IsActive
+    path: Hurtbox
+    classID: 1
+    script: {fileID: 0}
+    flags: 16
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.70000005
         value: 1
         inSlope: Infinity
         outSlope: Infinity

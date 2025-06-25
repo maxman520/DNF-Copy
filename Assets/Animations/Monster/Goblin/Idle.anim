@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Walk
+  m_Name: Idle
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -31,7 +31,7 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.75
+        time: 1
         value: 1
         inSlope: Infinity
         outSlope: Infinity
@@ -47,27 +47,8 @@ AnimationClip:
     classID: 1
     script: {fileID: 0}
     flags: 16
-  m_PPtrCurves:
-  - serializedVersion: 2
-    curve:
-    - time: 0
-      value: {fileID: 21300000, guid: 5431c1c2002f69647be9a29244c9ab1c, type: 3}
-    - time: 0.125
-      value: {fileID: 21300000, guid: 10f9ce5f82d85ce4d9b04977e366a66d, type: 3}
-    - time: 0.25
-      value: {fileID: 21300000, guid: 6a9c3b63d413e5445873c51686cc2020, type: 3}
-    - time: 0.375
-      value: {fileID: 21300000, guid: a19ab266d8a19ab4dab79950cfebdf05, type: 3}
-    - time: 0.5
-      value: {fileID: 21300000, guid: 51fdc00ef10a70f48970643108470036, type: 3}
-    - time: 0.625
-      value: {fileID: 21300000, guid: b5c306ad278252741b61dcc17b984f79, type: 3}
-    attribute: m_Sprite
-    path: Body
-    classID: 212
-    script: {fileID: 0}
-    flags: 2
-  m_SampleRate: 8
+  m_PPtrCurves: []
+  m_SampleRate: 1
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -83,28 +64,13 @@ AnimationClip:
       isPPtrCurve: 0
       isIntCurve: 0
       isSerializeReferenceCurve: 0
-    - serializedVersion: 2
-      path: 2073732236
-      attribute: 0
-      script: {fileID: 0}
-      typeID: 212
-      customType: 23
-      isPPtrCurve: 1
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
-    pptrCurveMapping:
-    - {fileID: 21300000, guid: 5431c1c2002f69647be9a29244c9ab1c, type: 3}
-    - {fileID: 21300000, guid: 10f9ce5f82d85ce4d9b04977e366a66d, type: 3}
-    - {fileID: 21300000, guid: 6a9c3b63d413e5445873c51686cc2020, type: 3}
-    - {fileID: 21300000, guid: a19ab266d8a19ab4dab79950cfebdf05, type: 3}
-    - {fileID: 21300000, guid: 51fdc00ef10a70f48970643108470036, type: 3}
-    - {fileID: 21300000, guid: b5c306ad278252741b61dcc17b984f79, type: 3}
+    pptrCurveMapping: []
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.75
+    m_StopTime: 1
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -134,7 +100,7 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.75
+        time: 1
         value: 1
         inSlope: Infinity
         outSlope: Infinity

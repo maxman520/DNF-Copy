@@ -4,13 +4,19 @@ using UnityEngine.InputSystem;
 
 public class Player : Singleton<Player>
 {
-    public float WalkSpeed;
-    public float RunSpeed;
-
+    public PlayerStat Stats { get; private set; }
+    [HideInInspector] public float Atk;
+    [HideInInspector] public float Def;
+    [HideInInspector] public float MaxHP;
+    [HideInInspector] public float MaxMP;
+    [HideInInspector] public float CurrentHP;
+    [HideInInspector] public float CurrentMP;
+    [HideInInspector] public float WalkSpeed;
+    [HideInInspector] public float RunSpeed;
+    
     private InputHandler inputHandler;
     private BehaviourController behaviourController;
     private AnimController animController;
-    private Vector2 moveInput;
 
     // 상태 관리
     public enum PlayerState
@@ -31,6 +37,8 @@ public class Player : Singleton<Player>
     public bool IsRunning { get; set; } = false;
     public bool IsJumping { get; set; } = false;
     public bool IsAttacking { get; set; } = false;
+    public bool IsJumpAttacking { get; set; } = false;
+    public bool IsHurt { get; set; } = false;
 
     protected override void Awake()
     {
@@ -52,23 +60,32 @@ public class Player : Singleton<Player>
             Debug.LogError("PlayerGround를 찾을 수 없습니다.", this);
         if (VisualsTransform == null)
             Debug.LogError("Visuals Transform을 찾을 수 없습니다.", this);
+
+        // PlayerStat 로드
+        Stats = GetComponent<PlayerStat>();
+        if (Stats != null)
+        {
+            this.Atk = Stats.Atk;
+            this.Def = Stats.Def;
+            this.MaxHP = Stats.MaxHP;
+            this.MaxMP = Stats.MaxMP;
+            this.CurrentHP = Stats.MaxHP;
+            this.CurrentMP = Stats.MaxMP;
+            this.WalkSpeed = Stats.MoveSpeed * 1.0f;
+            this.RunSpeed = Stats.MoveSpeed * 2.0f;
+        }
     }
 
     private void Start()
     {
-        // PlayerStats 로드
-        if (PlayerStat.Instance != null)
-        {
-            this.WalkSpeed = PlayerStat.Instance.MoveSpeed * 1.0f;
-            this.RunSpeed = PlayerStat.Instance.MoveSpeed * 2.0f;
-        }
+        
     }
 
     private void Update()
     {
         inputHandler.ReadInput(); // 1. 먼저 입력을 읽고
         behaviourController.Flip(); // 3. 입력을 바탕으로 게임 로직(점프, 방향 전환) 처리
-        animController.UpdateAnimations(); // 4. 애니메이션 처리           
+        animController.UpdateAnimations(); // 4. 애니메이션 처리
     }
 
     private void FixedUpdate()
@@ -119,6 +136,22 @@ public class Player : Singleton<Player>
         EnterNewState(CurrentState);
     }
 
+    public void TakeDamage(float monsterAtk)
+    {
+
+        float damage = (monsterAtk - (this.Def * 0.5f));
+        damage = Mathf.RoundToInt(damage * Random.Range(0.9f, 1.1f));
+
+        Debug.Log(damage + " 만큼의 피해를 입음");
+        if (IsGrounded) Anim.SetBool("isGrounded", true);
+        IsHurt = true;
+        Anim.SetTrigger("isHurt");
+
+        // 여기에 추가로 체력 감소, 넉백 등의 로직
+        // ex) health -= damage;
+        // ex) behaviourController.ApplyKnockback(...);
+    }
+
     public Coroutine StartCoroutineFromController(IEnumerator coroutine)
     {
         return StartCoroutine(coroutine);
@@ -144,10 +177,20 @@ public class Player : Singleton<Player>
         behaviourController?.OnComboWindowOpen();
     }
 
+    public void AnimEvent_OnComboWindowClose()
+    {
+        behaviourController?.OnComboWindowClose();
+    }
+
 
     public void AnimEvent_OnAttackEnd()
     {
         behaviourController?.OnAttackEnd();
+    }
+
+    public void AnimEvent_OnHurtEnd()
+    {
+        behaviourController?.OnHurtEnd();
     }
     #endregion
 }

@@ -224,7 +224,7 @@ public class Goblin : Monster
     public override void Attack()
     {
         anim.SetTrigger(animHashes.Attack);
-        Debug.Log("Attack!!!!!");
+        Debug.Log("고블린의 공격");
     }
 
     // 개발 편의를 위해 순찰 영역을 씬 뷰에 표시

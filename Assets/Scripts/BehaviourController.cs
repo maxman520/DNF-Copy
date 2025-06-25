@@ -14,10 +14,8 @@ public class BehaviourController
 
     // --- 콤보 시스템을 위한 변수 ---
     private bool canContinueAttack = false; // 공격을 이어갈 수 있는 상태인지 체크
-    private Coroutine attackResetCoroutine; // 공격 콤보 초기화 코루틴을 제어하기 위한 변수
-    private const float ATTACK_TIMEOUT = 1.5f; // 공격 입력 대기 시간
 
-    private const float JUMP_MOVEMENT_PENALTY = 0.2f;
+    private const float JUMP_MOVEMENT_PENALTY = 0.3f;
     private const float JUMP_DURATION = 1.0f;
     private const float JUMP_HEIGHT = 3.0f;
 
@@ -47,7 +45,7 @@ public class BehaviourController
     // 캐릭터 방향 조절
     public void Flip()
     {
-        if (player.IsAttacking || !player.IsGrounded) return;
+        if (player.IsAttacking || !player.IsGrounded || player.IsHurt) return;
 
         if (Mathf.Abs(inputHandler.MoveInput.x) > 0.1f)
         {
@@ -59,11 +57,17 @@ public class BehaviourController
     // 캐릭터 이동
     public void ApplyMovement()
     {
-        if (player.IsAttacking)
+        if (player.IsHurt)
         {
             player.Rb.linearVelocity = Vector2.zero;
             return;
         }
+
+        if (player.IsAttacking)
+        {
+            return;
+        }
+
         float currentSpeed = player.IsRunning ? player.RunSpeed : player.WalkSpeed;
         Vector2 velocity = inputHandler.MoveInput.normalized * currentSpeed;
 
@@ -78,7 +82,7 @@ public class BehaviourController
     // 달리기 시작
     private void OnRunPerformed(InputAction.CallbackContext context)
     {
-        if (!player.IsJumping && !player.IsAttacking) player.IsRunning = true;
+        if (!player.IsJumping && !player.IsAttacking || !player.IsHurt) player.IsRunning = true;
     }
 
     // 달리기 중지
@@ -90,35 +94,44 @@ public class BehaviourController
     // 점프
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
+        if (player.IsHurt) return; // 피격 시 점프 불가
         if (!player.IsAttacking) StartJump();
     }
 
     // 공격
     private void OnAttackPerformed(InputAction.CallbackContext context)
     {
-        if (!player.IsGrounded || player.IsJumping) return;
+        if (player.IsHurt) return; // 피격 시 공격 불가
+
+        // < 점프 공격 >
+        if (player.IsJumping)
+        {
+            PerformJumpAttack();
+            return;
+        }
+
+        if (!player.IsGrounded) return;
 
 
+        // < 지상 공격 >
         // 공격을 이어갈 수 있는 타이밍이라면
         if (canContinueAttack)
         {
-            // 진행중인 콤보 리셋 코루틴을 중지
-            if (attackResetCoroutine != null)
-            {
-                player.StopCoroutine(attackResetCoroutine);
-            }
             attackCounter++;
             PerformComboAttack();
         }
-        // 콤보를 이어갈 수 없지만, 다른 공격 중도 아니라면 (첫 공격)
+        // 첫 공격인 경우
         else if (!player.IsAttacking)
         {
+            player.Rb.linearVelocity = Vector2.zero;
             Debug.Log("My IsRunning is " + player.IsRunning);
-            if (player.IsRunning && Mathf.Abs(inputHandler.MoveInput.x) > 0.1f) // 달리는 중
+            // 달리는 중 공격
+            if (player.IsRunning && Mathf.Abs(inputHandler.MoveInput.x) > 0.1f)
             {
                 PerformRunAttack();
             }
-            else // 이외 걷는 중, Idle 상태 등
+            // 이외 걷는 중, Idle 상태 등
+            else
             {
                 player.IsRunning = false;
                 attackCounter = 1;
@@ -129,7 +142,9 @@ public class BehaviourController
 
     private void PerformComboAttack()
     {
-        player.IsAttacking = true;
+        float direction = player.transform.localScale.x;
+        player.Rb.AddForceX(direction * 0.05f, ForceMode2D.Impulse);
+
         canContinueAttack = false; // 다음 공격을 위해 일단 닫아둠
         player.Anim.SetTrigger("attack"+ attackCounter);
     }
@@ -138,20 +153,18 @@ public class BehaviourController
     {
         Debug.Log("달리기 공격");
         return; // 임시로 작성
-        player.IsAttacking = true;
         player.Anim.SetTrigger("RunAttack");
     }
 
-    // --- 공격 리셋 타이머 코루틴 ---
-    private IEnumerator ResetAttackCoroutine()
+    private void PerformJumpAttack()
     {
-        yield return new WaitForSeconds(ATTACK_TIMEOUT);
-        // 시간이 지나면 콤보 관련 변수들을 모두 초기화
-        attackCounter = 0;
-        canContinueAttack = false;
-        player.IsAttacking = false;
-    }
+        // 이미 이번 점프에서 공격을 했다면 무시
+        if (player.IsJumpAttacking) return;
 
+        // 점프 공격 실행
+        player.IsJumpAttacking = true; // 공격했다고 표시
+        player.Anim.SetTrigger("jumpAttack"); // 애니메이션 트리거 발동
+    }
     // 애니메이션 시작 시 호출
     public void OnAttackStart()
     {
@@ -165,21 +178,30 @@ public class BehaviourController
         if (attackCounter < 3)
         {
             canContinueAttack = true;
-            // 콤보 리셋 코루틴 시작
-            attackResetCoroutine = player.StartCoroutineFromController(ResetAttackCoroutine());
         }
+    }
+    
+    // 콤보를 이어갈 수 있는 "타이밍" 이 끝났을 때 애니메이션에서 호출
+    public void OnComboWindowClose()
+    {
+        // 콤보가 이어지지 않고 끝났을 경우에 대한 최종 처리
+        attackCounter = 0;
+        canContinueAttack = false;
     }
 
     // 공격 애니메이션이 완전히 끝났을 때 호출
     public void OnAttackEnd()
     {
-        // 콤보가 이어지지 않고 끝났을 경우에 대한 최종 처리
-        attackCounter = 0;
         player.IsAttacking = false;
+        attackCounter = 0;
         canContinueAttack = false;
     }
-
-
+    // 피격 애니메이션이 끝났을 때 호출
+    public void OnHurtEnd()
+    {
+        player.IsHurt = false;
+        Debug.Log("피격 상태 해제");
+    }
 
     #region Jump
     public void StartJump()
@@ -208,6 +230,7 @@ public class BehaviourController
         // 점프 시작 설정
         player.IsGrounded = false;
         player.IsJumping = true;
+        player.IsJumpAttacking = false;
 
         player.Anim.SetBool(animHashes.IsGrounded, false);
         player.Anim.SetTrigger(animHashes.Jump);
@@ -236,10 +259,12 @@ public class BehaviourController
 
         // 점프 완료 처리
         player.VisualsTransform.localPosition = startVisualPos;
-        player.IsJumping = false;
         player.IsGrounded = true;
+        player.IsJumping = false;
         player.IsRunning = false;
+        player.IsJumpAttacking = false;
 
+        player.Anim.ResetTrigger("jumpAttack");
         player.Anim.SetBool(animHashes.IsGrounded, true);
         player.Anim.SetFloat(animHashes.YVelocity, 0);
 

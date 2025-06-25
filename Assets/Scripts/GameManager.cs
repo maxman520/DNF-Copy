@@ -14,12 +14,12 @@ public class GameManager : Singleton<GameManager>
     }
     public void InitializePlayerState()
     {
-        CurrentHealth = PlayerStat.Instance.MaxHP;
-        CurrentMana = PlayerStat.Instance.MaxMP;
+        CurrentHealth = Player.Instance.MaxHP;
+        CurrentMana = Player.Instance.MaxMP;
 
         // UI 매니저에게 초기 UI 업데이트 요청
-        UIManager.Instance.UpdateHP(PlayerStat.Instance.MaxHP, CurrentHealth);
-        UIManager.Instance.UpdateMP(PlayerStat.Instance.MaxMP, CurrentMana);
+        UIManager.Instance.UpdateHP(Player.Instance.MaxHP, CurrentHealth);
+        UIManager.Instance.UpdateMP(Player.Instance.MaxMP, CurrentMana);
     }
 
     private void OnEnable()
@@ -37,7 +37,10 @@ public class GameManager : Singleton<GameManager>
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Player player = Player.Instance;
-        if (player == null) return;
+        if (player == null) {
+            Debug.Log("플레이어가 NULL입니다");
+            return;
+        }
 
 
         if (scene.name == "Dungeon1_Scene")
@@ -50,8 +53,8 @@ public class GameManager : Singleton<GameManager>
             Debug.Log("마을 씬 로드");
             player.SetState(Player.PlayerState.Town);
             // 마을로 이동시 체력, 마나 회복
-            CurrentHealth = PlayerStat.Instance.MaxHP;
-            CurrentMana = PlayerStat.Instance.MaxMP;
+            CurrentHealth = player.MaxHP;
+            CurrentMana = player.MaxMP;
         }
 
         // 플레이어를 시작 지점으로 이동
@@ -84,23 +87,6 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-
-    // 데미지를 받는 공용 메서드
-    public void TakeDamage(float damage)
-    {
-        CurrentHealth -= damage;
-        if (CurrentHealth < 0) CurrentHealth = 0;
-
-        // UI 업데이트 요청
-        UIManager.Instance.UpdateHP(PlayerStat.Instance.MaxHP, CurrentHealth);
-
-        if (CurrentHealth <= 0)
-        {
-            // Die(); // 사망 처리 로직 (나중에 구현)
-            Debug.Log("플레이어 사망!");
-        }
-    }
-
     // 마나를 사용하는 공용 메서드
     public void UseMana(float amount)
     {
@@ -108,6 +94,6 @@ public class GameManager : Singleton<GameManager>
         if (CurrentMana < 0) CurrentMana = 0;
 
         // UI 업데이트 요청
-        UIManager.Instance.UpdateMP(PlayerStat.Instance.MaxMP, CurrentMana);
+        UIManager.Instance.UpdateMP(Player.Instance.Stats.MaxMP, CurrentMana);
     }
 }

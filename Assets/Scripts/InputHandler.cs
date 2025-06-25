@@ -21,7 +21,7 @@ public class InputHandler : System.IDisposable
         inputActions = new PlayerInputActions();
         inputActions.Player.Enable();
 
-        // 입력 액션 이벤트가 발생하면, 이 클래스의 public 이벤트를 호출
+        // 입력 액션 이벤트가 발생하면, 이 클래스의 이벤트를 호출
         inputActions.Player.Run.performed += ctx => OnRunPerformed?.Invoke(ctx);
         inputActions.Player.Move.canceled += ctx => OnMoveCanceled?.Invoke(ctx);
         inputActions.Player.Jump.performed += ctx => OnJumpPerformed?.Invoke(ctx);
