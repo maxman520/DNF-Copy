@@ -17,6 +17,6 @@ MonoBehaviour:
   MaxHP: 100
   Atk: 10
   Def: 10
-  MoveSpeed: 2
+  MoveSpeed: 1
   RecognitionRange: 3
-  AttackRange: 1
+  AttackRange: 1.6

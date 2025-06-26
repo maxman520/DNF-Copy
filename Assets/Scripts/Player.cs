@@ -5,18 +5,30 @@ using UnityEngine.InputSystem;
 public class Player : Singleton<Player>
 {
     public PlayerStat Stats { get; private set; }
-    [HideInInspector] public float Atk;
-    [HideInInspector] public float Def;
-    [HideInInspector] public float MaxHP;
-    [HideInInspector] public float MaxMP;
-    [HideInInspector] public float CurrentHP;
-    [HideInInspector] public float CurrentMP;
-    [HideInInspector] public float WalkSpeed;
-    [HideInInspector] public float RunSpeed;
+    [Header("플레이어 스탯")]
+    public float Atk;
+    public float Def;
+    public float MaxHP;
+    public float MaxMP;
+    public float CurrentHP;
+    public float CurrentMP;
+    public float WalkSpeed;
+    public float RunSpeed;
     
     private InputHandler inputHandler;
     private BehaviourController behaviourController;
     private AnimController animController;
+
+    // 상태 변수
+    public bool IsGrounded { get; set; } = true;
+    public bool IsMoving { get; set; } = false;
+    public bool IsRunning { get; set; } = false;
+    public bool IsJumping { get; set; } = false;
+    public bool IsAttacking { get; set; } = false;
+    public bool IsJumpAttacking { get; set; } = false;
+    public bool IsHurt { get; set; } = false;
+    public bool CanContinueAttack { get; set; } = false;
+    public int AttackCounter = 0;
 
     // 상태 관리
     public enum PlayerState
@@ -32,14 +44,6 @@ public class Player : Singleton<Player>
     public Collider2D PlayerGround { get; private set; }
     public Transform VisualsTransform { get; private set; }
 
-    // 상태 변수
-    public bool IsGrounded { get; set; } = true;
-    public bool IsRunning { get; set; } = false;
-    public bool IsJumping { get; set; } = false;
-    public bool IsAttacking { get; set; } = false;
-    public bool IsJumpAttacking { get; set; } = false;
-    public bool IsHurt { get; set; } = false;
-
     protected override void Awake()
     {
         // 싱글턴 패턴
@@ -47,8 +51,8 @@ public class Player : Singleton<Player>
 
         // 컨트롤러 초기화
         inputHandler = new InputHandler();
-        behaviourController = new BehaviourController(this, inputHandler);
-        animController = new AnimController(this, inputHandler);
+        animController = new AnimController(this);
+        behaviourController = new BehaviourController(this, inputHandler, animController);
 
         // 컴포넌트 참조 변수 초기화
         Rb = GetComponent<Rigidbody2D>();
@@ -84,17 +88,17 @@ public class Player : Singleton<Player>
     private void Update()
     {
         inputHandler.ReadInput(); // 1. 먼저 입력을 읽고
-        behaviourController.Flip(); // 3. 입력을 바탕으로 게임 로직(점프, 방향 전환) 처리
-        animController.UpdateAnimations(); // 4. 애니메이션 처리
+        behaviourController.Flip(); // 2. 입력을 바탕으로 방향 전환 처리
+        animController.UpdateAnimations(); // 3. 애니메이션 처리
     }
 
     private void FixedUpdate()
     {
-        behaviourController.ApplyMovement(); // 물리 계산
+        behaviourController.ApplyMovement(); // 플레이어 이동 계산
     }
     public void EnterNewState(PlayerState currentState)
     {
-        switch (CurrentState)
+        switch (currentState)
         {
             case PlayerState.Town:
                 Debug.Log("마을 상태에 진입");
@@ -103,14 +107,14 @@ public class Player : Singleton<Player>
             case PlayerState.Dungeon:
                 Debug.Log("던전 상태에 진입");
                 Anim.Play("Idle_Dungeon");
-                behaviourController.SubscribeToEvents();
+                behaviourController.SubscribeToEvents(); // 이벤트 구독
                 break;
         }
-        IsRunning = false;
+        animController.ResetAnimations(); // 애니메이션 리셋
     }
     public void ExitCurrentState(PlayerState currentState)
     {
-        switch (CurrentState)
+        switch (currentState)
         {
             case PlayerState.Town:
                 Debug.Log("마을 상태를 벗어납니다.");
@@ -123,8 +127,8 @@ public class Player : Singleton<Player>
                 behaviourController.ForceStopJump();
                 break;
         }
-        behaviourController.UnsubscribeFromEvents();
-        animController.ResetAnimations();
+        behaviourController.UnsubscribeFromEvents(); // 이벤트 구독 해제
+        animController.ResetAnimations(); // 애니메이션 리셋
     }
 
     public void SetState(PlayerState newState)
@@ -143,7 +147,6 @@ public class Player : Singleton<Player>
         damage = Mathf.RoundToInt(damage * Random.Range(0.9f, 1.1f));
 
         Debug.Log(damage + " 만큼의 피해를 입음");
-        if (IsGrounded) Anim.SetBool("isGrounded", true);
         IsHurt = true;
         Anim.SetTrigger("isHurt");
 
@@ -167,11 +170,6 @@ public class Player : Singleton<Player>
         inputHandler?.Dispose();
     }
     #region Animation Event Receivers
-    public void AnimEvent_OnAttackStart()
-    {
-        behaviourController?.OnAttackStart();
-    }
-
     public void AnimEvent_OnComboWindowOpen()
     {
         behaviourController?.OnComboWindowOpen();
@@ -180,17 +178,6 @@ public class Player : Singleton<Player>
     public void AnimEvent_OnComboWindowClose()
     {
         behaviourController?.OnComboWindowClose();
-    }
-
-
-    public void AnimEvent_OnAttackEnd()
-    {
-        behaviourController?.OnAttackEnd();
-    }
-
-    public void AnimEvent_OnHurtEnd()
-    {
-        behaviourController?.OnHurtEnd();
     }
     #endregion
 }

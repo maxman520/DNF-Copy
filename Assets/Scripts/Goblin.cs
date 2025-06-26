@@ -6,7 +6,7 @@ public class Goblin : Monster
     private enum AIPhase { Unaware, Aware } // 플레이어 비인식, 인식 상태
     private AIPhase currentPhase = AIPhase.Unaware; // 기본은 비인식 상태
 
-    private Coroutine currentActionCoroutine;
+    private Coroutine aiLoopCoroutine; // AILoop 코루틴을 제어하기 위한 변수
 
     [Header("AI 행동 패턴 설정")]
     [SerializeField] private float minActionInterval = 1.0f; // 최소 행동 결정 시간
@@ -25,7 +25,7 @@ public class Goblin : Monster
 
 
         // AI 행동 루프 시작
-        StartCoroutine(AILoop());
+        aiLoopCoroutine = StartCoroutine(AILoop());
     }
 
     // AI의 전체적인 흐름을 제어하는 메인 코루틴
@@ -33,7 +33,12 @@ public class Goblin : Monster
     {
         while (currentHP > 0)
         {
-            // ★★★ AILoop이 매 턴 살아있는지 확인하는 로그 ★★★
+            if (IsHurt)
+            {
+                yield return null; // 다음 프레임에 다시 IsHurt인지 검사
+                continue;          // 아래 로직을 실행하지 않고 루프의 처음으로
+            }
+
             Debug.Log($"<color=orange>--- AILoop 턴 시작 (현재 상태: {currentPhase}) ---</color>");
             switch (currentPhase)
             {
@@ -84,18 +89,19 @@ public class Goblin : Monster
         if (IsPlayerInAttackRange())
         {
             Debug.Log("<color=red>플레이어가 공격 범위 안에 있음!</color>"); // 2. 공격 범위 감지
-            // 공격 가능 시: 70% 확률로 공격, 30% 확률로 다른 행동(후퇴/대기)
-            if (Random.value > 0.3f)
+            // 공격 가능 시: 90% 확률로 공격, 10% 확률로 다른 행동(후퇴/대기)
+            if (Random.value > 0.1f)
             {
                 yield return StartCoroutine(AwareAttack());
             }
             else
             {
-                Debug.Log("<color=yellow>플레이어가 공격 범위 밖에 있음. 추격/후퇴/대기 결정.</color>"); // 3. 공격 범위 밖
-                // 다른 행동 선택 (후퇴 또는 대기)
+                Debug.Log("<color=yellow>후퇴/대기 결정.</color>");
                 if (Random.value > 0.5f)
+                    // 후퇴
                     yield return StartCoroutine(AwareRetreat());
                 else
+                    // 대기
                     yield return StartCoroutine(AwareIdle());
             }
         }
@@ -221,12 +227,6 @@ public class Goblin : Monster
         Flip(directionToPlayer);
     }
 
-    public override void Attack()
-    {
-        anim.SetTrigger(animHashes.Attack);
-        Debug.Log("고블린의 공격");
-    }
-
     // 개발 편의를 위해 순찰 영역을 씬 뷰에 표시
     protected override void OnDrawGizmosSelected()
     {
@@ -238,4 +238,32 @@ public class Goblin : Monster
     }
 
     #endregion
+
+    public override void Attack()
+    {
+        anim.SetTrigger(animHashes.Attack);
+        Debug.Log("고블린의 공격");
+    }
+
+    protected override void Die()
+    {
+        Debug.Log($"{monsterData.MonsterName}이(가) 죽었습니다.");
+
+        // 죽었을 때 AI 코루틴을 확실히 중지
+        if (aiLoopCoroutine != null)
+        {
+            StopCoroutine(aiLoopCoroutine);
+            aiLoopCoroutine = null;
+        }
+
+        // 물리적 움직임과 충돌을 중지
+        rb.linearVelocity = Vector2.zero;
+        GetComponentInChildren<Collider2D>().enabled = false; // 다른 오브젝트와 충돌하지 않도록
+
+        // 죽음 애니메이션 재생
+        anim.SetTrigger("Die");
+
+        // 예시: 2초 후에 오브젝트 파괴
+        Destroy(gameObject, 2f);
+    }
 }

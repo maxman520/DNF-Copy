@@ -16,11 +16,6 @@ public class AnimEventReceiver : MonoBehaviour
         }
     }
 
-    public void OnAttackStart()
-    {
-        player?.AnimEvent_OnAttackStart();
-    }
-
     public void OnComboWindowOpen()
     {
         player?.AnimEvent_OnComboWindowOpen();
@@ -31,13 +26,4 @@ public class AnimEventReceiver : MonoBehaviour
         player?.AnimEvent_OnComboWindowClose();
     }
 
-    public void OnAttackEnd()
-    {
-        player?.AnimEvent_OnAttackEnd();
-    }
-
-    public void OnHurtEnd()
-    {
-        player?.AnimEvent_OnHurtEnd();
-    }
 }
