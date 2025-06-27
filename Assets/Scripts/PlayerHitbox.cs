@@ -3,6 +3,7 @@ using System.Collections.Generic; // 여러 대상을 기억하기 위해 필요
 
 public class PlayerHitbox : MonoBehaviour
 {
+    public AttackDetails attackDetails;
     private Player player;
 
     // 한 번의 공격 모션에서 동일한 적을 여러 번 때리지 않도록 기억하는 리스트
@@ -22,22 +23,28 @@ public class PlayerHitbox : MonoBehaviour
     {
         if (other.CompareTag("Monster"))
         {
-            // 이번 공격에서 이미 때린 적인지 확인
-            if (alreadyHit.Contains(other))
-            {
-                return; // 이미 때렸으면 무시
-            }
+            // 이번 공격에서 이미 때린 적이면 무시
+            if (alreadyHit.Contains(other)) return;
 
             // 때린 적으로 기록
             alreadyHit.Add(other);
 
-            // Hurtbox의 부모에게서 Monster 컴포넌트를 찾음
             Monster monster = other.GetComponentInParent<Monster>();
             if (monster != null)
             {
-                // 플레이어의 공격력으로 몬스터에게 데미지를 입힘
-                monster.TakeDamage(player.Atk);
+                // 공격 정보의 데미지 배율에 플레이어의 기본 공격력을 곱해서 전달
+                AttackDetails finalAttackDetails = attackDetails;
+                finalAttackDetails.damageRate *= player.Atk;
+
+                monster.TakeDamage(finalAttackDetails, transform.position); // 히트박스의 공격 위치도 전달
+                Debug.Log($"{monster.name}에게 데미지를 가함!");
             }
         }
+    }
+
+    // 애니메이션 이벤트에서 호출할 함수
+    public void SetComboAttackDetails(int index)
+    {
+        attackDetails = player.AttackDetails[index];
     }
 }

@@ -14,7 +14,10 @@ public class Player : Singleton<Player>
     public float CurrentMP;
     public float WalkSpeed;
     public float RunSpeed;
-    
+
+    [Header("공격 정보")]
+    public AttackDetails[] AttackDetails;
+
     private InputHandler inputHandler;
     private BehaviourController behaviourController;
     private AnimController animController;

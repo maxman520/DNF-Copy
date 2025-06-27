@@ -205,16 +205,16 @@ public class BehaviourController
 
         // 점프 중
         float elapsedTime = 0f;
-        Vector3 startVisualPos = player.VisualsTransform.localPosition;
+        Vector3 startPos = player.VisualsTransform.localPosition;
         float previousHeight = 0f;
 
         while (elapsedTime < JUMP_DURATION)
         {
             float progress = elapsedTime / JUMP_DURATION;
-            float currentHeight = Mathf.Sin(progress * Mathf.PI) * JUMP_HEIGHT;
+            float currentHeight = Mathf.Sin(progress * Mathf.PI) * JUMP_HEIGHT + startPos.y;
 
             // 비주얼 위치 업데이트
-            player.VisualsTransform.localPosition = new Vector3(startVisualPos.x, currentHeight, startVisualPos.z);
+            player.VisualsTransform.localPosition = new Vector3(startPos.x, currentHeight, startPos.z);
 
             // 애니메이션 업데이트
             float yVelocity = (currentHeight - previousHeight) / Time.deltaTime;
@@ -226,7 +226,7 @@ public class BehaviourController
         }
 
         // 점프 완료 처리
-        player.VisualsTransform.localPosition = startVisualPos;
+        player.VisualsTransform.localPosition = startPos;
         player.IsGrounded = true;
         player.IsJumping = false;
         player.IsRunning = false;

@@ -3721,6 +3721,19 @@ MonoBehaviour:
   CurrentMP: 0
   WalkSpeed: 0
   RunSpeed: 0
+  AttackDetails:
+  - damageRate: 1
+    knockbackForce: 0
+    launchDuration: 0
+    launchHeight: 0
+  - damageRate: 1.1
+    knockbackForce: 0
+    launchDuration: 0
+    launchHeight: 0
+  - damageRate: 1.2
+    knockbackForce: 1
+    launchDuration: 2
+    launchHeight: 2
   AttackCounter: 0
 --- !u!50 &1448341288
 Rigidbody2D:
@@ -4031,6 +4044,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8107134ce4ccb24684311d0b7cd37ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackDetails:
+    damageRate: 0
+    knockbackForce: 0
+    launchDuration: 0
+    launchHeight: 0
 --- !u!1 &1710948345
 GameObject:
   m_ObjectHideFlags: 0
@@ -4805,6 +4823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monsterData: {fileID: 11400000, guid: 871f98b4b761626408a370b6b589fcc1, type: 2}
+  airHitDurationDecrease: 0.1
   minActionInterval: 1
   maxActionInterval: 2.5
   patrolAreaCenter: {x: 0, y: 0}
