@@ -1,28 +1,25 @@
 using UnityEngine;
 
-public class PlayerStateBehaviour : StateMachineBehaviour
+public class PlayerJumpAttackState : PlayerStateBehaviourBase
 {
-    [SerializeField] private bool isJumpAttackingState = false; // 점프 공격
-
-    private Player player;
-
     // 이 상태로 진입할 때 호출
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        InitializePlayer(animator);
         if (player == null)
         {
-            player = animator.GetComponentInParent<Player>();
+            Debug.Log("player is NULL");
+            return;
         }
-        if (player == null) return;
 
-        if (isJumpAttackingState) player.IsJumpAttacking = true;
+        player.IsJumpAttacking = true;
     }
 
     // 이 상태에서 빠져나갈 때 호출
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (player == null) return;
-        if (isJumpAttackingState) player.IsJumpAttacking = false;
+        player.IsJumpAttacking = false;
     }
 
 }

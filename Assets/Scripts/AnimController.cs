@@ -4,26 +4,24 @@ using UnityEngine.InputSystem.XInput;
 public class AnimController
 {
     private readonly Player player;
-    private readonly AnimHashes animHashes;
 
     public AnimController(Player player)
     {
         this.player = player;
-        this.animHashes = new AnimHashes();
     }
 
     public void UpdateAnimations()
     {
-        player.Anim.SetBool(animHashes.IsGrounded, player.IsGrounded);
-        player.Anim.SetBool(animHashes.IsWalking, player.IsMoving && !player.IsRunning);
-        player.Anim.SetBool(animHashes.IsRunning, player.IsMoving && player.IsRunning);
+        player.Anim.SetBool("isGrounded", player.IsGrounded);
+        player.Anim.SetBool("isWalking", player.IsMoving && !player.IsRunning);
+        player.Anim.SetBool("isRunning", player.IsMoving && player.IsRunning);
     }
 
     public void ResetAnimations()
     {
-        player.Anim.SetBool(animHashes.IsGrounded, true);
-        player.Anim.SetBool(animHashes.IsWalking, false);
-        player.Anim.SetBool(animHashes.IsRunning, false);
+        player.Anim.SetBool("isGrounded", true);
+        player.Anim.SetBool("isWalking", false);
+        player.Anim.SetBool("isRunning", false);
     }
 
     public void PlayAttack(int counter)
@@ -38,11 +36,11 @@ public class AnimController
 
     public void PlayJump()
     {
-        player.Anim.SetTrigger(animHashes.Jump);
+        player.Anim.SetTrigger("jump");
     }
 
     public void UpdateJumpAnimation(float yVelocity) {
-        player.Anim.SetFloat(animHashes.YVelocity, yVelocity);
+        player.Anim.SetFloat("yVelocity", yVelocity);
     }
     public void ResetJumpAttackTrigger() {
         player.Anim.ResetTrigger("jumpAttack");

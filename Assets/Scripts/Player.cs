@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class Player : Singleton<Player>
 {
@@ -24,15 +25,25 @@ public class Player : Singleton<Player>
 
     // 상태 변수
     public bool IsGrounded { get; set; } = true;
-    public bool IsMoving { get; set; } = false;
+    public bool IsMoving { get; set; } = true;
     public bool IsRunning { get; set; } = false;
+
+
     public bool IsJumping { get; set; } = false;
     public bool IsAttacking { get; set; } = false;
     public bool IsJumpAttacking { get; set; } = false;
     public bool IsHurt { get; set; } = false;
+    public bool CanMove { get; set; } = true;
+    public bool CanAttack { get; set; } = true;
     public bool CanContinueAttack { get; set; } = false;
     public int AttackCounter = 0;
 
+    void OnGUI()
+    {
+        GUI.Label(new Rect(10, 10, 200, 20), "IsRunning: " + IsRunning);
+        GUI.Label(new Rect(10, 20, 200, 20), "CanMove: " + CanMove);
+        GUI.Label(new Rect(10, 30, 200, 20), "CanAttack: " + CanAttack);
+    }
     // 상태 관리
     public enum PlayerState
     {
@@ -83,11 +94,6 @@ public class Player : Singleton<Player>
         }
     }
 
-    private void Start()
-    {
-        
-    }
-
     private void Update()
     {
         inputHandler.ReadInput(); // 1. 먼저 입력을 읽고
@@ -97,7 +103,7 @@ public class Player : Singleton<Player>
 
     private void FixedUpdate()
     {
-        behaviourController.ApplyMovement(); // 플레이어 이동 계산
+        behaviourController.ApplyMovement(); // 플레이어 이동 처리
     }
     public void EnterNewState(PlayerState currentState)
     {
@@ -105,11 +111,11 @@ public class Player : Singleton<Player>
         {
             case PlayerState.Town:
                 Debug.Log("마을 상태에 진입");
-                Anim.Play("Idle_Town");
+                Anim.Play("Idle");
                 break;
             case PlayerState.Dungeon:
                 Debug.Log("던전 상태에 진입");
-                Anim.Play("Idle_Dungeon");
+                Anim.Play("Idle_Battle");
                 behaviourController.SubscribeToEvents(); // 이벤트 구독
                 break;
         }
@@ -151,7 +157,7 @@ public class Player : Singleton<Player>
 
         Debug.Log(damage + " 만큼의 피해를 입음");
         IsHurt = true;
-        Anim.SetTrigger("isHurt");
+        Anim.SetTrigger("hurt");
 
         // 여기에 추가로 체력 감소, 넉백 등의 로직
         // ex) health -= damage;

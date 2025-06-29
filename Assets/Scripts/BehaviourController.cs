@@ -39,7 +39,7 @@ public class BehaviourController
     // 캐릭터 방향 조절
     public void Flip()
     {
-        if (player.IsAttacking || !player.IsGrounded || player.IsHurt) return;
+        if (!player.CanMove) return;
 
         if (Mathf.Abs(inputHandler.MoveInput.x) > 0.1f)
         {
@@ -51,16 +51,7 @@ public class BehaviourController
     // 캐릭터 이동
     public void ApplyMovement()
     {
-        if (player.IsHurt)
-        {
-            player.Rb.linearVelocity = Vector2.zero;
-            return;
-        }
-
-        if (player.IsAttacking)
-        {
-            return;
-        }
+        if (!player.CanMove) return;
 
         float currentSpeed = player.IsRunning ? player.RunSpeed : player.WalkSpeed;
         player.IsMoving = inputHandler.MoveInput.magnitude > 0.1f;
@@ -77,7 +68,7 @@ public class BehaviourController
     // 달리기 시작
     private void OnRunPerformed(InputAction.CallbackContext context)
     {
-        if (!player.IsJumping && !player.IsAttacking || !player.IsHurt) player.IsRunning = true;
+        if (!player.IsJumping && player.CanMove) player.IsRunning = true;
     }
 
     // 달리기 중지
@@ -89,14 +80,13 @@ public class BehaviourController
     // 점프
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
-        if (player.IsHurt) return; // 피격 시 점프 불가
-        if (!player.IsAttacking) StartJump();
+        if (player.CanMove) StartJump();
     }
 
     // 공격
     private void OnAttackPerformed(InputAction.CallbackContext context)
     {
-        if (player.IsHurt) return; // 피격 시 공격 불가
+        if (!player.CanAttack) return;
 
         // < 점프 공격 >
         if (player.IsJumping)
@@ -168,11 +158,16 @@ public class BehaviourController
             player.CanContinueAttack = true;
         }
     }
-    
+
     // 콤보를 이어갈 수 있는 "타이밍" 이 끝났을 때 애니메이션에서 호출
     public void OnComboWindowClose()
     {
         // 콤보가 이어지지 않고 끝났을 경우에 대한 최종 처리
+        player.AttackCounter = 0;
+        player.CanContinueAttack = false;
+    }
+    public void ResetAttackState()
+    {
         player.AttackCounter = 0;
         player.CanContinueAttack = false;
     }

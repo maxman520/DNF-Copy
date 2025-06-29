@@ -5,7 +5,6 @@ public class Goblin : Monster
 {
     private enum AIPhase { Unaware, Aware } // 플레이어 비인식, 인식 상태
     private AIPhase currentPhase = AIPhase.Unaware; // 기본은 비인식 상태
-
     private Coroutine aiLoopCoroutine; // AILoop 코루틴을 제어하기 위한 변수
 
     [Header("AI 행동 패턴 설정")]
@@ -17,9 +16,30 @@ public class Goblin : Monster
     [SerializeField] private Vector2 patrolAreaSize;   // 순찰 구역 크기
     private Vector3 initialPosition; // 몬스터의 초기 위치
 
-    protected override void Start()
+
+    public bool IsGrounded = true; // 땅에 붙어있는가?
+    public bool IsWalking = false;
+    public bool IsHurt { get; protected set; } = false; // 피격 상태 변수
+    public bool IsAttacking { get; protected set; } = false;
+
+
+    // --- 공중 상태 제어 변수들 ---
+    private int airHitCounter = 0;
+    private float visualYVelocity = 0f;
+    private float virtualGravity = 0f;
+    [SerializeField] private float initialVirtualGravity = 4f;
+    [SerializeField] private float gravityIncreaseFactor = 1f;
+    private Coroutine launchCoroutine;
+
+    private Vector2 desiredVelocity;
+
+    protected void Start()
     {
-        base.Start();
+        if (Player.Instance != null)
+        {
+            playerTransform = Player.Instance.transform;
+        }
+
         initialPosition = transform.position; // 초기 위치 저장
         patrolAreaCenter += (Vector2)initialPosition; // 순찰 중심점을 월드 좌표로 변환
 
@@ -27,6 +47,28 @@ public class Goblin : Monster
         // AI 행동 루프 시작
         aiLoopCoroutine = StartCoroutine(AILoop());
     }
+    private void Update()
+    {
+        anim.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
+        anim.SetBool("isWalking", IsWalking);
+        // anim.SetBool("isGrounded", IsGrounded);
+        // anim.SetBool("isHurt", player.IsMoving && !player.IsRunning);
+        // anim.SetBool("isRunning", player.IsMoving && player.IsRunning);
+    }
+    private void FixedUpdate()
+    {
+
+        // 피격 또는 공격 중이 아니라면, AI의 의도를 반영한다.
+        if (!IsHurt && !IsAttacking)
+        {
+            rb.linearVelocity = desiredVelocity;
+        }
+        else // 피격 또는 공격 중에는 모든 수평 움직임을 멈춘다.
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        }
+    }
+
 
     // AI의 전체적인 흐름을 제어하는 메인 코루틴
     private IEnumerator AILoop()
@@ -128,8 +170,8 @@ public class Goblin : Monster
     // --- Unaware Actions ---
     private IEnumerator UnawareIdle()
     {
-        rb.linearVelocity = Vector2.zero;
-        anim.SetBool(animHashes.IsWalking, false);
+        desiredVelocity = Vector2.zero;
+        IsWalking = false;
         yield return new WaitForSeconds(Random.Range(1f, 3f)); // 1~3초간 대기
     }
 
@@ -142,7 +184,7 @@ public class Goblin : Monster
         );
         Vector2 destination = patrolAreaCenter + randomOffset;
 
-        anim.SetBool(animHashes.IsWalking, true);
+        IsWalking = true;
         while (Vector2.Distance(transform.position, destination) > 0.1f)
         {
             // 만약 순찰 중 플레이어를 발견하면 즉시 중단
@@ -153,19 +195,19 @@ public class Goblin : Monster
             }
 
             Vector2 direction = (destination - (Vector2)transform.position).normalized;
-            rb.linearVelocity = direction * moveSpeed;
-            Flip(rb.linearVelocity.x);
+            desiredVelocity = direction * moveSpeed;
+            Flip(desiredVelocity.x);
             yield return null; // 다음 프레임까지 이동
         }
-        rb.linearVelocity = Vector2.zero;
-        anim.SetBool(animHashes.IsWalking, false);
+        desiredVelocity = Vector2.zero;
+        IsWalking = false;
     }
 
     // --- Aware Actions ---
     private IEnumerator AwareIdle()
     {
-        rb.linearVelocity = Vector2.zero;
-        anim.SetBool(animHashes.IsWalking, false);
+        desiredVelocity = Vector2.zero;
+        IsWalking = false;
         FlipTowardsPlayer();
         yield return null; // 행동 결정 주기까지 이 상태를 유지
     }
@@ -173,26 +215,26 @@ public class Goblin : Monster
     private IEnumerator AwareWalk()
     {
         Debug.Log(">> 행동 실행: AwareWalk (추격)"); // 5. 실제 행동 실행 로그
-        anim.SetBool(animHashes.IsWalking, true);
+        IsWalking = true;
         Vector2 direction = (playerTransform.position - transform.position).normalized;
-        rb.linearVelocity = direction * moveSpeed; // MonsterData의 moveSpeed 사용
-        Flip(rb.linearVelocity.x);
+        desiredVelocity = direction * moveSpeed; // MonsterData의 moveSpeed 사용
+        Flip(desiredVelocity.x);
         yield return null;
     }
 
     private IEnumerator AwareRetreat()
     {
-        anim.SetBool(animHashes.IsWalking, true);
+        IsWalking = true;
         Vector2 direction = (transform.position - playerTransform.position).normalized;
-        rb.linearVelocity = direction * moveSpeed;
+        desiredVelocity = direction * moveSpeed;
         FlipTowardsPlayer();
         yield return null;
     }
 
     private IEnumerator AwareAttack()
     {
-        rb.linearVelocity = Vector2.zero;
-        anim.SetBool(animHashes.IsWalking, false);
+        desiredVelocity = Vector2.zero;
+        IsWalking = false;
         FlipTowardsPlayer();
         Attack(); // Monster 클래스의 Attack() 호출
         // 공격 애니메이션 시간만큼 대기 (AILoop의 대기시간이 쿨타임 역할을 함)
@@ -241,10 +283,36 @@ public class Goblin : Monster
 
     public override void Attack()
     {
-        anim.SetTrigger(animHashes.Attack);
+        anim.SetTrigger("attack");
         Debug.Log("고블린의 공격");
     }
 
+    protected override void Hurt(AttackDetails attackDetails, Vector2 attackPosition)
+    {
+        // AI의 의도(움직임)를 즉시 멈춘다.
+        desiredVelocity = Vector2.zero;
+        // AI 루프 자체를 잠시 멈추고 싶다면 여기에 로직 추가 가능
+
+        // 수평 넉백은 desiredVelocity가 아닌, 직접적인 힘으로 즉시 적용
+        float direction = (transform.position.x > attackPosition.x) ? 1 : -1;
+        rb.linearVelocity = new Vector2(direction * attackDetails.knockbackForce, 0);
+
+        if (IsGrounded)
+        {
+            if (attackDetails.launchYVelocity > 0)
+            {
+                visualYVelocity = attackDetails.launchYVelocity;
+                anim.SetTrigger("isAirborne");
+            }
+        }
+        else // 공중에 있을 때
+        {
+            airHitCounter++;
+            visualYVelocity += attackDetails.airComboYVelocity;
+            virtualGravity = initialVirtualGravity + (airHitCounter * gravityIncreaseFactor);
+            anim.SetTrigger("isHurt");
+        }
+    }
     protected override void Die()
     {
         Debug.Log($"{monsterData.MonsterName}이(가) 죽었습니다.");
