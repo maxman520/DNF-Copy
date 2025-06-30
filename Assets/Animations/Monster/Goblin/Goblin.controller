@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e90151377e6a1d45a182d1b3f4fd722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isAttackState: 0
   isHurtState: 1
+  isGroundedState: 0
 --- !u!1102 &-8392765746271065877
 AnimatorState:
   serializedVersion: 6
@@ -78,7 +80,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: isHurt
+    m_ConditionEvent: hurt
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8392765746271065877}
@@ -248,7 +250,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: isHurt
+  - m_Name: hurt
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0

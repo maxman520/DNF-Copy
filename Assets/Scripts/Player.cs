@@ -19,6 +19,7 @@ public class Player : Singleton<Player>
     [Header("공격 정보")]
     public AttackDetails[] AttackDetails;
 
+
     private InputHandler inputHandler;
     private BehaviourController behaviourController;
     private AnimController animController;
@@ -63,16 +64,16 @@ public class Player : Singleton<Player>
         // 싱글턴 패턴
         base.Awake();
 
-        // 컨트롤러 초기화
-        inputHandler = new InputHandler();
-        animController = new AnimController(this);
-        behaviourController = new BehaviourController(this, inputHandler, animController);
-
         // 컴포넌트 참조 변수 초기화
         Rb = GetComponent<Rigidbody2D>();
         Anim = GetComponentInChildren<Animator>();
         PlayerGround = transform.Find("PlayerGround").GetComponent<BoxCollider2D>();
         VisualsTransform = transform.Find("Visuals");
+
+        // 컨트롤러 초기화
+        inputHandler = new InputHandler();
+        animController = new AnimController(this);
+        behaviourController = new BehaviourController(this, inputHandler, animController);
 
         if (PlayerGround == null)
             Debug.LogError("PlayerGround를 찾을 수 없습니다.", this);
@@ -96,8 +97,9 @@ public class Player : Singleton<Player>
 
     private void Update()
     {
-        inputHandler.ReadInput(); // 1. 먼저 입력을 읽고
-        behaviourController.Flip(); // 2. 입력을 바탕으로 방향 전환 처리
+        inputHandler.ReadInput(); // 입력을 읽고
+        behaviourController.Flip(); // 입력을 바탕으로 방향 전환 처리
+        behaviourController.HandleGravity();
         animController.UpdateAnimations(); // 3. 애니메이션 처리
     }
 
@@ -133,7 +135,6 @@ public class Player : Singleton<Player>
             case PlayerState.Dungeon:
                 Debug.Log("던전 상태를 벗어남");
                 IsRunning = false;
-                behaviourController.ForceStopJump();
                 break;
         }
         behaviourController.UnsubscribeFromEvents(); // 이벤트 구독 해제

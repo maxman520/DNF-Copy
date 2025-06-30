@@ -7,17 +7,21 @@ public class BehaviourController
     private readonly Player player;
     private readonly InputHandler inputHandler;
     private readonly AnimController animController;
-    private Coroutine jumpCoroutine;
+    Vector3 startPos;
 
+    // 가상 물리 변수
+    private const float ORIGINAL_GRAVITY = 21f;
+    private const float JUMP_FORCE = 11f;     // 점프 시 위로 가하는 초기 '힘'(속도)
     private const float JUMP_MOVEMENT_PENALTY = 0.3f;
-    private const float JUMP_DURATION = 1.0f;
-    private const float JUMP_HEIGHT = 3.0f;
+    private float verticalVelocity; // 수직 '힘'의 결과로 나타나는 현재 속도
+    private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
 
     public BehaviourController(Player player, InputHandler inputHandler, AnimController animController)
     {
         this.player = player;
         this.inputHandler = inputHandler;
         this.animController = animController;
+        startPos = player.VisualsTransform.localPosition;
     }
     public void SubscribeToEvents()
     {
@@ -80,7 +84,11 @@ public class BehaviourController
     // 점프
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
-        if (player.CanMove) StartJump();
+        // 땅에 있을 때만 점프 '힘'을 가할 수 있다.
+        if (player.CanMove && player.IsGrounded)
+        {
+            ApplyJumpForce();
+        }
     }
 
     // 공격
@@ -173,63 +181,56 @@ public class BehaviourController
     }
 
     #region Jump
-    public void StartJump()
-    {
-        if (!player.IsGrounded || player.IsJumping) return;
 
-        jumpCoroutine = player.StartCoroutineFromController(JumpRoutine());
-    }
-
-    public void ForceStopJump()
+    // Update에서 매번 체크하며 중력 적용
+    public void HandleGravity()
     {
-        if (jumpCoroutine != null)
+        // 1. 공중에 떠 있다면
+        if (!player.IsGrounded)
         {
-            player.StopCoroutine(jumpCoroutine);
-            jumpCoroutine = null;
-            player.IsJumping = false;
-            player.IsGrounded = true;
+            // 2. 중력을 계속 적용
+            verticalVelocity += (- gravity) * Time.deltaTime;
+
+            // 3. 계산된 속도로 Visuals의 local Y좌표를 변경
+            player.VisualsTransform.localPosition += new Vector3(0, verticalVelocity * Time.deltaTime, 0);
+
+            // 4. 착지했는지 확인
+            CheckForLanding();
         }
+
+        // 5. 현재 수직 속도를 애니메이터에 전달
+        animController.UpdateJumpAnimation(verticalVelocity);
     }
 
-    private IEnumerator JumpRoutine()
+    // "점프는 Visuals에 local y좌표로의 이동을 하게 만드는 힘을 가하는 방식"
+    private void ApplyJumpForce()
     {
-        // 점프 시작 설정
+        // 수직 속도에 점프 '힘'을 즉시 적용
+        verticalVelocity = JUMP_FORCE;
+
+        // 상태를 '공중에 뜬' 상태로 변경
         player.IsGrounded = false;
         player.IsJumping = true;
         animController.PlayJump();
+    }
 
-        // 점프 중
-        float elapsedTime = 0f;
-        Vector3 startPos = player.VisualsTransform.localPosition;
-        float previousHeight = 0f;
-
-        while (elapsedTime < JUMP_DURATION)
+    // 착지 판별 로직
+    private void CheckForLanding()
+    {
+        // Visuals의 Y 좌표가 바닥(0)보다 아래로 내려갔다면 착지로 간주
+        if (player.VisualsTransform.localPosition.y <= startPos.y)
         {
-            float progress = elapsedTime / JUMP_DURATION;
-            float currentHeight = Mathf.Sin(progress * Mathf.PI) * JUMP_HEIGHT + startPos.y;
+            // 위치와 속도, 중력 초기화
+            player.VisualsTransform.localPosition = startPos;
+            verticalVelocity = 0f;
+            gravity = ORIGINAL_GRAVITY;
 
-            // 비주얼 위치 업데이트
-            player.VisualsTransform.localPosition = new Vector3(startPos.x, currentHeight, startPos.z);
-
-            // 애니메이션 업데이트
-            float yVelocity = (currentHeight - previousHeight) / Time.deltaTime;
-            animController.UpdateJumpAnimation(yVelocity);
-
-            previousHeight = currentHeight;
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            // 상태 초기화
+            player.IsGrounded = true;
+            player.IsJumping = false;
+            player.IsRunning = false;
+            animController.ResetJumpAttackTrigger();
         }
-
-        // 점프 완료 처리
-        player.VisualsTransform.localPosition = startPos;
-        player.IsGrounded = true;
-        player.IsJumping = false;
-        player.IsRunning = false;
-
-        animController.ResetJumpAttackTrigger();
-        animController.UpdateJumpAnimation(0f);
-
-        jumpCoroutine = null;
     }
     #endregion
 }

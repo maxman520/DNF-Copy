@@ -49,7 +49,7 @@ public class Goblin : Monster
     }
     private void Update()
     {
-        anim.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
+        anim.SetFloat("speed", Mathf.Abs(rb.linearVelocity.x));
         anim.SetBool("isWalking", IsWalking);
         // anim.SetBool("isGrounded", IsGrounded);
         // anim.SetBool("isHurt", player.IsMoving && !player.IsRunning);
@@ -299,9 +299,9 @@ public class Goblin : Monster
 
         if (IsGrounded)
         {
-            if (attackDetails.launchYVelocity > 0)
+            if (attackDetails.launchVelocity > 0)
             {
-                visualYVelocity = attackDetails.launchYVelocity;
+                visualYVelocity = attackDetails.launchVelocity;
                 anim.SetTrigger("isAirborne");
             }
         }
