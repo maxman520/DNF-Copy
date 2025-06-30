@@ -43,7 +43,10 @@ public class Player : Singleton<Player>
     {
         GUI.Label(new Rect(10, 10, 200, 20), "IsRunning: " + IsRunning);
         GUI.Label(new Rect(10, 20, 200, 20), "CanMove: " + CanMove);
+
         GUI.Label(new Rect(10, 30, 200, 20), "CanAttack: " + CanAttack);
+        GUI.Label(new Rect(10, 40, 200, 20), "CanContinueAttack: " + CanContinueAttack);
+                GUI.Label(new Rect(10, 50, 200, 20), "AttackCounter: " + AttackCounter);
     }
     // 상태 관리
     public enum PlayerState

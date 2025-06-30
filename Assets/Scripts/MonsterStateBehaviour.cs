@@ -18,10 +18,6 @@ public class MonsterStateBehaviour : StateMachineBehaviour
         {
             animator.SetBool("isAttacking", true);
         }
-        if (isHurtState)
-        {
-            animator.SetBool("isHurt", true);
-        }    
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -45,11 +41,6 @@ public class MonsterStateBehaviour : StateMachineBehaviour
         if (isAttackState)
         {
             animator.SetBool("isAttacking", false);
-        }
-
-        if (isHurtState)
-        {
-            animator.SetBool("isHurt", false);
         }
 
     }

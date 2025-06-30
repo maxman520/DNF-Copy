@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SocialPlatforms.Impl;
 
 public abstract class Monster : MonoBehaviour
 {
@@ -73,7 +74,8 @@ public abstract class Monster : MonoBehaviour
     // 데미지 계산 로직
     protected virtual void ApplyDamage(AttackDetails attackDetails)
     {
-        float finalDamage = (attackDetails.damageRate * Player.Instance.Atk) - (monsterData.Def * 0.5f);
+        // !! 데미지 배율에 플레이어의 공격력이 이미 곱해져있음 !!
+        float finalDamage = (attackDetails.damageRate) - (def * 0.5f);
         finalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage * Random.Range(0.9f, 1.1f)));
         currentHP -= finalDamage;
         Debug.Log($"{monsterData.MonsterName}이(가) {finalDamage}의 데미지를 입음. 현재 체력: {currentHP}");
