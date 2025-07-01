@@ -3479,6 +3479,12 @@ MonoBehaviour:
   - damageRate: 1.2
     knockbackForce: 0
     launchForce: 6
+  - damageRate: 1
+    knockbackForce: 0
+    launchForce: 0
+  IsGrounded: 1
+  IsWalking: 0
+  IsRunning: 0
   AttackCounter: 0
 --- !u!50 &1448341288
 Rigidbody2D:

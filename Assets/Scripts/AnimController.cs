@@ -9,12 +9,12 @@ public class AnimController
     {
         this.player = player;
     }
-
     public void UpdateAnimations()
     {
         player.Anim.SetBool("isGrounded", player.IsGrounded);
         player.Anim.SetBool("isWalking", player.IsMoving && !player.IsRunning);
         player.Anim.SetBool("isRunning", player.IsMoving && player.IsRunning);
+            
     }
 
     public void ResetAnimations()
@@ -29,11 +29,6 @@ public class AnimController
         player.Anim.SetTrigger("attack" + counter);
     }
 
-    public void PlayJumpAttack()
-    {
-        player.Anim.SetTrigger("jumpAttack");
-    }
-
     public void PlayJump()
     {
         player.Anim.SetTrigger("jump");
@@ -43,6 +38,6 @@ public class AnimController
         player.Anim.SetFloat("yVelocity", yVelocity);
     }
     public void ResetJumpAttackTrigger() {
-        player.Anim.ResetTrigger("jumpAttack");
+        player.Anim.ResetTrigger("attack0");
     }
 }

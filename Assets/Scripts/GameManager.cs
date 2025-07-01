@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
+    private Player player;
     public float CurrentHealth { get; private set; }
     public float CurrentMana { get; private set; }
 
@@ -36,7 +37,8 @@ public class GameManager : Singleton<GameManager>
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Player player = Player.Instance;
+        player = Player.Instance;
+
         if (player == null) {
             Debug.Log("플레이어가 NULL입니다");
             return;
@@ -45,13 +47,13 @@ public class GameManager : Singleton<GameManager>
 
         if (scene.name == "Dungeon1_Scene")
         {
-            Debug.Log("던전 씬 로드");
-            player.SetState(Player.PlayerState.Dungeon);
+            Debug.Log("던전에 입장. 전투 시스템 활성화.");
+            player.OnEnterDungeon();
         }
         else if (scene.name == "Town_Scene")
         {
             Debug.Log("마을 씬 로드");
-            player.SetState(Player.PlayerState.Town);
+            player.OnExitDungeon();
             // 마을로 이동시 체력, 마나 회복
             CurrentHealth = player.MaxHP;
             CurrentMana = player.MaxMP;

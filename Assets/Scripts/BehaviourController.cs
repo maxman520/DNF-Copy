@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
+using UnityEditorInternal;
 
 public class BehaviourController
 {
@@ -25,16 +26,16 @@ public class BehaviourController
     }
     public void SubscribeToEvents()
     {
-        inputHandler.OnRunPerformed += OnRunPerformed;
         inputHandler.OnMoveCanceled += OnMoveCanceled;
+        inputHandler.OnRunPerformed += OnRunPerformed;
         inputHandler.OnJumpPerformed += OnJumpPerformed;
         inputHandler.OnAttackPerformed += OnAttackPerformed;
     }
 
     public void UnsubscribeFromEvents()
     {
-        inputHandler.OnRunPerformed -= OnRunPerformed;
         inputHandler.OnMoveCanceled -= OnMoveCanceled;
+        inputHandler.OnRunPerformed -= OnRunPerformed;
         inputHandler.OnJumpPerformed -= OnJumpPerformed;
         inputHandler.OnAttackPerformed -= OnAttackPerformed;
     }
@@ -43,7 +44,7 @@ public class BehaviourController
     // 캐릭터 방향 조절
     public void Flip()
     {
-        if (!player.CanMove) return;
+        if (!player.CanMove || player.HasState(PlayerAnimState.Jump)) return;
 
         if (Mathf.Abs(inputHandler.MoveInput.x) > 0.1f)
         {
@@ -61,7 +62,8 @@ public class BehaviourController
         player.IsMoving = inputHandler.MoveInput.magnitude > 0.1f;
         Vector2 velocity = inputHandler.MoveInput.normalized * currentSpeed;
 
-        if (player.IsJumping)
+        // 점프중이라면 y축 속도에 패널티 부과
+        if (player.HasState(PlayerAnimState.Jump))
         {
             velocity.y *= JUMP_MOVEMENT_PENALTY;
         }
@@ -72,15 +74,14 @@ public class BehaviourController
     // 달리기 시작
     private void OnRunPerformed(InputAction.CallbackContext context)
     {
-        if (!player.IsJumping && player.CanMove) player.IsRunning = true;
+        if (!player.HasState(PlayerAnimState.Jump) && player.CanMove)
+            player.IsRunning = true;
     }
-
     // 달리기 중지
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
         player.IsRunning = false;
     }
-
     // 점프
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
@@ -97,7 +98,7 @@ public class BehaviourController
         if (!player.CanAttack) return;
 
         // < 점프 공격 >
-        if (player.IsJumping)
+        if (player.HasState(PlayerAnimState.Jump))
         {
             PerformJumpAttack();
             return;
@@ -114,7 +115,7 @@ public class BehaviourController
             PerformAttack();
         }
         // 첫 공격인 경우
-        else if (!player.IsAttacking)
+        else if (!player.HasState(PlayerAnimState.Attack))
         {
             player.Rb.linearVelocity = Vector2.zero;
             // 달리는 중 공격
@@ -145,16 +146,17 @@ public class BehaviourController
     {
         Debug.Log("달리기 공격");
         return; // 임시로 작성
-        player.Anim.SetTrigger("RunAttack");
+        animController.PlayAttack(player.AttackCounter);
     }
 
     private void PerformJumpAttack()
     {
         // 이미 이번 점프에서 공격을 했다면 무시
-        if (player.IsJumpAttacking) return;
+        if (player.HasState(PlayerAnimState.Jump)
+            && player.HasState(PlayerAnimState.Attack)) return;
 
         // 점프 공격 실행
-        animController.PlayJumpAttack();
+        animController.PlayAttack(player.AttackCounter);
     }
 
     // 콤보를 이어갈 수 있는 "타이밍" 일 때 애니메이션에서 호출
@@ -210,7 +212,6 @@ public class BehaviourController
 
         // 상태를 '공중에 뜬' 상태로 변경
         player.IsGrounded = false;
-        player.IsJumping = true;
         animController.PlayJump();
     }
 
@@ -227,7 +228,6 @@ public class BehaviourController
 
             // 상태 초기화
             player.IsGrounded = true;
-            player.IsJumping = false;
             player.IsRunning = false;
             animController.ResetJumpAttackTrigger();
         }

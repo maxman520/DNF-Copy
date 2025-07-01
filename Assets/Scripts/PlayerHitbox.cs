@@ -32,7 +32,10 @@ public class PlayerHitbox : MonoBehaviour
             Monster monster = other.GetComponentInParent<Monster>();
             if (monster != null)
             {
-                Debug.Log($"launch force is {attackDetails.launchForce}");
+
+                Debug.Log($"DamageRate is {attackDetails.damageRate}\n" +
+                    $"KnockBack force is {attackDetails.knockbackForce}\n" +
+                    $"launch force is {attackDetails.launchForce}\n");
                 // 공격 정보의 데미지 배율에 플레이어의 기본 공격력을 곱해서 전달
                 AttackDetails finalAttackDetails = attackDetails;
                 finalAttackDetails.damageRate *= player.Atk;

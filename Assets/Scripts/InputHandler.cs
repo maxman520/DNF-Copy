@@ -11,8 +11,8 @@ public class InputHandler : System.IDisposable
     public Vector2 MoveInput { get; private set; }
 
     // 이벤트들
-    public event Action<InputAction.CallbackContext> OnRunPerformed;
     public event Action<InputAction.CallbackContext> OnMoveCanceled;
+    public event Action<InputAction.CallbackContext> OnRunPerformed;
     public event Action<InputAction.CallbackContext> OnJumpPerformed;
     public event Action<InputAction.CallbackContext> OnAttackPerformed;
 
@@ -22,8 +22,8 @@ public class InputHandler : System.IDisposable
         inputActions.Player.Enable();
 
         // 입력 액션 이벤트가 발생하면, 이 클래스의 이벤트를 호출
-        inputActions.Player.Run.performed += ctx => OnRunPerformed?.Invoke(ctx);
         inputActions.Player.Move.canceled += ctx => OnMoveCanceled?.Invoke(ctx);
+        inputActions.Player.Run.performed += ctx => OnRunPerformed?.Invoke(ctx);
         inputActions.Player.Jump.performed += ctx => OnJumpPerformed?.Invoke(ctx);
         inputActions.Player.Attack.performed += ctx => OnAttackPerformed?.Invoke(ctx);
     }

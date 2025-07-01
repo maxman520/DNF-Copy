@@ -11,8 +11,17 @@ public class PlayerIdleState : PlayerStateBehaviourBase
             Debug.Log("player is NULL");
             return;
         }
+        player.CurrentAnimState = PlayerAnimState.Idle;
+
         ResetAttackState();
         player.CanMove = true;
         player.CanAttack = true;
+    }
+
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        if (player == null) return;
+
+        player.CurrentAnimState &= ~PlayerAnimState.Idle;
     }
 }

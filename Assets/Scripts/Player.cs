@@ -1,7 +1,18 @@
+using System;
 using UnityEngine;
-using System.Collections;
-using UnityEngine.InputSystem;
-using Unity.VisualScripting;
+
+[Flags]
+public enum PlayerAnimState
+{
+    // None = 0,
+    Idle = 1 << 0,
+    Move = 1 << 1,
+    Run = 1 << 2,
+    Jump = 1 << 3,
+    Attack = 1 << 4,
+    Hurt = 1 << 5,
+    Airborne = 1 << 6,
+}
 
 public class Player : Singleton<Player>
 {
@@ -16,6 +27,17 @@ public class Player : Singleton<Player>
     public float WalkSpeed;
     public float RunSpeed;
 
+
+    // 상태 변수
+    public bool IsGrounded = true;
+    public bool IsRunning = false;
+    public bool IsMoving { get; set; } = false;
+
+    public bool CanMove { get; set; } = true;
+    public bool CanAttack { get; set; } = true;
+    public bool CanContinueAttack { get; set; } = false;
+    public int AttackCounter = 0;
+
     [Header("공격 정보")]
     public AttackDetails[] AttackDetails;
 
@@ -24,37 +46,16 @@ public class Player : Singleton<Player>
     private BehaviourController behaviourController;
     private AnimController animController;
 
-    // 상태 변수
-    public bool IsGrounded { get; set; } = true;
-    public bool IsMoving { get; set; } = true;
-    public bool IsRunning { get; set; } = false;
-
-
-    public bool IsJumping { get; set; } = false;
-    public bool IsAttacking { get; set; } = false;
-    public bool IsJumpAttacking { get; set; } = false;
-    public bool IsHurt { get; set; } = false;
-    public bool CanMove { get; set; } = true;
-    public bool CanAttack { get; set; } = true;
-    public bool CanContinueAttack { get; set; } = false;
-    public int AttackCounter = 0;
 
     void OnGUI()
     {
         GUI.Label(new Rect(10, 10, 200, 20), "IsRunning: " + IsRunning);
         GUI.Label(new Rect(10, 20, 200, 20), "CanMove: " + CanMove);
-
         GUI.Label(new Rect(10, 30, 200, 20), "CanAttack: " + CanAttack);
         GUI.Label(new Rect(10, 40, 200, 20), "CanContinueAttack: " + CanContinueAttack);
-                GUI.Label(new Rect(10, 50, 200, 20), "AttackCounter: " + AttackCounter);
+        GUI.Label(new Rect(10, 50, 200, 20), "AttackCounter: " + AttackCounter);
     }
-    // 상태 관리
-    public enum PlayerState
-    {
-        Town,
-        Dungeon
-    }
-    public PlayerState CurrentState { get; private set; } = PlayerState.Town;
+    public PlayerAnimState CurrentAnimState { get; set; }
 
     // 컴포넌트 참조
     public Rigidbody2D Rb { get; private set; }
@@ -66,6 +67,9 @@ public class Player : Singleton<Player>
     {
         // 싱글턴 패턴
         base.Awake();
+
+
+        CurrentAnimState = PlayerAnimState.Idle;
 
         // 컴포넌트 참조 변수 초기화
         Rb = GetComponent<Rigidbody2D>();
@@ -103,64 +107,25 @@ public class Player : Singleton<Player>
         inputHandler.ReadInput(); // 입력을 읽고
         behaviourController.Flip(); // 입력을 바탕으로 방향 전환 처리
         behaviourController.HandleGravity();
-        animController.UpdateAnimations(); // 3. 애니메이션 처리
+        animController.UpdateAnimations(); // 애니메이션 처리
     }
 
     private void FixedUpdate()
     {
         behaviourController.ApplyMovement(); // 플레이어 이동 처리
     }
-    public void EnterNewState(PlayerState currentState)
+    public bool HasState(PlayerAnimState state)
     {
-        switch (currentState)
-        {
-            case PlayerState.Town:
-                Debug.Log("마을 상태에 진입");
-                Anim.Play("Idle");
-                break;
-            case PlayerState.Dungeon:
-                Debug.Log("던전 상태에 진입");
-                Anim.Play("Idle_Battle");
-                behaviourController.SubscribeToEvents(); // 이벤트 구독
-                break;
-        }
-        animController.ResetAnimations(); // 애니메이션 리셋
-    }
-    public void ExitCurrentState(PlayerState currentState)
-    {
-        switch (currentState)
-        {
-            case PlayerState.Town:
-                Debug.Log("마을 상태를 벗어납니다.");
-                // 다음 상태로 가기 전, 걷기 애니메이션 상태를 초기화
-                Anim.SetBool("isWalking", false);
-                break;
-            case PlayerState.Dungeon:
-                Debug.Log("던전 상태를 벗어남");
-                IsRunning = false;
-                break;
-        }
-        behaviourController.UnsubscribeFromEvents(); // 이벤트 구독 해제
-        animController.ResetAnimations(); // 애니메이션 리셋
-    }
-
-    public void SetState(PlayerState newState)
-    {
-        if (CurrentState == newState) return;
-
-        ExitCurrentState(CurrentState);
-        CurrentState = newState;
-        EnterNewState(CurrentState);
+        return (CurrentAnimState & state) == state;
     }
 
     public void TakeDamage(float monsterAtk)
     {
 
         float damage = (monsterAtk - (this.Def * 0.5f));
-        damage = Mathf.RoundToInt(damage * Random.Range(0.9f, 1.1f));
+        damage = Mathf.RoundToInt(damage * UnityEngine.Random.Range(0.9f, 1.1f));
 
         Debug.Log(damage + " 만큼의 피해를 입음");
-        IsHurt = true;
         Anim.SetTrigger("hurt");
 
         // 여기에 추가로 체력 감소, 넉백 등의 로직
@@ -168,9 +133,17 @@ public class Player : Singleton<Player>
         // ex) behaviourController.ApplyKnockback(...);
     }
 
-    public Coroutine StartCoroutineFromController(IEnumerator coroutine)
+    // 던전 입장 시 GameManager에 의해 호출
+    public void OnEnterDungeon()
     {
-        return StartCoroutine(coroutine);
+        behaviourController.SubscribeToEvents();
+        Anim.Play("Idle_Battle");
+    }
+    // 던전 퇴장 시 GameManager에 의해 호출
+    public void OnExitDungeon()
+    {
+        behaviourController.UnsubscribeFromEvents();
+        animController.ResetAnimations();
     }
 
     private void OnDisable()

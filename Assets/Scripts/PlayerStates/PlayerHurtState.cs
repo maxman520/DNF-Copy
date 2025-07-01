@@ -10,7 +10,7 @@ public class PlayerHurtState : PlayerStateBehaviourBase
         {
             Debug.Log("player is NULL");
         }
-        player.IsHurt = true;
+        player.CurrentAnimState = PlayerAnimState.Hurt;
         player.CanMove = false;
         player.Rb.linearVelocity = Vector2.zero;
         ResetAttackState();
@@ -19,7 +19,10 @@ public class PlayerHurtState : PlayerStateBehaviourBase
     // 이 상태에서 빠져나갈 때 호출
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player.IsHurt = false;
+        if (player == null) return;
+        player.CurrentAnimState &= ~PlayerAnimState.Hurt;
+
+
     }
 
 }

@@ -76,7 +76,7 @@ public abstract class Monster : MonoBehaviour
     {
         // !! 데미지 배율에 플레이어의 공격력이 이미 곱해져있음 !!
         float finalDamage = (attackDetails.damageRate) - (def * 0.5f);
-        finalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage * Random.Range(0.9f, 1.1f)));
+        finalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage * Random.Range(0.8f, 1.2f)));
         currentHP -= finalDamage;
         Debug.Log($"{monsterData.MonsterName}이(가) {finalDamage}의 데미지를 입음. 현재 체력: {currentHP}");
     }

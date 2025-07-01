@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerAttackState : PlayerStateBehaviourBase
+public class PlayerAttack1State : PlayerStateBehaviourBase
 {
     // 이 상태로 진입할 때 호출
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -11,15 +11,17 @@ public class PlayerAttackState : PlayerStateBehaviourBase
             Debug.Log("player is NULL");
             return;
         }
+        player.CurrentAnimState = PlayerAnimState.Attack;
 
-        player.IsAttacking = true;
         player.CanMove = false;
     }
 
     // 이 상태에서 빠져나갈 때 호출
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player.IsAttacking = false;
+        if (player == null) return;
+        player.CurrentAnimState &= ~PlayerAnimState.Attack;
+
     }
 
 }
