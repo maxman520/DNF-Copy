@@ -4,7 +4,7 @@ using UnityEngine;
 [Flags]
 public enum PlayerAnimState
 {
-    // None = 0,
+    None = 0,
     Idle = 1 << 0,
     Move = 1 << 1,
     Run = 1 << 2,
@@ -119,7 +119,7 @@ public class Player : Singleton<Player>
         return (CurrentAnimState & state) == state;
     }
 
-    public void TakeDamage(float monsterAtk)
+    public void OnDamaged(float monsterAtk)
     {
 
         float damage = (monsterAtk - (this.Def * 0.5f));

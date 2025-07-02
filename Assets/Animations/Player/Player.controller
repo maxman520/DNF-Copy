@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49df1035c563a38438822b9e39bdca7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 0
+  Run: 0
+  Jump: 1
+  Attack: 0
+  Hurt: 0
+  Airborne: 0
 --- !u!1101 &-8376327092194579241
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -74,6 +81,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef43a3308f8fc3945ae177082fe855dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 0
+  Run: 0
+  Jump: 0
+  Attack: 0
+  Hurt: 1
+  Airborne: 0
 --- !u!1101 &-7427204997678224358
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -190,6 +204,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee98a459e12cca640980f3674ce54283, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 1
+  Run: 1
+  Jump: 0
+  Attack: 0
+  Hurt: 0
+  Airborne: 0
 --- !u!1102 &-3847023603800034465
 AnimatorState:
   serializedVersion: 6
@@ -417,6 +438,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79435fa1e53668341b70146f9bfcd2ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 0
+  Run: 0
+  Jump: 0
+  Attack: 1
+  Hurt: 0
+  Airborne: 0
 --- !u!1101 &-286313709344597196
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -617,6 +645,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f63d947f9e704c4c8555a171a197271, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 1
+  Run: 0
+  Jump: 0
+  Attack: 0
+  Hurt: 0
+  Airborne: 0
 --- !u!114 &1406806881661092227
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -629,6 +664,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0af7d52f05cb1944aba34d9a7959db0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 0
+  Run: 0
+  Jump: 0
+  Attack: 1
+  Hurt: 0
+  Airborne: 0
 --- !u!1101 &1873533049366936683
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -794,6 +836,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a91fb6945bd3e64c9ec04c463d19e36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 1
+  Move: 0
+  Run: 0
+  Jump: 0
+  Attack: 0
+  Hurt: 0
+  Airborne: 0
 --- !u!1102 &4268269895104492364
 AnimatorState:
   serializedVersion: 6
@@ -835,6 +884,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efb4497d1b0847e4b804c20d7134a10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 0
+  Run: 0
+  Jump: 0
+  Attack: 1
+  Hurt: 0
+  Airborne: 0
 --- !u!1101 &4636652250026923466
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -928,6 +984,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0195f83b4adda3548b7fe98a94a637a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 0
+  Run: 0
+  Jump: 1
+  Attack: 1
+  Hurt: 0
+  Airborne: 0
 --- !u!1101 &5223419877410006631
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -987,6 +1050,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49df1035c563a38438822b9e39bdca7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 0
+  Run: 0
+  Jump: 1
+  Attack: 0
+  Hurt: 0
+  Airborne: 0
 --- !u!1101 &6487231384235545814
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1024,6 +1094,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f63d947f9e704c4c8555a171a197271, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 1
+  Run: 0
+  Jump: 0
+  Attack: 0
+  Hurt: 0
+  Airborne: 0
 --- !u!1109 &6909259483616849356
 AnimatorTransition:
   m_ObjectHideFlags: 1

@@ -208,7 +208,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 3
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -235,14 +235,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monsterData: {fileID: 11400000, guid: 871f98b4b761626408a370b6b589fcc1, type: 2}
-  minActionInterval: 1
-  maxActionInterval: 2.5
-  patrolAreaCenter: {x: 0, y: 0}
-  patrolAreaSize: {x: 3, y: 3}
   IsGrounded: 1
   IsWalking: 0
-  initialVirtualGravity: 4
-  gravityIncreaseFactor: 1
+  patrolAreaCenter: {x: 0, y: 0}
+  patrolAreaSize: {x: 3, y: 3}
 --- !u!1 &4415389070063616576
 GameObject:
   m_ObjectHideFlags: 0

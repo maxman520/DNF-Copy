@@ -4,10 +4,12 @@ public class MonsterHitbox : MonoBehaviour
 {
     // 이 Hitbox의 주인
     private Monster ownerMonster;
+    private Player player;
 
     private void Awake()
     {
         ownerMonster = GetComponentInParent<Monster>();
+        player = Player.Instance;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -16,11 +18,9 @@ public class MonsterHitbox : MonoBehaviour
         {
             if (ownerMonster == null) return;
 
-            Player player = Player.Instance;
-
             if (player != null)
             {
-                player.TakeDamage(ownerMonster.GetAtk());
+                player.OnDamaged(ownerMonster.GetAtk());
             }
         }
     }

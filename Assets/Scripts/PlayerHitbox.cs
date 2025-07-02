@@ -40,7 +40,7 @@ public class PlayerHitbox : MonoBehaviour
                 AttackDetails finalAttackDetails = attackDetails;
                 finalAttackDetails.damageRate *= player.Atk;
 
-                monster.TakeDamage(finalAttackDetails, transform.position); // 히트박스의 공격 위치도 전달
+                monster.OnDamaged(finalAttackDetails, transform.position); // 히트박스의 공격 위치도 전달
                 Debug.Log($"{monster.name}에게 데미지를 가함!");
             }
         }

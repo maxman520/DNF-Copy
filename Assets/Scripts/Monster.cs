@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections;
-using UnityEngine.SocialPlatforms.Impl;
 
 public abstract class Monster : MonoBehaviour
 {
@@ -24,6 +22,7 @@ public abstract class Monster : MonoBehaviour
 
     protected Vector3 startPos; // 내부 visuals 위치 제어용
 
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -32,19 +31,12 @@ public abstract class Monster : MonoBehaviour
         startPos = visualsTransform.localPosition;
 
         // 데이터 초기화
-        if (monsterData != null)
-        {
-            currentHP = monsterData.MaxHP;
-            moveSpeed = monsterData.MoveSpeed;
-            atk = monsterData.Atk;
-            def = monsterData.Def;
-            recognitionRange = monsterData.RecognitionRange;
-            attackRange = monsterData.AttackRange;
-        }
-        else
-        {
-            Debug.LogError($"{gameObject.name}: MonsterData가 할당되지 않았음");
-        }
+        currentHP = monsterData.MaxHP;
+        moveSpeed = monsterData.MoveSpeed;
+        atk = monsterData.Atk;
+        def = monsterData.Def;
+        recognitionRange = monsterData.RecognitionRange;
+        attackRange = monsterData.AttackRange;
 
     }
     public float GetAtk()
@@ -52,27 +44,22 @@ public abstract class Monster : MonoBehaviour
         return this.atk;
     }
 
-    // 이 몬스터가 데미지를 입었을 때
-    public virtual void TakeDamage(AttackDetails attackDetails, Vector2 attackPosition)
+    // 데미지를 입었을 때
+    public virtual void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition)
     {
+        // 피격 반응은 자식에게위임
+        Hurt(attackDetails, attackPosition);
+
         // 이미 죽었거나 무적 상태일 때를 대비한 가드
         if (currentHP <= 0) return;
 
-        // 1. 데미지 계산 및 체력 적용
-        ApplyDamage(attackDetails);
+        // 입을 데미지 계산
+        CalculateDamage(attackDetails);
 
-        // 2. 피격 반응은 자식에게 완전히 위임
-        Hurt(attackDetails, attackPosition);
-
-        // 3. 사망 처리
-        if (currentHP <= 0)
-        {
-            Die();
-        }
     }
 
     // 데미지 계산 로직
-    protected virtual void ApplyDamage(AttackDetails attackDetails)
+    protected virtual void CalculateDamage(AttackDetails attackDetails)
     {
         // !! 데미지 배율에 플레이어의 공격력이 이미 곱해져있음 !!
         float finalDamage = (attackDetails.damageRate) - (def * 0.5f);
@@ -83,7 +70,19 @@ public abstract class Monster : MonoBehaviour
 
     protected abstract void Hurt(AttackDetails attackDetails, Vector2 attackPosition);
     protected abstract void Die();
-    public abstract void Attack();
+    protected abstract void Attack();
+
+    // 대기 애니메이션으로 진입 시 호출
+    public abstract void OnIdleStateEnter();
+    // 걷기 애니메이션이 끝났을 때 호출
+    public abstract void OnWalkStateExit();
+    // 공격 애니메이션이 끝났을 때 호출
+    public abstract void OnAttackStateExit();
+    // 피격 애니메이션이 끝났을 때 호출
+    public abstract void OnHurtStateExit();
+    // 기상 애니메이션이 끝났을 때 호출
+    public abstract void OnGetUpStateExit();
+
 
     // 에디터에서만 보이는 기즈모(Gizmo)를 그려서 AI 범위를 시각적으로 확인
     protected virtual void OnDrawGizmosSelected()
