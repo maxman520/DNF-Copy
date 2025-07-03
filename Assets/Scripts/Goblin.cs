@@ -23,6 +23,11 @@ public class Goblin : Monster
     [SerializeField] private Vector2 patrolAreaSize;   // 순찰 구역 크기
     private Vector3 initialPosition; // 몬스터의 초기 위치
 
+    [Header("사망 연출")]
+    [SerializeField] private GameObject[] fragPrefabs; // 시체 파편
+    private SpriteRenderer spriteRenderer;
+    private bool isDead = false; // HP가 0이하로 떨어졌는가 (사망 로직 중복 실행 방지용)
+
 
     private CancellationTokenSource aiLoopCts; // 비동기 작업 관리. 외부에서는 CancellationToken만 사용
     private CancellationTokenSource moveCts; // 이동 작업 전용 토큰 - 이동 중단을 위해
@@ -31,7 +36,11 @@ public class Goblin : Monster
 
     protected override void Awake()
     {
-        base.Awake(); // 부모의 Awake를 먼저 호출
+        base.Awake();
+
+        spriteRenderer = visualsTransform.GetComponentInChildren<SpriteRenderer>();
+        spriteRenderer.material = new Material(spriteRenderer.material);
+
     }
 
     protected void Start()
@@ -51,15 +60,10 @@ public class Goblin : Monster
         HandleGravity();
 
         // 애니메이션 업데이트
+
         anim.SetBool("isGrounded", IsGrounded);
         anim.SetBool("isWalking", IsWalking);
-
-
-        // 사망 처리
-        if (currentHP <= 0 && IsGrounded)
-        {
-            Die();
-        }
+        anim.SetBool("isDead", isDead);
     }
     void OnGUI()
     {
@@ -92,7 +96,6 @@ public class Goblin : Monster
     }
     private void StopMovement()
     {
-        // 이동 작업 중단
         moveCts?.Cancel();
         moveCts?.Dispose();
         moveCts = null;
@@ -301,6 +304,37 @@ public class Goblin : Monster
 
     #endregion Utilities
 
+    public override void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition)
+    {
+        // 피격 반응
+        Hurt(attackDetails, attackPosition);
+
+        // 이미 죽었다면 return
+        if (isDead) return;
+
+        // 입을 데미지 계산
+        CalculateDamage(attackDetails);
+
+        if (currentHP <= 0)
+        {
+            isDead = true; // 죽음 절차 시작 플래그
+            WaitUntilGroundedAndDie(this.GetCancellationTokenOnDestroy()).Forget();
+        }
+
+    }
+
+    // 착지를 기다렸다가 Die()를 호출하는 비동기 함수
+    private async UniTask WaitUntilGroundedAndDie(CancellationToken token)
+    {
+        Debug.Log("죽음 예약. 착지를 기다립니다...");
+
+        // IsGrounded가 true가 될 때까지 매 프레임 확인하며 대기
+        await UniTask.WaitUntil(() => IsGrounded, cancellationToken: token);
+
+        Debug.Log("착지 확인. 사망 절차를 시작합니다.");
+        Die();
+    }
+
     protected override void Hurt(AttackDetails attackDetails, Vector2 attackPosition)
     {
         StopAILoop(); // 모든 비동기 작업 즉시 중단
@@ -354,13 +388,64 @@ public class Goblin : Monster
 
         // 물리적 움직임과 충돌을 중지
         rb.linearVelocity = Vector2.zero;
-        GetComponentInChildren<Collider2D>().enabled = false; // 다른 오브젝트와 충돌하지 않도록
+        GetComponentInChildren<Collider2D>().enabled = false;
 
-        // 죽음 애니메이션 재생
-        anim.SetTrigger("die");
+        DeathSequenceAsync(this.GetCancellationTokenOnDestroy()).Forget();
+    }
 
-        // 예시: 2초 후에 오브젝트 파괴
-        Destroy(gameObject, 2f);
+    private async UniTask DeathSequenceAsync(CancellationToken token)
+    {
+        // 1. 점점 하얗게 변하는 효과
+        float duration = 0.3f; // 하얗게 변하는 데 걸리는 시간
+        float elapsedTime = 0f;
+
+        // 머티리얼을 바꾸는 대신, 머티리얼의 프로퍼티 값을 애니메이션
+        while (elapsedTime < duration)
+        {
+            // 보간 계수 계산 (0에서 1로 증가)
+            float BlendAmount = elapsedTime / duration;
+
+
+            // 렌더러가 사용하는 머티리얼의 "_FlashAmount" 프로퍼티 값을 변경
+            spriteRenderer.material.SetFloat("_Blend", BlendAmount);
+
+            elapsedTime += Time.deltaTime;
+            await UniTask.Yield(token);
+        }
+
+        // 2. 소멸 및 파편 생성
+        spriteRenderer.enabled = false;
+
+        if (fragPrefabs != null && fragPrefabs.Length > 0)
+        {
+            // 파편 생성 위치: 몬스터의 월드 좌표
+            Vector3 spawnPosition = transform.position;
+            // 파편 Visual의 초기 높이: 몬스터 Visuals의 현재 높이 + 약간의 추가 높이
+            float initialVerticalOffset = visualsTransform.localPosition.y - startPos.y;
+
+            foreach (GameObject fragPrefab in fragPrefabs)
+            {
+                // 파편 생성
+                GameObject fragment = Instantiate(fragPrefab, spawnPosition, Quaternion.identity);
+                MonsterFragment fragmentObj = fragment.GetComponent<MonsterFragment>();
+
+                if (fragmentObj != null)
+                {
+                    // 파편 Visual의 초기 높이 설정
+                    fragmentObj.VisualTransform.localPosition = new Vector3(0, initialVerticalOffset, 0);
+
+                    // 각 파편에 가할 힘 계산
+                    Vector2 horizontalForce = new Vector2(Random.Range(-1f, 1f), Random.Range(-0.3f, 0.3f)).normalized * Random.Range(3f, 7f);
+                    float verticalForce = Random.Range(5f, 7f);
+
+                    // 파편에 힘 적용
+                    fragmentObj.Initialize(horizontalForce, verticalForce);
+                }
+            }
+        }
+        // 3. 최종 오브젝트 파괴
+        Destroy(gameObject);
+        await UniTask.CompletedTask; // async 함수이므로 await 하나는 필요
     }
 
     protected override void Attack()

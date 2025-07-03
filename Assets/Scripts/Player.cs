@@ -123,7 +123,7 @@ public class Player : Singleton<Player>
     {
 
         float damage = (monsterAtk - (this.Def * 0.5f));
-        damage = Mathf.RoundToInt(damage * UnityEngine.Random.Range(0.9f, 1.1f));
+        damage = Mathf.RoundToInt(damage * UnityEngine.Random.Range(0.8f, 1.2f));
 
         Debug.Log(damage + " 만큼의 피해를 입음");
         Anim.SetTrigger("hurt");

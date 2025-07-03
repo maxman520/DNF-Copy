@@ -56,7 +56,8 @@ public class BehaviourController
     // 캐릭터 이동
     public void ApplyMovement()
     {
-        if (!player.CanMove) return;
+        if (!player.CanMove)
+            return;
 
         float currentSpeed = player.IsRunning ? player.RunSpeed : player.WalkSpeed;
         player.IsMoving = inputHandler.MoveInput.magnitude > 0.1f;
@@ -68,7 +69,8 @@ public class BehaviourController
             velocity.y *= JUMP_MOVEMENT_PENALTY;
         }
 
-        player.Rb.linearVelocity = velocity;
+        if (player.CanMove)
+            player.Rb.linearVelocity = velocity;
     }
 
     // 달리기 시작

@@ -45,18 +45,7 @@ public abstract class Monster : MonoBehaviour
     }
 
     // 데미지를 입었을 때
-    public virtual void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition)
-    {
-        // 피격 반응은 자식에게위임
-        Hurt(attackDetails, attackPosition);
-
-        // 이미 죽었거나 무적 상태일 때를 대비한 가드
-        if (currentHP <= 0) return;
-
-        // 입을 데미지 계산
-        CalculateDamage(attackDetails);
-
-    }
+    public abstract void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition);
 
     // 데미지 계산 로직
     protected virtual void CalculateDamage(AttackDetails attackDetails)
