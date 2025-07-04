@@ -1,6 +1,7 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks; // UniTask
 using System.Threading;       // CancellationToken
+using Unity.VisualScripting;
 
 public class Goblin : Monster
 {
@@ -306,14 +307,21 @@ public class Goblin : Monster
 
     public override void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition)
     {
+        // 입을 데미지 계산
+        float damage = CalculateDamage(attackDetails);
+
+        // 데미지 텍스트 출력
+        EffectManager.Instance.PlayEffect("DamageText", hurtboxTransform.position, Quaternion.identity, damage);
+
         // 피격 반응
         Hurt(attackDetails, attackPosition);
 
-        // 이미 죽었다면 return
+        // 이미 죽었다면 데미지 적용X. return
         if (isDead) return;
 
-        // 입을 데미지 계산
-        CalculateDamage(attackDetails);
+        // 데미지 적용
+        currentHP -= damage;
+        Debug.Log($"{monsterData.MonsterName}이(가) {damage}의 데미지를 입음. 현재 체력: {currentHP}");
 
         if (currentHP <= 0)
         {
@@ -342,6 +350,20 @@ public class Goblin : Monster
         IsWalking = false;
        
         rb.linearVelocity = Vector2.zero; // 넉백 전에 속도 초기화
+
+        // ★★★ 이펙트 재생 요청 ★★★
+
+        // 충돌 지점(other.ClosestPoint(transform.position))에 이펙트를 생성
+        Vector3 hitPoint = hurtboxTransform.position;
+        // 이펙트의 방향은 플레이어가 바라보는 방향을 따르거나, 기본 방향으로 설정
+        Quaternion effectRotation = (transform.position.x > attackPosition.x) ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
+
+        // attackDetails에 이펙트 이름이 있다면 그걸 사용, 없다면 기본 이펙트 사용
+        // string effectToPlay = string.IsNullOrEmpty(attackDetails.effectName) ? "NormalHit_Slash" : attackDetails.effectName;
+        string effectToPlay = "SlashSmall" + Random.Range(1, 4);
+        EffectManager.Instance.PlayEffect(effectToPlay, hitPoint, Quaternion.identity);
+        EffectManager.Instance.PlayEffect("BloodLarge", hitPoint, effectRotation);
+
 
         float direction = (transform.position.x > attackPosition.x) ? 1 : -1;
 
@@ -395,25 +417,31 @@ public class Goblin : Monster
 
     private async UniTask DeathSequenceAsync(CancellationToken token)
     {
-        // 1. 점점 하얗게 변하는 효과
-        float duration = 0.3f; // 하얗게 변하는 데 걸리는 시간
+        // 1. 하얗게 변하고 점점 투명하게
+        var mat = spriteRenderer.material;
+        mat.SetFloat("_Blend", 1f);
+        float duration = 0.3f; // 투명하게 변하는 데 걸리는 시간
         float elapsedTime = 0f;
 
-        // 머티리얼을 바꾸는 대신, 머티리얼의 프로퍼티 값을 애니메이션
+        // 머티리얼의 프로퍼티 값을 애니메이션
         while (elapsedTime < duration)
         {
             // 보간 계수 계산 (0에서 1로 증가)
-            float BlendAmount = elapsedTime / duration;
+            float alpha = Mathf.Lerp(1f, 0f, elapsedTime / duration);
 
-
+            mat.SetFloat("_Alpha", alpha);
             // 렌더러가 사용하는 머티리얼의 "_FlashAmount" 프로퍼티 값을 변경
-            spriteRenderer.material.SetFloat("_Blend", BlendAmount);
 
             elapsedTime += Time.deltaTime;
             await UniTask.Yield(token);
         }
 
         // 2. 소멸 및 파편 생성
+        // 몬스터 위치에 이펙트를 생성
+        Vector3 hitPoint = new Vector3(transform.position.x, visualsTransform.position.y - startPos.y, transform.position.z);
+        EffectManager.Instance.PlayEffect("MonsterDieFlash", hitPoint, Quaternion.identity);
+
+
         spriteRenderer.enabled = false;
 
         if (fragPrefabs != null && fragPrefabs.Length > 0)
@@ -475,7 +503,7 @@ public class Goblin : Monster
         // Visuals의 Y 좌표가 시작 Y좌표보다 아래로 내려갔다면 착지로 간주
         if (visualsTransform.localPosition.y <= startPos.y)
         {
-            if (verticalVelocity < -3f)
+            if (verticalVelocity < -1f)
             {
                 verticalVelocity *= -0.5f;
                 return;

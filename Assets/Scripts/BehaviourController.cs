@@ -1,7 +1,5 @@
 using UnityEngine;
-using System.Collections;
 using UnityEngine.InputSystem;
-using UnityEditorInternal;
 
 public class BehaviourController
 {
@@ -69,8 +67,7 @@ public class BehaviourController
             velocity.y *= JUMP_MOVEMENT_PENALTY;
         }
 
-        if (player.CanMove)
-            player.Rb.linearVelocity = velocity;
+        player.Rb.linearVelocity = velocity;
     }
 
     // 달리기 시작

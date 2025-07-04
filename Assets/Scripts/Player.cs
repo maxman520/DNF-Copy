@@ -116,7 +116,7 @@ public class Player : Singleton<Player>
     }
     public bool HasState(PlayerAnimState state)
     {
-        return (CurrentAnimState & state) == state;
+        return (CurrentAnimState.HasFlag(state));
     }
 
     public void OnDamaged(float monsterAtk)

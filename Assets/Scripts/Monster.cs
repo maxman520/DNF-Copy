@@ -18,6 +18,7 @@ public abstract class Monster : MonoBehaviour
     protected Rigidbody2D rb;
     protected Animator anim;
     protected Transform visualsTransform;
+    protected Transform hurtboxTransform;
     protected Transform playerTransform;
 
     protected Vector3 startPos; // 내부 visuals 위치 제어용
@@ -28,6 +29,7 @@ public abstract class Monster : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
         visualsTransform = transform.Find("Visuals");
+        hurtboxTransform = visualsTransform.Find("Hurtbox");
         startPos = visualsTransform.localPosition;
 
         // 데이터 초기화
@@ -48,13 +50,13 @@ public abstract class Monster : MonoBehaviour
     public abstract void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition);
 
     // 데미지 계산 로직
-    protected virtual void CalculateDamage(AttackDetails attackDetails)
+    protected virtual float CalculateDamage(AttackDetails attackDetails)
     {
         // !! 데미지 배율에 플레이어의 공격력이 이미 곱해져있음 !!
         float finalDamage = (attackDetails.damageRate) - (def * 0.5f);
         finalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage * Random.Range(0.8f, 1.2f)));
-        currentHP -= finalDamage;
-        Debug.Log($"{monsterData.MonsterName}이(가) {finalDamage}의 데미지를 입음. 현재 체력: {currentHP}");
+
+        return finalDamage;
     }
 
     protected abstract void Hurt(AttackDetails attackDetails, Vector2 attackPosition);
