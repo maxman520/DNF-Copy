@@ -62,6 +62,7 @@ public class Player : Singleton<Player>
     public Animator Anim { get; private set; }
     public Collider2D PlayerGround { get; private set; }
     public Transform VisualsTransform { get; private set; }
+    public Transform HurtboxTransform { get; private set; }
 
     protected override void Awake()
     {
@@ -74,8 +75,9 @@ public class Player : Singleton<Player>
         // 컴포넌트 참조 변수 초기화
         Rb = GetComponent<Rigidbody2D>();
         Anim = GetComponentInChildren<Animator>();
-        PlayerGround = transform.Find("PlayerGround").GetComponent<BoxCollider2D>();
+        PlayerGround = transform.Find("Player_Ground").GetComponent<BoxCollider2D>();
         VisualsTransform = transform.Find("Visuals");
+        HurtboxTransform = VisualsTransform.Find("Hurtbox");
 
         // 컨트롤러 초기화
         inputHandler = new InputHandler();
@@ -119,18 +121,32 @@ public class Player : Singleton<Player>
         return (CurrentAnimState.HasFlag(state));
     }
 
-    public void OnDamaged(float monsterAtk)
+    public void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition)
     {
+        // 입을 데미지 계산
+        float damage = CalculateDamage(attackDetails);
 
-        float damage = (monsterAtk - (this.Def * 0.5f));
-        damage = Mathf.RoundToInt(damage * UnityEngine.Random.Range(0.8f, 1.2f));
+        // 데미지 텍스트 출력
+        EffectManager.Instance.PlayEffect("HurtDamageText",HurtboxTransform.position, Quaternion.identity, damage);
 
+        // 피격 반응
         Debug.Log(damage + " 만큼의 피해를 입음");
         Anim.SetTrigger("hurt");
 
-        // 여기에 추가로 체력 감소, 넉백 등의 로직
+        // 이미 죽었다면 데미지 적용X. return
+
+        // 데미지 적용
         // ex) health -= damage;
-        // ex) behaviourController.ApplyKnockback(...);
+        // ex) behaviourController.ApplyKnockback(...); // 넉백 및 피격 반응 처리
+        // BehaviourController에 위임하는 것이 좋음
+    }
+    public float CalculateDamage(AttackDetails attackDetails)
+    {
+        // !! 데미지 배율에 몬스터의 공격력이 이미 곱해져있음 !!
+        float finalDamage = (attackDetails.damageRate) - (Def * 0.5f);
+        finalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage * UnityEngine.Random.Range(0.8f, 1.2f)));
+
+        return finalDamage;
     }
 
     // 던전 입장 시 GameManager에 의해 호출

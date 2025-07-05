@@ -1,7 +1,6 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks; // UniTask
 using System.Threading;       // CancellationToken
-using Unity.VisualScripting;
 
 public class Goblin : Monster
 {
@@ -20,8 +19,12 @@ public class Goblin : Monster
     protected bool isAware = false; // 플레이어를 인식했는가
 
     [Header("AI Configuration")]
-    [SerializeField] private Vector2 patrolAreaCenter; // 순찰 구역 중심 (로컬 좌표)
-    [SerializeField] private Vector2 patrolAreaSize;   // 순찰 구역 크기
+    [Tooltip("순찰 시, 초기 위치를 중심으로 한 활동 반경")]
+    [SerializeField] private Vector2 patrolAreaSize;
+    [Tooltip("전투 시, 이동 가능한 가장 왼쪽 아래 경계")]
+    [SerializeField] private Transform combatMinBoundary;
+    [Tooltip("전투 시, 이동 가능한 가장 오른쪽 위 경계")]
+    [SerializeField] private Transform combatMaxBoundary;
     private Vector3 initialPosition; // 몬스터의 초기 위치
 
     [Header("사망 연출")]
@@ -51,7 +54,6 @@ public class Goblin : Monster
             playerTransform = Player.Instance.transform;
         }
         initialPosition = transform.position; // 초기 위치 저장
-        patrolAreaCenter += (Vector2)initialPosition; // 순찰 중심점을 월드 좌표로 변환
 
         // AI 루프 시작
         StartAILoop();
@@ -143,21 +145,26 @@ public class Goblin : Monster
         {
             // 랜덤 시간(1~2초) 동안 대기
             float idleTime = Random.Range(1f, 2f);
-            Debug.Log($"순찰: {idleTime:F1}초 동안 대기");
             await UniTask.Delay(System.TimeSpan.FromSeconds(idleTime), cancellationToken: token);
         }
         else
         {
             // 순찰 영역 내 랜덤 목적지 설정
+            Vector2 patrolAreaCenter = initialPosition;
             Vector2 randomOffset = new Vector2(
                 Random.Range(-patrolAreaSize.x / 2, patrolAreaSize.x / 2),
                 Random.Range(-patrolAreaSize.y / 2, patrolAreaSize.y / 2)
             );
             Vector2 destination = patrolAreaCenter + randomOffset;
 
-            // 순찰 범위 내의 랜덤한 목표 지점으로 이동
-            Debug.Log($"순찰: {destination.x}, {destination.y} 위치로 이동");
+            // 생성된 순찰 목적지를 전투 경계 안으로 보정
+            if (combatMinBoundary != null && combatMaxBoundary != null)
+            {
+                destination.x = Mathf.Clamp(destination.x, combatMinBoundary.position.x, combatMaxBoundary.position.x);
+                destination.y = Mathf.Clamp(destination.y, combatMinBoundary.position.y, combatMaxBoundary.position.y);
+            }
 
+            // 순찰 범위 내의 랜덤한 목표 지점으로 이동
             await MoveTo(destination, token);
         }
 
@@ -170,8 +177,11 @@ public class Goblin : Monster
     {
         if (isActing) return; // 이미 다른 행동중이면 실행하지 않음
 
+        // 첫 번째 공격 정보를 가져옴
+        currentAttackDetails = monsterData.attackDetails[0];
+
         // 플레이어가 공격 범위 안에 있으면 70% 확률로 공격
-        if (IsPlayerInAttackRange()&& Random.value > 0.3f)
+        if (IsPlayerInAttackRange(currentAttackDetails) && Random.value > 0.3f)
         {
             isActing = true;
             IsWalking = false;
@@ -195,17 +205,21 @@ public class Goblin : Monster
             {
                 case 0: // 잠시 대기
                     float idleTime = Random.Range(1f, 2f);
-                    Debug.Log($"경계: {idleTime:F1}초 동안 대기");
                     await UniTask.Delay(System.TimeSpan.FromSeconds(idleTime), cancellationToken: token);
                     break;
                 case 1: // 플레이어에게 접근
-                    destination = transform.position + (playerTransform.position - transform.position).normalized * Random.Range(1f, 3f);
-                    Debug.Log($"경계: 플레이어에게 접근");
-                    await MoveTo(destination, token);
-                    break;
                 case 2: // 플레이어에게서 후퇴
-                    destination = transform.position - (playerTransform.position - transform.position).normalized * Random.Range(1f, 3f);
-                    Debug.Log($"경계: 플레이어에게서 후진");
+                    // 접근이면 +, 후퇴면 - 방향
+                    float directionFactor = (action == 1) ? 1f : -1f;
+                    Vector3 direction = (playerTransform.position - transform.position).normalized * directionFactor;
+                    destination = transform.position + direction * Random.Range(1f, 3f);
+
+                    // 목표 지점을 combatMinBoundary/combatMaxBoundary 내로 보정
+                    if (combatMinBoundary != null && combatMaxBoundary != null)
+                    {
+                        destination.x = Mathf.Clamp(destination.x, combatMinBoundary.position.x, combatMaxBoundary.position.x);
+                        destination.y = Mathf.Clamp(destination.y, combatMinBoundary.position.y, combatMaxBoundary.position.y);
+                    }
                     await MoveTo(destination, token);
                     break;
             }
@@ -283,9 +297,18 @@ public class Goblin : Monster
         return playerTransform != null && Vector2.Distance(transform.position, playerTransform.position) <= recognitionRange;
     }
 
-    private bool IsPlayerInAttackRange()
+    private bool IsPlayerInAttackRange(AttackDetails currentAttackDetails)
     {
-        return playerTransform != null && Vector2.Distance(transform.position, playerTransform.position) <= attackRange;
+        if (playerTransform == null) return false;
+
+        // X축 거리 계산
+        float distanceX = Mathf.Abs(playerTransform.position.x - transform.position.x);
+
+        // Y축 거리 계산 (Visuals의 Y 위치를 기준으로)
+        float distanceY = Mathf.Abs((playerTransform.position.y) - (transform.position.y));
+
+        // X축 거리가 공격 범위 내에 있고, Y축 거리도 공격 범위(yOffset) 내에 있는지 확인
+        return distanceX <= attackRange && distanceY <= currentAttackDetails.yOffset;
     }
 
     private void Flip(float directionX)
@@ -311,7 +334,7 @@ public class Goblin : Monster
         float damage = CalculateDamage(attackDetails);
 
         // 데미지 텍스트 출력
-        EffectManager.Instance.PlayEffect("DamageText", hurtboxTransform.position, Quaternion.identity, damage);
+        EffectManager.Instance.PlayEffect("DefaultDamageText", hurtboxTransform.position, Quaternion.identity, damage);
 
         // 피격 반응
         Hurt(attackDetails, attackPosition);
@@ -334,12 +357,9 @@ public class Goblin : Monster
     // 착지를 기다렸다가 Die()를 호출하는 비동기 함수
     private async UniTask WaitUntilGroundedAndDie(CancellationToken token)
     {
-        Debug.Log("죽음 예약. 착지를 기다립니다...");
-
         // IsGrounded가 true가 될 때까지 매 프레임 확인하며 대기
         await UniTask.WaitUntil(() => IsGrounded, cancellationToken: token);
 
-        Debug.Log("착지 확인. 사망 절차를 시작합니다.");
         Die();
     }
 
@@ -351,18 +371,19 @@ public class Goblin : Monster
        
         rb.linearVelocity = Vector2.zero; // 넉백 전에 속도 초기화
 
-        // ★★★ 이펙트 재생 요청 ★★★
+        // 이펙트 재생 요청
 
-        // 충돌 지점(other.ClosestPoint(transform.position))에 이펙트를 생성
-        Vector3 hitPoint = hurtboxTransform.position;
+        // hurtbox 지점에 이펙트를 생성
+        Vector3 hurtPoint = hurtboxTransform.position;
+
         // 이펙트의 방향은 플레이어가 바라보는 방향을 따르거나, 기본 방향으로 설정
         Quaternion effectRotation = (transform.position.x > attackPosition.x) ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
 
         // attackDetails에 이펙트 이름이 있다면 그걸 사용, 없다면 기본 이펙트 사용
         // string effectToPlay = string.IsNullOrEmpty(attackDetails.effectName) ? "NormalHit_Slash" : attackDetails.effectName;
         string effectToPlay = "SlashSmall" + Random.Range(1, 4);
-        EffectManager.Instance.PlayEffect(effectToPlay, hitPoint, Quaternion.identity);
-        EffectManager.Instance.PlayEffect("BloodLarge", hitPoint, effectRotation);
+        EffectManager.Instance.PlayEffect(effectToPlay, hurtPoint, Quaternion.identity);
+        EffectManager.Instance.PlayEffect("BloodLarge", hurtPoint, effectRotation);
 
 
         float direction = (transform.position.x > attackPosition.x) ? 1 : -1;
@@ -438,10 +459,9 @@ public class Goblin : Monster
 
         // 2. 소멸 및 파편 생성
         // 몬스터 위치에 이펙트를 생성
-        Vector3 hitPoint = new Vector3(transform.position.x, visualsTransform.position.y - startPos.y, transform.position.z);
-        EffectManager.Instance.PlayEffect("MonsterDieFlash", hitPoint, Quaternion.identity);
-
-
+        Vector3 hurtPoint = hurtboxTransform.position;
+        EffectManager.Instance.PlayEffect("MonsterDieYoung", hurtPoint, Quaternion.identity);
+        
         spriteRenderer.enabled = false;
 
         if (fragPrefabs != null && fragPrefabs.Length > 0)
@@ -472,8 +492,8 @@ public class Goblin : Monster
             }
         }
         // 3. 최종 오브젝트 파괴
+        await UniTask.Delay(System.TimeSpan.FromSeconds(1.0), cancellationToken: token);
         Destroy(gameObject);
-        await UniTask.CompletedTask; // async 함수이므로 await 하나는 필요
     }
 
     protected override void Attack()
@@ -524,8 +544,25 @@ public class Goblin : Monster
     {
         base.OnDrawGizmosSelected(); // 기본 인식/공격 범위 기즈모 그리기
 
+        // 1. 순찰 영역 그리기 (녹색)
         Gizmos.color = Color.green;
-        Vector3 center = initialPosition + (Vector3)patrolAreaCenter - (Vector3)initialPosition; // 월드 좌표 보정
-        Gizmos.DrawWireCube(center, patrolAreaSize);
+        // 실행 중이 아닐 때만 초기 위치를 사용, 실행 중일 땐 실제 초기 위치를 사용
+        Vector3 patrolCenter = initialPosition;
+        Gizmos.DrawWireCube(patrolCenter, patrolAreaSize);
+
+        // 2. 전투 영역 그리기 (파란색)
+        if (combatMinBoundary != null && combatMaxBoundary != null)
+        {
+            Gizmos.color = Color.blue;
+            Vector3 p1 = combatMinBoundary.position;
+            Vector3 p2 = new Vector3(combatMaxBoundary.position.x, combatMinBoundary.position.y);
+            Vector3 p3 = combatMaxBoundary.position;
+            Vector3 p4 = new Vector3(combatMinBoundary.position.x, combatMaxBoundary.position.y);
+
+            Gizmos.DrawLine(p1, p2);
+            Gizmos.DrawLine(p2, p3);
+            Gizmos.DrawLine(p3, p4);
+            Gizmos.DrawLine(p4, p1);
+        }
     }
 }

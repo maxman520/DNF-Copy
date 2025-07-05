@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEngine;
 
 public class MonsterHitbox : MonoBehaviour
@@ -18,10 +19,20 @@ public class MonsterHitbox : MonoBehaviour
         {
             if (ownerMonster == null) return;
 
+            AttackDetails attackDetails = ownerMonster.currentAttackDetails;
+
+            // 몬스터 공격의 Y축 범위 체크
+            if (Mathf.Abs(this.transform.position.y - player.transform.position.y) >= attackDetails.yOffset)
+                return;
+
             if (player != null)
             {
-                player.OnDamaged(ownerMonster.GetAtk());
+                // 공격 정보의 데미지 배율에 몬스터의 기본 공격력을 곱해서 전달
+                attackDetails.damageRate *= ownerMonster.GetAtk();
+
+                player.OnDamaged(attackDetails, transform.position);
             }
         }
+
     }
 }

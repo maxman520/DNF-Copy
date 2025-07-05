@@ -19,9 +19,13 @@ public abstract class Monster : MonoBehaviour
     protected Animator anim;
     protected Transform visualsTransform;
     protected Transform hurtboxTransform;
+    protected Transform hitboxTransform;
     protected Transform playerTransform;
 
     protected Vector3 startPos; // 내부 visuals 위치 제어용
+
+    [Header("공격 정보")]
+    public AttackDetails currentAttackDetails;
 
 
     protected virtual void Awake()
@@ -30,6 +34,7 @@ public abstract class Monster : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         visualsTransform = transform.Find("Visuals");
         hurtboxTransform = visualsTransform.Find("Hurtbox");
+        hitboxTransform = visualsTransform.Find("Hitbox");
         startPos = visualsTransform.localPosition;
 
         // 데이터 초기화

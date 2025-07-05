@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 83309198573400854}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.75, y: 0, z: 0}
+  m_LocalPosition: {x: 0.54, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -127,7 +127,7 @@ Transform:
   m_GameObject: {fileID: 198850099643006956}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 0}
+  m_LocalPosition: {x: 0.36, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -227,7 +227,7 @@ Transform:
   m_GameObject: {fileID: 417160822053855307}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0, z: 0}
+  m_LocalPosition: {x: 0.18, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -327,7 +327,7 @@ Transform:
   m_GameObject: {fileID: 1318309271510270779}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: 0.72, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -511,7 +511,7 @@ GameObject:
   - component: {fileID: 2818678406642904967}
   - component: {fileID: 4930144260568468121}
   m_Layer: 0
-  m_Name: DamageText
+  m_Name: HurtDamageText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -556,6 +556,9 @@ MonoBehaviour:
   - {fileID: 1936790404611914483}
   - {fileID: 5699376534553718772}
   - {fileID: 2815812712817306108}
-  moveDistance: 0.5
-  duration: 0.8
+  moveDistance: 0.4
+  duration: 0.6
   fadeOutDelay: 0.5
+  startScale: {x: 5, y: 5, z: 1}
+  scaleInDuration: 0.2
+  effectName: HurtDamageText

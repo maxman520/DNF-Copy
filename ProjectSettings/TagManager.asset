@@ -5,17 +5,15 @@ TagManager:
   serializedVersion: 3
   tags:
   - CameraBound
-  - PlayerAttack
-  - MonsterAttack
   - Monster
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player Ground
   - Water
   - UI
-  - 
+  - Monster Ground
   - 
   - 
   - 

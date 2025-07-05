@@ -29,7 +29,7 @@ public class MonsterStateBehaviour : StateMachineBehaviour
     {
         if (monster == null) return;
         if (walk)
-        {
+        {   
             monster.OnWalkStateExit();
         }
         if (attack)

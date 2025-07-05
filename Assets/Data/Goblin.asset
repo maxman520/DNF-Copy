@@ -20,3 +20,9 @@ MonoBehaviour:
   MoveSpeed: 1
   RecognitionRange: 3
   AttackRange: 1.6
+  attackDetails:
+  - attackName: Attack
+    damageRate: 1
+    knockbackForce: 0
+    launchForce: 0
+    yOffset: 0.3

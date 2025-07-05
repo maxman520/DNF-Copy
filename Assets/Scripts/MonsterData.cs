@@ -17,5 +17,7 @@ public class MonsterData : ScriptableObject
     public float RecognitionRange; // 플레이어 인식 범위
     public float AttackRange;      // 공격 가능 범위
 
+    [Header("공격 정보")]
+    public AttackDetails[] attackDetails; // 몬스터의 공격 정보를 담을 구조체
 
 }
