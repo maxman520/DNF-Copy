@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Goblin
   m_EditorClassIdentifier: 
   MonsterName: "\uACE0\uBE14\uB9B0"
+  FaceSprite: {fileID: 21300000, guid: 059a7820d0accd24492c22c3160592e1, type: 3}
   Prefab: {fileID: 3265251797581228386, guid: ad84f14c8fee1094d81d544ab20b0762, type: 3}
   MaxHP: 100
   Atk: 10

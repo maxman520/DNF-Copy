@@ -14,6 +14,11 @@ public abstract class Monster : MonoBehaviour
     protected float recognitionRange;
     protected float attackRange;
 
+    public MonsterData GetMonsterData() => monsterData;
+    public float GetMaxHP() => maxHP;
+    public float GetCurrentHP() => currentHP;
+    public float GetAtk() => atk;
+
     [Header("컴포넌트 참조")]
     protected Rigidbody2D rb;
     protected Animator anim;
@@ -45,10 +50,6 @@ public abstract class Monster : MonoBehaviour
         recognitionRange = monsterData.RecognitionRange;
         attackRange = monsterData.AttackRange;
 
-    }
-    public float GetAtk()
-    {
-        return this.atk;
     }
 
     // 데미지를 입었을 때

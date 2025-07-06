@@ -352,6 +352,10 @@ public class Goblin : Monster
             WaitUntilGroundedAndDie(this.GetCancellationTokenOnDestroy()).Forget();
         }
 
+        // UIManager에 자신을 타겟으로 알림
+        UIManager.Instance.OnMonsterDamaged(this);
+        UIManager.Instance.UpdateMonsterHP();
+
     }
 
     // 착지를 기다렸다가 Die()를 호출하는 비동기 함수
@@ -425,8 +429,8 @@ public class Goblin : Monster
     {
         StopAILoop(); // 모든 비동기 작업 중단
         isActing = false;
+        UIManager.Instance.HideMonsterHPBar(); // HP바를 숨기도록 요청
 
-        // ... 기존 Die 로직 ...
         Debug.Log($"{monsterData.MonsterName}이(가) 죽었습니다.");
 
         // 물리적 움직임과 충돌을 중지

@@ -5,6 +5,7 @@ public class MonsterData : ScriptableObject
 {
     [Header("기본 정보")]
     public string MonsterName;
+    public Sprite FaceSprite; // 몬스터 초상화 스프라이트
     public GameObject Prefab; // 몬스터의 외형 프리팹
 
     [Header("핵심 스탯")]
