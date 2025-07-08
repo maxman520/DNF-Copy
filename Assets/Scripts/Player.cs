@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+
 
 [Flags]
 public enum PlayerAnimState
@@ -46,15 +48,6 @@ public class Player : Singleton<Player>
     private BehaviourController behaviourController;
     private AnimController animController;
 
-
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 200, 20), "IsRunning: " + IsRunning);
-        GUI.Label(new Rect(10, 20, 200, 20), "CanMove: " + CanMove);
-        GUI.Label(new Rect(10, 30, 200, 20), "CanAttack: " + CanAttack);
-        GUI.Label(new Rect(10, 40, 200, 20), "CanContinueAttack: " + CanContinueAttack);
-        GUI.Label(new Rect(10, 50, 200, 20), "AttackCounter: " + AttackCounter);
-    }
     public PlayerAnimState CurrentAnimState { get; set; }
 
     // 컴포넌트 참조
@@ -68,7 +61,6 @@ public class Player : Singleton<Player>
     {
         // 싱글턴 패턴
         base.Awake();
-
 
         CurrentAnimState = PlayerAnimState.Idle;
 
@@ -106,15 +98,29 @@ public class Player : Singleton<Player>
 
     private void Update()
     {
-        inputHandler.ReadInput(); // 입력을 읽고
-        behaviourController.Flip(); // 입력을 바탕으로 방향 전환 처리
-        behaviourController.HandleGravity();
+        HandleCommands();
+        behaviourController.Flip(); // 방향 전환 처리
+        behaviourController.HandleGravity(); // 플레이어 visuals의 localPosition에 따라 중력 처리
         animController.UpdateAnimations(); // 애니메이션 처리
     }
 
     private void FixedUpdate()
     {
         behaviourController.ApplyMovement(); // 플레이어 이동 처리
+    }
+    private void HandleCommands()
+    {
+        // 버퍼에서 커맨드를 하나 가져옴
+        ICommand command = inputHandler.PeekCommand();
+
+        if (command != null)
+        {
+            // 커맨드를 실행, 성공하면 커맨드를 버퍼에서 제거
+            if (command.Execute(behaviourController))
+            {
+                inputHandler.RemoveCommand();
+            }
+        }
     }
     public bool HasState(PlayerAnimState state)
     {
@@ -182,4 +188,56 @@ public class Player : Singleton<Player>
         behaviourController?.OnComboWindowClose();
     }
     #endregion
+#if UNITY_EDITOR // 에디터에서만 실행되도록 전처리기 사용 (빌드 시 제외)
+    // 디버깅 UI를 켤지 말지 결정하는 변수
+    [Header("디버그 옵션")]
+    [SerializeField] private bool showInputBufferUI = true;
+
+    private void OnGUI()
+    {
+        if (!showInputBufferUI) return;
+
+        
+
+        // UI 스타일 설정
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 20;
+        style.normal.textColor = Color.white;
+        style.fontStyle = FontStyle.Bold;
+
+        // 화면 좌상단에 UI 영역을 만듦
+        GUILayout.BeginArea(new Rect(10, 10, 300, 500));
+
+        GUILayout.Label("--- Input Buffer ---", style);
+
+        if (inputHandler != null)
+        {
+            // InputHandler로부터 버퍼에 있는 커맨드 이름 목록을 가져옴
+            List<string> bufferedCommands = inputHandler.GetBufferedCommandNames();
+
+            if (bufferedCommands.Count == 0)
+            {
+                GUILayout.Label("(Empty)", style);
+            }
+            else
+            {
+                // 버퍼에 있는 각 커맨드를 화면에 표시
+                foreach (string commandName in bufferedCommands)
+                {
+                    GUILayout.Label(commandName, style);
+                }
+            }
+        }
+
+        GUI.Label(new Rect(10, 10, 200, 20), "IsRunning: " + IsRunning);
+        GUI.Label(new Rect(10, 20, 200, 20), "CanMove: " + CanMove);
+        GUI.Label(new Rect(10, 30, 200, 20), "CanAttack: " + CanAttack);
+        GUI.Label(new Rect(10, 40, 200, 20), "CanContinueAttack: " + CanContinueAttack);
+        GUI.Label(new Rect(10, 50, 200, 20), "AttackCounter: " + AttackCounter);
+
+
+        GUILayout.EndArea();
+
+    }
+#endif // UNITY_EDITOR
 }

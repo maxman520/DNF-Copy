@@ -5,8 +5,10 @@ public class PlayerAttack1State : PlayerStateBehaviourBase
     // 이 상태로 진입할 때 호출
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+
         base.OnStateEnter(animator, stateInfo, layerIndex);
 
+        player.Rb.linearVelocity = Vector2.zero;
         player.CanMove = false;
     }
 
@@ -14,6 +16,7 @@ public class PlayerAttack1State : PlayerStateBehaviourBase
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateExit(animator, stateInfo, layerIndex);
+        player.CanMove = true;
     }
 
 }

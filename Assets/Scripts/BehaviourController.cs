@@ -24,18 +24,12 @@ public class BehaviourController
     }
     public void SubscribeToEvents()
     {
-        inputHandler.OnMoveCanceled += OnMoveCanceled;
         inputHandler.OnRunPerformed += OnRunPerformed;
-        inputHandler.OnJumpPerformed += OnJumpPerformed;
-        inputHandler.OnAttackPerformed += OnAttackPerformed;
     }
 
     public void UnsubscribeFromEvents()
     {
-        inputHandler.OnMoveCanceled -= OnMoveCanceled;
         inputHandler.OnRunPerformed -= OnRunPerformed;
-        inputHandler.OnJumpPerformed -= OnJumpPerformed;
-        inputHandler.OnAttackPerformed -= OnAttackPerformed;
     }
 
 
@@ -59,6 +53,7 @@ public class BehaviourController
 
         float currentSpeed = player.IsRunning ? player.RunSpeed : player.WalkSpeed;
         player.IsMoving = inputHandler.MoveInput.magnitude > 0.1f;
+
         Vector2 velocity = inputHandler.MoveInput.normalized * currentSpeed;
 
         // 점프중이라면 y축 속도에 패널티 부과
@@ -70,40 +65,41 @@ public class BehaviourController
         player.Rb.linearVelocity = velocity;
     }
 
+
     // 달리기 시작
-    private void OnRunPerformed(InputAction.CallbackContext context)
+    public void OnRunPerformed(InputAction.CallbackContext context)
     {
         if (!player.HasState(PlayerAnimState.Jump) && player.CanMove)
             player.IsRunning = true;
     }
-    // 달리기 중지
-    private void OnMoveCanceled(InputAction.CallbackContext context)
-    {
-        player.IsRunning = false;
-    }
     // 점프
-    private void OnJumpPerformed(InputAction.CallbackContext context)
+    public bool PerformJump(InputAction.CallbackContext context)
     {
-        // 땅에 있을 때만 점프 '힘'을 가할 수 있다.
-        if (player.CanMove && player.IsGrounded)
-        {
-            ApplyJumpForce();
-        }
+        // 땅에 있지않으면 점프 X
+        if (!player.CanMove || !player.IsGrounded)
+            return false;
+
+        // 수직 속도에 점프 '힘'을 즉시 적용
+        verticalVelocity = JUMP_FORCE;
+
+        // 상태를 '공중에 뜬' 상태로 변경
+        player.IsGrounded = false;
+        animController.PlayJump();
+
+        return true;
     }
 
     // 공격
-    private void OnAttackPerformed(InputAction.CallbackContext context)
+    public bool PerformAttack(InputAction.CallbackContext context)
     {
-        if (!player.CanAttack) return;
+        if (!player.CanAttack) return false;
 
         // < 점프 공격 >
-        if (player.HasState(PlayerAnimState.Jump))
+        if (player.HasState(PlayerAnimState.Jump) && !player.HasState(PlayerAnimState.Attack))
         {
             PerformJumpAttack();
-            return;
+            return true;
         }
-
-        if (!player.IsGrounded) return;
 
 
         // < 지상 공격 >
@@ -111,7 +107,8 @@ public class BehaviourController
         if (player.CanContinueAttack)
         {
             player.AttackCounter++;
-            PerformAttack();
+            PerformComboAttack();
+            return true;
         }
         // 첫 공격인 경우
         else if (!player.HasState(PlayerAnimState.Attack))
@@ -127,12 +124,16 @@ public class BehaviourController
             {
                 player.IsRunning = false;
                 player.AttackCounter = 1;
-                PerformAttack();
+                PerformComboAttack();
             }
+            return true;
         }
+
+        return false;
     }
 
-    private void PerformAttack()
+    // 플레이어의 1, 2, 3 콤보 공격
+    public void PerformComboAttack()
     {
         float direction = player.transform.localScale.x;
         player.Rb.AddForceX(direction * 0.05f, ForceMode2D.Impulse);
@@ -141,14 +142,14 @@ public class BehaviourController
         animController.PlayAttack(player.AttackCounter);
     }
 
-    private void PerformRunAttack()
+    public void PerformRunAttack()
     {
         Debug.Log("달리기 공격");
         return; // 임시로 작성
         animController.PlayAttack(player.AttackCounter);
     }
 
-    private void PerformJumpAttack()
+    public void PerformJumpAttack()
     {
         // 이미 이번 점프에서 공격을 했다면 무시
         if (player.HasState(PlayerAnimState.Jump)
@@ -172,8 +173,7 @@ public class BehaviourController
     public void OnComboWindowClose()
     {
         // 콤보가 이어지지 않고 끝났을 경우에 대한 최종 처리
-        player.AttackCounter = 0;
-        player.CanContinueAttack = false;
+        ResetAttackState();
     }
     public void ResetAttackState()
     {
@@ -203,17 +203,6 @@ public class BehaviourController
         animController.UpdateJumpAnimation(verticalVelocity);
     }
 
-    // "점프는 Visuals에 local y좌표로의 이동을 하게 만드는 힘을 가하는 방식"
-    private void ApplyJumpForce()
-    {
-        // 수직 속도에 점프 '힘'을 즉시 적용
-        verticalVelocity = JUMP_FORCE;
-
-        // 상태를 '공중에 뜬' 상태로 변경
-        player.IsGrounded = false;
-        animController.PlayJump();
-    }
-
     // 착지 판별 로직
     private void CheckForLanding()
     {
@@ -231,5 +220,5 @@ public class BehaviourController
             animController.ResetJumpAttackTrigger();
         }
     }
-    #endregion
+    #endregion Jump
 }
