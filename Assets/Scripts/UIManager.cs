@@ -17,7 +17,6 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private MonsterHPBar monsterHPBar;
     
     private Monster currentTargetMonster; // 현재 몬스터 HP바가 추적하는 몬스터
-    private MonsterData targetMonsterData; // 현재 몬스터 HP바가 추적하는 몬스터의 데이터
 
     private CancellationTokenSource hpBarCts; // 몬스터 HP바 자동 숨김 작업을 위한 토큰
     private void Start()
@@ -36,6 +35,7 @@ public class UIManager : Singleton<UIManager>
         if (currentTargetMonster != monster || !monsterHPBar.gameObject.activeSelf)
         {
             ShowMonsterHPBar(monster);
+            UpdateMonsterHP();
         }
         else // 같은 타겟을 계속 때리고 있다면
         {
@@ -50,14 +50,12 @@ public class UIManager : Singleton<UIManager>
         if (monsterHPBar == null || target == null) return;
 
         currentTargetMonster = target;
-        targetMonsterData = target.GetMonsterData();
 
         // 몬스터 데이터에서 초상화 가져와서 설정
-        monsterHPBar.SetPortrait(targetMonsterData.FaceSprite);
-        monsterHPBar.UpdateHP(targetMonsterData.MaxHP, currentTargetMonster.GetCurrentHP());
+        monsterHPBar.SetFace(target.GetMonsterData().FaceSprite);
 
         monsterHPBar.gameObject.SetActive(true);
-        monsterHPBar.Show();
+        monsterHPBar.Show(currentTargetMonster);
 
         ResetHideTimer(); // 자동 숨김 타이머 시작
     }
@@ -67,7 +65,12 @@ public class UIManager : Singleton<UIManager>
     {
         if (monsterHPBar == null || currentTargetMonster == null || !monsterHPBar.gameObject.activeSelf) return;
 
-        monsterHPBar.UpdateHP(targetMonsterData.MaxHP, currentTargetMonster.GetCurrentHP());
+        monsterHPBar.UpdateHP(
+            currentTargetMonster.GetMaxHP(),
+            currentTargetMonster.GetPreviousHP(),
+            currentTargetMonster.GetCurrentHP(),
+            currentTargetMonster.GetHpPerLine()
+        );
     }
 
     // 몬스터 HP바를 숨김
@@ -75,7 +78,7 @@ public class UIManager : Singleton<UIManager>
     {
         if (monsterHPBar == null || !monsterHPBar.gameObject.activeSelf) return;
 
-        monsterHPBar.Hide().Forget();
+        monsterHPBar.Hide();
         // Hide 애니메이션이 끝난 후 비활성화하는 로직을 추가할 수도 있음
         // await monsterHPBar.Hide();
         // monsterHPBar.gameObject.SetActive(false);

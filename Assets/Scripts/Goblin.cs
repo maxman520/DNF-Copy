@@ -343,6 +343,7 @@ public class Goblin : Monster
         if (isDead) return;
 
         // 데미지 적용
+        previousHP = currentHP;
         currentHP -= damage;
         Debug.Log($"{monsterData.MonsterName}이(가) {damage}의 데미지를 입음. 현재 체력: {currentHP}");
 
@@ -354,7 +355,7 @@ public class Goblin : Monster
 
         // UIManager에 자신을 타겟으로 알림
         UIManager.Instance.OnMonsterDamaged(this);
-        UIManager.Instance.UpdateMonsterHP();
+        //UIManager.Instance.UpdateMonsterHP();
 
     }
 
@@ -454,8 +455,8 @@ public class Goblin : Monster
             // 보간 계수 계산 (0에서 1로 증가)
             float alpha = Mathf.Lerp(1f, 0f, elapsedTime / duration);
 
+            // 렌더러가 사용하는 머티리얼의 "_Alpha" 프로퍼티 값을 변경
             mat.SetFloat("_Alpha", alpha);
-            // 렌더러가 사용하는 머티리얼의 "_FlashAmount" 프로퍼티 값을 변경
 
             elapsedTime += Time.deltaTime;
             await UniTask.Yield(token);

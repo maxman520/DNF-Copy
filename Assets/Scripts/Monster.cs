@@ -6,8 +6,10 @@ public abstract class Monster : MonoBehaviour
     [SerializeField] protected MonsterData monsterData; // 몬스터의 원본 데이터를 담는 ScriptableObject
 
     [Header("실시간 스탯")]
-    protected float currentHP;
     protected float maxHP;
+    protected float previousHP;
+    protected float currentHP;
+    protected float hpPerLine;
     protected float moveSpeed;
     protected float atk;
     protected float def;
@@ -16,7 +18,9 @@ public abstract class Monster : MonoBehaviour
 
     public MonsterData GetMonsterData() => monsterData;
     public float GetMaxHP() => maxHP;
+    public float GetPreviousHP() => previousHP;
     public float GetCurrentHP() => currentHP;
+    public float GetHpPerLine() => hpPerLine;
     public float GetAtk() => atk;
 
     [Header("컴포넌트 참조")]
@@ -43,7 +47,10 @@ public abstract class Monster : MonoBehaviour
         startPos = visualsTransform.localPosition;
 
         // 데이터 초기화
+        maxHP = monsterData.MaxHP;
         currentHP = monsterData.MaxHP;
+        previousHP = monsterData.MaxHP;
+        hpPerLine = monsterData.HpPerLine;
         moveSpeed = monsterData.MoveSpeed;
         atk = monsterData.Atk;
         def = monsterData.Def;

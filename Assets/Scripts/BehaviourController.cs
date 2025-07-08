@@ -42,7 +42,7 @@ public class BehaviourController
     // 캐릭터 방향 조절
     public void Flip()
     {
-        if (!player.CanMove || player.HasState(PlayerAnimState.Jump)) return;
+        if (!player.CanMove || player.HasState(PlayerAnimState.Attack)) return;
 
         if (Mathf.Abs(inputHandler.MoveInput.x) > 0.1f)
         {

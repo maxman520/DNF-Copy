@@ -10,6 +10,7 @@ public class MonsterData : ScriptableObject
 
     [Header("핵심 스탯")]
     public float MaxHP;
+    public float HpPerLine; // HP 게이지 한 줄당 체력
     public float Atk;
     public float Def;
     public float MoveSpeed;
