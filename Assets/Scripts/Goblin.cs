@@ -1,6 +1,8 @@
 using UnityEngine;
+using Random = UnityEngine.Random;
 using Cysharp.Threading.Tasks; // UniTask
 using System.Threading;       // CancellationToken
+using System;
 
 public class Goblin : Monster
 {
@@ -29,7 +31,6 @@ public class Goblin : Monster
 
     [Header("사망 연출")]
     [SerializeField] private GameObject[] fragPrefabs; // 시체 파편
-    private SpriteRenderer spriteRenderer;
     private bool isDead = false; // HP가 0이하로 떨어졌는가 (사망 로직 중복 실행 방지용)
 
 
@@ -38,21 +39,9 @@ public class Goblin : Monster
 
     #region Unity Lifecycle
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
-
-        spriteRenderer = visualsTransform.GetComponentInChildren<SpriteRenderer>();
-        spriteRenderer.material = new Material(spriteRenderer.material);
-
-    }
-
-    protected void Start()
-    {
-        if (Player.Instance != null)
-        {
-            playerTransform = Player.Instance.transform;
-        }
+        base.Start();
         initialPosition = transform.position; // 초기 위치 저장
 
         // AI 루프 시작
@@ -190,8 +179,8 @@ public class Goblin : Monster
 
             Attack(); // 공격 실행
 
-            // 공격 후 딜레이
-            await UniTask.Delay(3000, cancellationToken: token); // 공격 쿨타임
+            // 공격 후 딜레이를 줘 다른 행동 방지 + 내부 쿨타임 역할
+            await UniTask.Delay(3000, cancellationToken: token);
         }
         else // 공격 범위 밖에 있으면 경계 행동
         {
@@ -230,7 +219,7 @@ public class Goblin : Monster
     // 목표 지점까지 이동하는 UniTask 함수
     private async UniTask MoveTo(Vector3 destination, CancellationToken parentToken)
     {
-        // 이전 이동 작업 중단
+        // 이전 이동 작업이 있다면 중단
         StopMovement();
 
         // 새로운 이동 토큰 생성 (부모 토큰과 연결)
@@ -239,20 +228,29 @@ public class Goblin : Monster
 
         IsWalking = true;
 
-        while (Vector2.Distance(transform.position, destination) > 0.1f
-            && !moveToken.IsCancellationRequested)
+        try
         {
-            Vector2 direction = (destination - transform.position).normalized;
-            rb.linearVelocity = direction * moveSpeed;
+            while (Vector2.Distance(transform.position, destination) > 0.1f
+                   && !moveToken.IsCancellationRequested)
+            {
+                Vector2 direction = (destination - transform.position).normalized;
+                rb.linearVelocity = direction * moveSpeed;
 
-            if (isAware) FlipTowardsPlayer();
-            else Flip(direction.x);
+                if (isAware) FlipTowardsPlayer();
+                else Flip(direction.x);
 
-            await UniTask.Yield(PlayerLoopTiming.Update, moveToken);  // 다음 프레임까지 이동
+                await UniTask.Yield(PlayerLoopTiming.Update, moveToken);
+            }
         }
-
-        rb.linearVelocity = Vector2.zero;
-        IsWalking = false;
+        catch (OperationCanceledException)
+        {
+            // 예외 처리
+        }
+        finally
+        {
+            rb.linearVelocity = Vector2.zero;
+            IsWalking = false;
+        }
     }
     #endregion AI System
 
@@ -444,7 +442,7 @@ public class Goblin : Monster
     private async UniTask DeathSequenceAsync(CancellationToken token)
     {
         // 1. 하얗게 변하고 점점 투명하게
-        var mat = spriteRenderer.material;
+        var mat = sr.material;
         mat.SetFloat("_Blend", 1f);
         float duration = 0.3f; // 투명하게 변하는 데 걸리는 시간
         float elapsedTime = 0f;
@@ -467,7 +465,7 @@ public class Goblin : Monster
         Vector3 hurtPoint = hurtboxTransform.position;
         EffectManager.Instance.PlayEffect("MonsterDieYoung", hurtPoint, Quaternion.identity);
         
-        spriteRenderer.enabled = false;
+        sr.enabled = false;
 
         if (fragPrefabs != null && fragPrefabs.Length > 0)
         {
@@ -501,7 +499,7 @@ public class Goblin : Monster
         Destroy(gameObject);
     }
 
-    protected override void Attack()
+    protected void Attack()
     {
         anim.SetTrigger("attack");
         Debug.Log("고블린의 공격!");
@@ -547,7 +545,10 @@ public class Goblin : Monster
     }
     protected override void OnDrawGizmosSelected()
     {
-        base.OnDrawGizmosSelected(); // 기본 인식/공격 범위 기즈모 그리기
+        base.OnDrawGizmosSelected(); // 기본 공격 범위 기즈모 그리기
+
+        Gizmos.color = Color.yellow; // 인식 범위는 노란색
+        Gizmos.DrawWireSphere(transform.position, recognitionRange);
 
         // 1. 순찰 영역 그리기 (녹색)
         Gizmos.color = Color.green;

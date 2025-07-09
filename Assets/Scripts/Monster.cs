@@ -26,6 +26,7 @@ public abstract class Monster : MonoBehaviour
     [Header("컴포넌트 참조")]
     protected Rigidbody2D rb;
     protected Animator anim;
+    protected SpriteRenderer sr;
     protected Transform visualsTransform;
     protected Transform hurtboxTransform;
     protected Transform hitboxTransform;
@@ -42,6 +43,8 @@ public abstract class Monster : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
         visualsTransform = transform.Find("Visuals");
+        sr = visualsTransform.GetComponentInChildren<SpriteRenderer>();
+        sr.material = new Material(sr.material);
         hurtboxTransform = visualsTransform.Find("Hurtbox");
         hitboxTransform = visualsTransform.Find("Hitbox");
         startPos = visualsTransform.localPosition;
@@ -59,6 +62,12 @@ public abstract class Monster : MonoBehaviour
 
     }
 
+    protected virtual void Start()
+    {
+        if (Player.Instance != null)
+            playerTransform = Player.Instance.transform;
+    }
+
     // 데미지를 입었을 때
     public abstract void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition);
 
@@ -74,7 +83,6 @@ public abstract class Monster : MonoBehaviour
 
     protected abstract void Hurt(AttackDetails attackDetails, Vector2 attackPosition);
     protected abstract void Die();
-    protected abstract void Attack();
 
     // 대기 애니메이션으로 진입 시 호출
     public abstract void OnIdleStateEnter();
@@ -91,9 +99,6 @@ public abstract class Monster : MonoBehaviour
     // 에디터에서만 보이는 기즈모(Gizmo)를 그려서 AI 범위를 시각적으로 확인
     protected virtual void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow; // 인식 범위는 노란색
-        Gizmos.DrawWireSphere(transform.position, recognitionRange);
-
         Gizmos.color = Color.red; // 공격 범위는 빨간색
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }

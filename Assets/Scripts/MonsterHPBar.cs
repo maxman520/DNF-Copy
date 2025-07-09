@@ -44,6 +44,7 @@ public class MonsterHPBar : MonoBehaviour
         }
     }
 
+    
     // HP 업데이트
     public void UpdateHP(float maxHP,  float previousHP, float currentHP,  float hpPerLine)
     {
@@ -109,40 +110,49 @@ public class MonsterHPBar : MonoBehaviour
             hpFillFrontImage.enabled = true;
         }
     }
+
+    // 플레이어에게 데미지를 받아 해당 줄의 몬스터 HP바가 줄어드는 애니메이션
     private async UniTask FillAnimationAsync(float newFillAmount)
     {
         fillCts?.Cancel();
+        fillCts?.Dispose();
+
         var destroyToken = this.GetCancellationTokenOnDestroy();
         fillCts = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
         var token = fillCts.Token;
 
+        float oldFillAmount = hpFillFrontImage.fillAmount;
+        
         try
         {
-            float oldFillAmount = hpFillFrontImage.fillAmount;
-
             // 점차 줄어들게 함
             float elapsedTime = 0f;
-            while (elapsedTime < animDuration && oldFillAmount > newFillAmount)
+            while (elapsedTime < animDuration && !token.IsCancellationRequested)
             {
+                // 이전 줄에서 다음 줄로 넘어갈 때, startFillAmount가 targetFillAmount보다 작을 수 있음
+                // 이 경우 애니메이션 없이 즉시 반영해야 자연스러움
+                if (oldFillAmount < newFillAmount)
+                    oldFillAmount = newFillAmount;
+
                 float tmp = Mathf.Lerp(oldFillAmount, newFillAmount, elapsedTime / animDuration);
 
-                // Image의 Color 프로퍼티를 변경
+                // FrontImage의 Color 프로퍼티를 변경
                 hpFillFrontImage.fillAmount = tmp;
 
                 elapsedTime += Time.deltaTime;
                 await UniTask.Yield(token);
             }
-
-
-            hpFillFrontImage.fillAmount = newFillAmount;
-
         }
         catch (OperationCanceledException)
         {
-            // 연속 타격으로 애니메이션이 취소됨. 정상.
+            // 예외 처리
+        }
+        finally
+        {
+            hpFillFrontImage.fillAmount = newFillAmount;
         }
     }
-
+    // 플레이어에게 데미지를 받아 전체 몬스터 HP바가 줄어드는 애니메이션
     private async UniTaskVoid OverallFlashAsync(float previousFillRatio)
     {
         // 1. 점멸용 이미지 복제

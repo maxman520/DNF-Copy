@@ -21,7 +21,7 @@ public class EffectManager : Singleton<EffectManager>
     // 이펙트 이름과 프리팹을 매칭하는 딕셔너리 (빠른 검색용)
     private Dictionary<string, GameObject> effectPrefabDict = new Dictionary<string, GameObject>();
 
-    // ★★★ 활성화된 모든 이펙트를 추적하는 리스트
+    // 활성화된 모든 이펙트를 추적하는 리스트
     private Dictionary<string, List<GameObject>> activeEffects = new Dictionary<string, List<GameObject>>();
 
     protected override void Awake()

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac02e4ae3a2691d409f951306e13c7db, type: 3}
+  m_Name: Vinoshu
+  m_EditorClassIdentifier: 
+  MonsterName: "\uBE44\uB178\uC288"
+  FaceSprite: {fileID: 21300000, guid: 20a503b9808e46e44bb8c9d0478ac462, type: 3}
+  Prefab: {fileID: 6296903932047600178, guid: 88ddcb5810e85694c8fc5ab54df920d5, type: 3}
+  MaxHP: 300
+  HpPerLine: 100
+  Atk: 20
+  Def: 10
+  MoveSpeed: 2
+  RecognitionRange: 100
+  AttackRange: 1.6
+  attackDetails:
+  - attackName: Attack
+    damageRate: 1
+    knockbackForce: 0
+    launchForce: 0
+    yOffset: 0.5
+  - attackName: Meteor
+    damageRate: 2
+    knockbackForce: 0
+    launchForce: 0
+    yOffset: 1

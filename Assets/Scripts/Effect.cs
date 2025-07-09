@@ -19,7 +19,7 @@ public class Effect : MonoBehaviour
         // 끝날 때 풀에 반납하는 로직 실행
         if (animator == null)
         {
-            Debug.Log("이펙트의 animator변수가 초기화 되지 않음!");
+            Debug.Log(this.effectName + " 이펙트의 animator변수가 초기화 되지 않음!");
             return;
         }
             
