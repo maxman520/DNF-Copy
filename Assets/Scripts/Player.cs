@@ -127,7 +127,7 @@ public class Player : Singleton<Player>
         return (CurrentAnimState.HasFlag(state));
     }
 
-    public void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition)
+    public void OnDamaged(AttackDetails attackDetails)
     {
         // 입을 데미지 계산
         float damage = CalculateDamage(attackDetails);

@@ -32,4 +32,4 @@ MonoBehaviour:
     damageRate: 2
     knockbackForce: 0
     launchForce: 0
-    yOffset: 1
+    yOffset: 2

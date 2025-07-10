@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5674666154531158940}
   m_Layer: 0
   m_Name: Hitbox
-  m_TagString: Untagged
+  m_TagString: MonsterHitbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 5412046881914425829}
   m_Layer: 0
   m_Name: Hurtbox
-  m_TagString: Monster
+  m_TagString: MonsterHurtbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -421,8 +421,10 @@ MonoBehaviour:
     launchForce: 0
     yOffset: 0
   verticalVelocity: 0
+  attackHitboxObject: {fileID: 1897019175860110760}
   combatMinBoundary: {fileID: 0}
   combatMaxBoundary: {fileID: 0}
+  meteorPrefab: {fileID: 0}
 --- !u!1 &9219640952573525801
 GameObject:
   m_ObjectHideFlags: 0

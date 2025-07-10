@@ -16,6 +16,10 @@ public class Goblin : Monster
     private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
     private int airHitCounter = 0;
 
+    [Header("공격 판정")]
+    [SerializeField] private GameObject attackHitboxObject;
+    private MonsterHitbox attackHitbox;
+
     [Header("AI 상태")]
     protected bool isActing = false; // 현재 어떤 행동(Idle, Move 등)을 하고 있는지 여부
     protected bool isAware = false; // 플레이어를 인식했는가
@@ -38,7 +42,15 @@ public class Goblin : Monster
     private CancellationTokenSource moveCts; // 이동 작업 전용 토큰 - 이동 중단을 위해
 
     #region Unity Lifecycle
-
+    protected override void Awake()
+    {
+        base.Awake();
+        // 히트박스 스크립트 참조
+        if (attackHitboxObject != null)
+        {
+            attackHitbox = attackHitboxObject.GetComponent<MonsterHitbox>();
+        }
+    }
     protected override void Start()
     {
         base.Start();
@@ -165,12 +177,8 @@ public class Goblin : Monster
     private async UniTask Pattern_Aware(CancellationToken token)
     {
         if (isActing) return; // 이미 다른 행동중이면 실행하지 않음
-
-        // 첫 번째 공격 정보를 가져옴
-        currentAttackDetails = monsterData.attackDetails[0];
-
         // 플레이어가 공격 범위 안에 있으면 70% 확률로 공격
-        if (IsPlayerInAttackRange(currentAttackDetails) && Random.value > 0.3f)
+        if (IsPlayerInAttackRange(monsterData.attackDetails[0]) && Random.value > 0.3f)
         {
             isActing = true;
             IsWalking = false;
@@ -471,8 +479,6 @@ public class Goblin : Monster
         {
             // 파편 생성 위치: 몬스터의 월드 좌표
             Vector3 spawnPosition = transform.position;
-            // 파편 Visual의 초기 높이: 몬스터 Visuals의 현재 높이 + 약간의 추가 높이
-            float initialVerticalOffset = visualsTransform.localPosition.y - startPos.y;
 
             foreach (GameObject fragPrefab in fragPrefabs)
             {
@@ -482,9 +488,6 @@ public class Goblin : Monster
 
                 if (fragmentObj != null)
                 {
-                    // 파편 Visual의 초기 높이 설정
-                    fragmentObj.VisualTransform.localPosition = new Vector3(0, initialVerticalOffset, 0);
-
                     // 각 파편에 가할 힘 계산
                     Vector2 horizontalForce = new Vector2(Random.Range(-1f, 1f), Random.Range(-0.3f, 0.3f)).normalized * Random.Range(3f, 7f);
                     float verticalForce = Random.Range(5f, 7f);
@@ -501,6 +504,18 @@ public class Goblin : Monster
 
     protected void Attack()
     {
+        // 첫 번째 공격 정보를 가져옴
+        currentAttackDetails = monsterData.attackDetails[0];
+
+        // 최종 데미지를 계산하여 AttackDetails에 채워넣음
+        currentAttackDetails.damageRate *= this.atk;
+
+        // 히트박스에 완성된 공격 정보를 전달하여 초기화
+        if (attackHitbox != null)
+        {
+            attackHitbox.Initialize(currentAttackDetails);
+        }
+
         anim.SetTrigger("attack");
         Debug.Log("고블린의 공격!");
     }

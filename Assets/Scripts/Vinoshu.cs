@@ -50,6 +50,10 @@ public class Vinoshu : Monster
     private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
     private int airHitCounter = 0;
 
+    [Header("공격 판정")]
+    [SerializeField] private GameObject attackHitboxObject;
+    private MonsterHitbox attackHitbox;
+
     [Header("AI 상태")]
     protected bool isActing = false; // 현재 어떤 행동(Idle, Move 등)을 하고 있는지 여부
     
@@ -61,6 +65,8 @@ public class Vinoshu : Monster
     [SerializeField] private Transform combatMinBoundary;
     [Tooltip("전투 시, 이동 가능한 가장 오른쪽 위 경계를 나타내는 트랜스폼")]
     [SerializeField] private Transform combatMaxBoundary;
+
+    [SerializeField] private GameObject meteorPrefab; // 비노슈가 소환할 메테오
 
     private bool isDead // HP가 0이하로 떨어졌는가 (사망 로직 중복 실행 방지용)
     {
@@ -78,7 +84,15 @@ public class Vinoshu : Monster
     private CancellationTokenSource aiLoopCts; // 비동기 작업 관리. 외부에서는 CancellationToken만 사용
 
     #region Unity Lifecycle
-
+    protected override void Awake()
+    {
+        base.Awake();
+        // 히트박스 스크립트 참조
+        if (attackHitboxObject != null)
+        {
+            attackHitbox = attackHitboxObject.GetComponent<MonsterHitbox>();
+        }
+    }
     protected override void Start()
     {
         base.Start();
@@ -190,7 +204,8 @@ public class Vinoshu : Monster
             {
                 // 메테오
                 await Meteor(token);
-            } else if (action > 0.7f) // 나머지. 대기 / 전진 / 후퇴
+            }
+            else if (action > 0.7f) // 나머지. 대기 / 전진 / 후퇴
             {
                 action = Random.Range(0, 3);
                 switch (action)
@@ -231,8 +246,17 @@ public class Vinoshu : Monster
         isActing = true;
         try
         {
-            // 첫 번째 공격 정보(근접 공격 정보)를 가져옴
+            // 첫 번째 공격 정보를 가져옴
             currentAttackDetails = monsterData.attackDetails[0];
+
+            // 최종 데미지를 계산하여 AttackDetails에 채워넣음
+            currentAttackDetails.damageRate *= this.atk;
+
+            // 히트박스에 완성된 공격 정보를 전달하여 초기화
+            if (attackHitbox != null)
+            {
+                attackHitbox.Initialize(currentAttackDetails);
+            }
             FlipTowardsPlayer();
             anim.SetTrigger("attack");
             Debug.Log("비노슈의 근접 공격!");
@@ -253,14 +277,31 @@ public class Vinoshu : Monster
         isActing = true;
         try
         {
-            // 두 번째 공격 정보(메테오 공격 정보)를 가져옴
+            // 인스펙터에서 설정해놓은 두 번째 공격 정보(메테오 공격 정보)를 가져옴
+            Debug.Log("비노슈의 메테오 시전!");
             currentAttackDetails = monsterData.attackDetails[1];
+            currentAttackDetails.damageRate *= this.atk; // 공격력을 곱해 메테오에게 전달할 것임
             FlipTowardsPlayer();
             anim.SetTrigger("cast");
-            Debug.Log("비노슈의 메테오 공격!");
 
+            // 마법진 생성. MagicCircle 이펙트의 visuals가 0.4f 만큼 밑으로 내려가있어 그만큼 offset을 넣어줘야함
+            Vector3 targetPosition = new Vector3(playerTransform.position.x, playerTransform.position.y + 0.4f, playerTransform.position.z);
+            EffectManager.Instance.PlayEffect("MagicCircle", targetPosition, Quaternion.identity);
+
+            // 다른 행동 진행을 막기 위해 cast애니메이션의 길이 1.1초 만큼 대기
             await UniTask.Delay(1100, cancellationToken: token);
-            
+
+            targetPosition.y -= 0.4f;
+
+            Debug.Log("메테오 소환!");
+            if (meteorPrefab != null)
+            {
+                GameObject meteorInstance = Instantiate(meteorPrefab, targetPosition, Quaternion.identity);
+
+                // 메테오가 타겟을 향하도록 현재 공격 정보와 함께 초기화
+                meteorInstance.GetComponent<VinoshuMeteor>().Initialize(currentAttackDetails, targetPosition);
+            }
+
         }
         catch (OperationCanceledException)
         {
@@ -271,7 +312,6 @@ public class Vinoshu : Monster
             isActing = false;
         }        
     }
-
     // 목표 지점까지 이동
     private async UniTask MoveTo(Vector3 destination, CancellationToken token)
     {
@@ -540,7 +580,7 @@ public class Vinoshu : Monster
     private void CheckForLanding()
     {
         // Visuals의 Y 좌표가 시작 Y좌표보다 아래로 내려갔다면 착지로 간주
-        if (visualsTransform.localPosition.y <= startPos.y - 0.25f) // 비노슈는 땅에서 살짝 떠있는 채로 움직이는 몬스터기 때문에 0.25만큼 y값을 빼주어야함
+        if (visualsTransform.localPosition.y <= startPos.y - 0.25f) // 비노슈는 땅에서 살짝 떠있는 채로 움직이는 몬스터기 때문에 0.25만큼 y값을 빼주어야 땅에 제대로 착지한 듯이 보임
         {
             if (verticalVelocity < -1f)
             {

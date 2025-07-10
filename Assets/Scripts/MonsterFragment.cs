@@ -13,13 +13,13 @@ public class MonsterFragment : MonoBehaviour
     [Header("참조")]
     private Rigidbody2D rb;
     public Transform VisualTransform;
-    private SpriteRenderer spriteRenderer;
+    private SpriteRenderer sr;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         VisualTransform = transform.Find("Visual");
-        spriteRenderer = VisualTransform.GetComponent<SpriteRenderer>();
+        sr = VisualTransform.GetComponent<SpriteRenderer>();
     }
 
     void Start()
@@ -67,12 +67,12 @@ public class MonsterFragment : MonoBehaviour
 
         // 서서히 사라지는 효과
         float elapsedTime = 0f;
-        Color startColor = spriteRenderer.color;
+        Color startColor = sr.color;
 
         while (elapsedTime < fadeOutDuration)
         {
             float alpha = 1.0f - (elapsedTime / fadeOutDuration);
-            spriteRenderer.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            sr.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
             elapsedTime += Time.deltaTime;
             await UniTask.Yield(token);
         }

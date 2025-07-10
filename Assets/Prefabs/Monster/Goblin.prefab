@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4317449604219310834}
   m_Layer: 0
   m_Name: Hurtbox
-  m_TagString: Monster
+  m_TagString: MonsterHurtbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -245,6 +245,7 @@ MonoBehaviour:
   IsGrounded: 1
   IsWalking: 0
   verticalVelocity: 0
+  attackHitboxObject: {fileID: 5832026579691959121}
   patrolAreaSize: {x: 3, y: 3}
   combatMinBoundary: {fileID: 0}
   combatMaxBoundary: {fileID: 0}
@@ -431,7 +432,7 @@ GameObject:
   - component: {fileID: 6491341674499214301}
   m_Layer: 0
   m_Name: Hitbox
-  m_TagString: Untagged
+  m_TagString: MonsterHitbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

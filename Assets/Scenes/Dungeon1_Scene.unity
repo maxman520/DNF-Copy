@@ -4044,6 +4044,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7883884189406195664, guid: 88ddcb5810e85694c8fc5ab54df920d5, type: 3}
+      propertyPath: meteorPrefab
+      value: 
+      objectReference: {fileID: 2230765920653679949, guid: a0ef7d3a832793b42ba6908252c7a74e, type: 3}
+    - target: {fileID: 7883884189406195664, guid: 88ddcb5810e85694c8fc5ab54df920d5, type: 3}
       propertyPath: combatMaxBoundary
       value: 
       objectReference: {fileID: 1761127746}

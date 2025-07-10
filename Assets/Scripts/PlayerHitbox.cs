@@ -21,7 +21,7 @@ public class PlayerHitbox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Monster"))
+        if (other.CompareTag("MonsterHurtbox"))
         {
             Monster monster = other.GetComponentInParent<Monster>();
             if (monster == null) return;
