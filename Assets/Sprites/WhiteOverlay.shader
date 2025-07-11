@@ -48,14 +48,20 @@ Shader"Custom/WhiteOverlay" // 1. 셰이더 이름 정의
                     o.vertex = UnityObjectToClipPos(v.vertex);
                     o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
                     return o;
-}
+                }
 
                 // 18. 프래그먼트 셰이더
                 fixed4 frag(v2f i) : SV_Target
                 {
+                    // 1. 텍스처에서 원본 픽셀 색상 가져오기
                     fixed4 col = tex2D(_MainTex, i.uv);
+    
+                    // 2. 흰색으로 덮어씌우기 (Flash White의 핵심)
                     col.rgb = lerp(col.rgb, 1.0, _Blend); // White 보간
-                    col.a *= _Alpha; // 알파값은 따로 조절
+    
+                    // 3. 최종 투명도 조절
+                    col.a *= _Alpha;
+    
                     return col;
                 }
             ENDCG // 19. CG/HLSL 코드 끝

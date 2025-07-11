@@ -46,12 +46,12 @@ public class EffectManager : Singleton<EffectManager>
     }
 
     // 이펙트 재생 요청
-    public void PlayEffect(string name, Vector3 position, Quaternion rotation)
+    public GameObject PlayEffect(string name, Vector3 position, Quaternion rotation)
     {
         if (!effectPrefabDict.ContainsKey(name))
         {
             Debug.LogWarning($"EffectManager: '{name}' 이라는 이름의 이펙트를 찾을 수 없습니다.");
-            return;
+            return null;
         }
 
         GameObject effectObject;
@@ -73,16 +73,18 @@ public class EffectManager : Singleton<EffectManager>
         }
 
         activeEffects[name].Add(effectObject);
+
+        return effectObject;
     }
 
     // 데미지 폰트 재생 요청
-    public void PlayEffect(string name, Vector3 position, Quaternion rotation, float damage)
+    public GameObject PlayEffect(string name, Vector3 position, Quaternion rotation, float damage)
     {
         position = new Vector3(position.x, position.y + 0.5f, position.z);
         if (!effectPrefabDict.ContainsKey(name))
         {
             Debug.LogWarning($"EffectManager: '{name}' 이라는 이름의 이펙트를 찾을 수 없습니다.");
-            return;
+            return null;
         }
 
         GameObject damageTextObj;
@@ -105,6 +107,8 @@ public class EffectManager : Singleton<EffectManager>
 
         damageTextObj.GetComponent<DamageText>().SetDamageAndPlay((int)damage);
         activeEffects[name].Add(damageTextObj);
+
+        return damageTextObj;
     }
 
     // 몬스터 HP바 점멸 이펙트 생성 요청

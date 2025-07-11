@@ -280,7 +280,7 @@ public class Vinoshu : Monster
             // 인스펙터에서 설정해놓은 두 번째 공격 정보(메테오 공격 정보)를 가져옴
             Debug.Log("비노슈의 메테오 시전!");
             currentAttackDetails = monsterData.attackDetails[1];
-            currentAttackDetails.damageRate *= this.atk; // 공격력을 곱해 메테오에게 전달할 것임
+            currentAttackDetails.damageRate *= this.atk; // 공격력이 곱해진 정보를 메테오에게 전달할 것임
             FlipTowardsPlayer();
             anim.SetTrigger("cast");
 
@@ -291,7 +291,7 @@ public class Vinoshu : Monster
             // 다른 행동 진행을 막기 위해 cast애니메이션의 길이 1.1초 만큼 대기
             await UniTask.Delay(1100, cancellationToken: token);
 
-            targetPosition.y -= 0.4f;
+            targetPosition.y -= 0.4f; // 정확한 타겟 위치를 구하기 위해 위에서 더해줬던 0.4를 다시 빼줌
 
             Debug.Log("메테오 소환!");
             if (meteorPrefab != null)

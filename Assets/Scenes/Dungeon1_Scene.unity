@@ -4003,6 +4003,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vinoshu
       objectReference: {fileID: 0}
+    - target: {fileID: 6296903932047600178, guid: 88ddcb5810e85694c8fc5ab54df920d5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7719143606362437499, guid: 88ddcb5810e85694c8fc5ab54df920d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.5039358

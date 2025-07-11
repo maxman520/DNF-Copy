@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class VinoshuMeteor : MonoBehaviour
 {
-    private AttackDetails attackDetails;
+    private AttackDetails attackDetails; // 이 메테오를 호출한 몬스터의 공격 정보
+    Vector3 origin; // 히트박스 판정 처리 기준 위치
+
     private float fallSpeed = 8f;
-    private Vector3 targetPosition = Vector3.zero;
     private bool isFalling = false;
 
     private Transform visualsTransform;
@@ -23,6 +24,7 @@ public class VinoshuMeteor : MonoBehaviour
     {
         this.visualsTransform.localPosition = new Vector3 (8f, 8f ,0);
         this.attackDetails = details;
+        this.origin = origin;
         isFalling = true;
 
         var token = this.GetCancellationTokenOnDestroy();
@@ -45,10 +47,10 @@ public class VinoshuMeteor : MonoBehaviour
         if (isFalling)
         {
             // 단순하게 타겟을 향해 등속 이동
-            visualsTransform.localPosition = Vector3.MoveTowards(visualsTransform.localPosition, targetPosition, fallSpeed * Time.deltaTime);
+            visualsTransform.localPosition = Vector3.MoveTowards(visualsTransform.localPosition, Vector3.zero, fallSpeed * Time.deltaTime);
 
             // 타겟에 거의 도착했다면 폭발
-            if (Vector3.Distance(visualsTransform.localPosition, targetPosition) < 0.1f)
+            if (Vector3.Distance(visualsTransform.localPosition, Vector3.zero) < 0.1f)
             {
                 Explode();
                 isFalling = false; // 중복 폭발 방지
@@ -58,8 +60,9 @@ public class VinoshuMeteor : MonoBehaviour
 
     private void Explode()
     {
-        // GameObject MeteorExplosion = EffectManager.Instance.PlayEffect("MeteorExplosion", transform.position, Quaternion.identity);
-        // ...
+        GameObject meteorExplosion = EffectManager.Instance.PlayEffect("FireExplosion", transform.position, Quaternion.identity);
+        attackDetails.yOffset += 0.3f; // 폭발 이펙트의 y축 범위는 메테오 자체의 y축 범위보다 넓게
+        meteorExplosion?.GetComponentInChildren<MonsterHitbox>().Initialize(attackDetails, origin);
         Destroy(gameObject);
     }
 
