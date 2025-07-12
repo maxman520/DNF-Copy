@@ -1,4 +1,5 @@
 using System;
+using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,6 +43,8 @@ public class Player : Singleton<Player>
 
     [Header("공격 정보")]
     public AttackDetails[] AttackDetails;
+    [Header("히트박스 참조")]
+    [SerializeField] private PlayerHitbox comboHitbox; // 일반 콤보 공격에 사용할 히트박스
 
 
     private InputHandler inputHandler;
@@ -127,7 +130,7 @@ public class Player : Singleton<Player>
         return (CurrentAnimState.HasFlag(state));
     }
 
-    public void OnDamaged(AttackDetails attackDetails)
+    public void OnDamaged(AttackDetails attackDetails, Vector3 attackPosition)
     {
         // 입을 데미지 계산
         float damage = CalculateDamage(attackDetails);
@@ -136,17 +139,17 @@ public class Player : Singleton<Player>
         EffectManager.Instance.PlayEffect("HurtDamageText",HurtboxTransform.position, Quaternion.identity, damage);
 
         // 피격 반응
-        Debug.Log(damage + " 만큼의 피해를 입음");
-        Anim.SetTrigger("hurt");
+        behaviourController.HandleHurt(attackDetails, attackPosition);
 
         // 이미 죽었다면 데미지 적용X. return
 
         // 데미지 적용
         // ex) health -= damage;
+        // Debug.Log(damage + " 만큼의 피해를 입음");
         // ex) behaviourController.ApplyKnockback(...); // 넉백 및 피격 반응 처리
         // BehaviourController에 위임하는 것이 좋음
     }
-    public float CalculateDamage(AttackDetails attackDetails)
+    private float CalculateDamage(AttackDetails attackDetails)
     {
         // !! 데미지 배율에 몬스터의 공격력이 이미 곱해져있음 !!
         float finalDamage = (attackDetails.damageRate) - (Def * 0.5f);
@@ -154,6 +157,7 @@ public class Player : Singleton<Player>
 
         return finalDamage;
     }
+
 
     // 던전 입장 시 GameManager에 의해 호출
     public void OnEnterDungeon()
@@ -186,8 +190,24 @@ public class Player : Singleton<Player>
     public void AnimEvent_OnComboWindowClose()
     {
         behaviourController?.OnComboWindowClose();
+
     }
-    #endregion
+    public void SetComboAttackDetails(int index)
+    {
+        // 1. 공격 정보 가져오기
+        AttackDetails details = AttackDetails[index];
+
+        // 2. Y축 판정 기준점 결정
+        //    일반 공격은 항상 플레이어의 발밑을 기준으로 함
+        float originY = this.transform.position.y;
+
+        // 3. 히트박스 초기화
+        if (comboHitbox != null)
+        {
+            comboHitbox.Initialize(details, originY);
+        }
+    }
+    #endregion Animation Event Receivers
 #if UNITY_EDITOR // 에디터에서만 실행되도록 전처리기 사용 (빌드 시 제외)
     // 디버깅 UI를 켤지 말지 결정하는 변수
     [Header("디버그 옵션")]

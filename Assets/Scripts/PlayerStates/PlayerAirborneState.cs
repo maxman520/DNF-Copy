@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerHurtState : PlayerStateBehaviourBase
+public class PlayerAirborneState : PlayerStateBehaviourBase
 {
     // 이 상태로 진입할 때 호출
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -17,6 +17,7 @@ public class PlayerHurtState : PlayerStateBehaviourBase
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateExit(animator, stateInfo, layerIndex);
+
     }
 
 }

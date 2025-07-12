@@ -9,8 +9,8 @@ public class BehaviourController
     Vector3 startPos;
 
     // 가상 물리 변수
-    private const float ORIGINAL_GRAVITY = 21f;
-    private const float JUMP_FORCE = 11f;     // 점프 시 위로 가하는 초기 '힘'(속도)
+    private const float ORIGINAL_GRAVITY = 12f;
+    private const float JUMP_FORCE = 8f;     // 점프 시 위로 가하는 초기 '힘'(속도)
     private const float JUMP_MOVEMENT_PENALTY = 0.3f;
     private float verticalVelocity; // 수직 '힘'의 결과로 나타나는 현재 속도
     private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
@@ -181,6 +181,53 @@ public class BehaviourController
         player.CanContinueAttack = false;
     }
 
+    // Player로부터 피격 처리를 위임받는 함수
+    public void HandleHurt(AttackDetails attackDetails, Vector3 attackPosition)
+    {
+        // 방향 결정
+        float direction = (player.transform.position.x > attackPosition.x) ? 1 : -1;
+
+        if (player.IsGrounded) // 땅에 있을 때
+        {
+            if (attackDetails.launchForce > 0) // 띄우는 공격
+            {
+                // 수평 넉백
+                player.Rb.linearVelocity = Vector2.zero; // 기존 속도 초기화
+                player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
+
+                // 공중에 뜨는 힘 적용
+                verticalVelocity = attackDetails.launchForce;
+                player.IsGrounded = false;
+                animController.PlayAirborne(); // 또는 AnimController를 통해 애니메이션 직접 제어
+            }
+            else // 일반 공격
+            {
+                // 짧은 수평 넉백 (transform.position 직접 조작 또는 AddForce)
+                player.Rb.linearVelocity = Vector2.zero; // 기존 속도 초기화
+                player.transform.position += new Vector3(direction * attackDetails.knockbackForce * 0.1f, 0);
+                // player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
+
+                animController.PlayHurt(Random.Range(1, 3)); // hurt 애니메이션 재생
+            }
+        }
+        else // 공중에 있을 때
+        {
+            // 수평 넉백
+            player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
+            animController.PlayAirborne(); // hurt 애니메이션 재생
+
+            // 공중 콤보 보정. 플레이어는 필요없음
+            // if (attackDetails.launchForce > 0) airHitCounter++;
+
+            // 공중 피격 반응 로직 적용. 플레이어는 필요없음
+            // float heightDecayFactor = Mathf.Max(0, 1f - (airHitCounter * 0.2f));
+            // float finalLaunchForce = attackDetails.launchForce * heightDecayFactor;
+            // float airHitReactionForce = 4f; // 공중에서 맞았을 때 살짝 튀어오르는 기본 힘
+
+            verticalVelocity = 4f;
+        }
+    }
+
     #region Jump
 
     // Update에서 매번 체크하며 중력 적용
@@ -215,6 +262,7 @@ public class BehaviourController
             gravity = ORIGINAL_GRAVITY;
 
             // 상태 초기화
+            player.Rb.linearVelocity = Vector3.zero;
             player.IsGrounded = true;
             player.IsRunning = false;
             animController.ResetJumpAttackTrigger();

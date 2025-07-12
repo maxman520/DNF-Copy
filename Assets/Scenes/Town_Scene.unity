@@ -2795,6 +2795,8 @@ MonoBehaviour:
     prefab: {fileID: 345330374214512100, guid: d44fdaab37eae484b93fe3beea3ff9eb, type: 3}
   - name: ShootingStarGlow
     prefab: {fileID: 6363487491190452214, guid: 1b7092fdbce23244fbdd32a31022c448, type: 3}
+  - name: FireExplosion
+    prefab: {fileID: 7245467881734940303, guid: a27c96f6ab33ae5469c1e31b7b529533, type: 3}
 --- !u!4 &1231408414
 Transform:
   m_ObjectHideFlags: 0
@@ -3818,6 +3820,7 @@ MonoBehaviour:
     knockbackForce: 0.5
     launchForce: 0
     yOffset: 0.5
+  comboHitbox: {fileID: 1705849575}
   showInputBufferUI: 1
 --- !u!50 &1448341288
 Rigidbody2D:
@@ -3832,7 +3835,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 3
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -4031,7 +4034,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 13.333333, y: 10}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -4129,7 +4132,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1705849573
 Transform:
   m_ObjectHideFlags: 0

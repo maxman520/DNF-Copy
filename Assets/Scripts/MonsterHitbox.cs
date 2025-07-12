@@ -46,7 +46,7 @@ public class MonsterHitbox : MonoBehaviour
 
             if (player != null)
             {
-                player.OnDamaged(attackDetails);
+                player.OnDamaged(attackDetails, originPosition);
             }
         }
 

@@ -25,6 +25,6 @@ MonoBehaviour:
   attackDetails:
   - attackName: Attack
     damageRate: 1
-    knockbackForce: 0
+    knockbackForce: 0.5
     launchForce: 0
     yOffset: 0.3

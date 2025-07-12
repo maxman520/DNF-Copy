@@ -387,6 +387,7 @@ public class Goblin : Monster
         // hurtbox 지점에 이펙트를 생성
         Vector3 hurtPoint = hurtboxTransform.position;
 
+        // 출혈 이펙트의 방향을 조절하기 위한 변수. attackPosition(플레이어 히트박스의 좌표)와 몬스터의 좌표를 비교
         // 이펙트의 방향은 플레이어가 바라보는 방향을 따르거나, 기본 방향으로 설정
         Quaternion effectRotation = (transform.position.x > attackPosition.x) ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
 
@@ -397,6 +398,7 @@ public class Goblin : Monster
         EffectManager.Instance.PlayEffect("BloodLarge", hurtPoint, effectRotation);
 
 
+        // 넉백 적용 방향 결정. attackPosition은 플레이어 히트박스의 위치
         float direction = (transform.position.x > attackPosition.x) ? 1 : -1;
 
         if (IsGrounded) // 땅에 있을 때
@@ -541,7 +543,7 @@ public class Goblin : Monster
         // Visuals의 Y 좌표가 시작 Y좌표보다 아래로 내려갔다면 착지로 간주
         if (visualsTransform.localPosition.y <= startPos.y)
         {
-            if (verticalVelocity < -1f)
+            if (verticalVelocity < -1.5f)
             {
                 verticalVelocity *= -0.5f;
                 return;

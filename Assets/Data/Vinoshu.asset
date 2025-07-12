@@ -25,11 +25,11 @@ MonoBehaviour:
   attackDetails:
   - attackName: Attack
     damageRate: 1
-    knockbackForce: 0
+    knockbackForce: 0.5
     launchForce: 0
     yOffset: 0.5
   - attackName: Meteor
     damageRate: 2
-    knockbackForce: 0
-    launchForce: 0
-    yOffset: 0.3
+    knockbackForce: 3
+    launchForce: 6
+    yOffset: 0.5

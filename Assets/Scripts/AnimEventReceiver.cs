@@ -23,7 +23,7 @@ public class AnimEventReceiver : MonoBehaviour
 
     public void SetComboAttackDetails(int index)
     {
-        playerHitbox?.SetComboAttackDetails(index);
+        player?.SetComboAttackDetails(index);
     }
 
 }

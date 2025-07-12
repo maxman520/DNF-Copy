@@ -582,7 +582,7 @@ public class Vinoshu : Monster
         // Visuals의 Y 좌표가 시작 Y좌표보다 아래로 내려갔다면 착지로 간주
         if (visualsTransform.localPosition.y <= startPos.y - 0.25f) // 비노슈는 땅에서 살짝 떠있는 채로 움직이는 몬스터기 때문에 0.25만큼 y값을 빼주어야 땅에 제대로 착지한 듯이 보임
         {
-            if (verticalVelocity < -1f)
+            if (verticalVelocity < -1.5f)
             {
                 verticalVelocity *= -0.5f;
                 return;

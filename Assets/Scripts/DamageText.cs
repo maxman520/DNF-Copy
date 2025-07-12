@@ -83,10 +83,10 @@ public class DamageText : MonoBehaviour
 
             // Ease-Out 효과를 위해 진행률을 보정 (처음엔 빠르고 나중에 느리게)
             // 1 - (1-x)^n 공식 사용
-            float easedProgress = 1 - Mathf.Pow(1 - progress, 3); // 3은 강도 조절
+            // float easedProgress = 1 - Mathf.Pow(1 - progress, 3); // 3은 강도 조절
 
             // 크기를 시작 크기에서 목표 크기로 보간
-            transform.localScale = Vector3.Lerp(startScale, originalScale, easedProgress);
+            transform.localScale = Vector3.Lerp(startScale, originalScale, progress);
 
             elapsedTime += Time.deltaTime;
             await UniTask.Yield(this.GetCancellationTokenOnDestroy());
