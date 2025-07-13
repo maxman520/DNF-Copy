@@ -6,7 +6,7 @@ using System;
 
 public class Vinoshu : Monster
 {
-    [Header("이동 상태")]
+    [Header("상태 변수")]
     public bool IsGrounded
     {
         get
@@ -43,31 +43,6 @@ public class Vinoshu : Monster
             anim.SetBool("isBackward", value);
         }
     }
-
-    [Header("물리 변수")]
-    private const float ORIGINAL_GRAVITY = 10f;
-    public float verticalVelocity; // 수직 '힘'의 결과로 나타나는 현재 속도
-    private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
-    private int airHitCounter = 0;
-
-    [Header("공격 판정")]
-    [SerializeField] private GameObject attackHitboxObject;
-    private MonsterHitbox attackHitbox;
-
-    [Header("AI 상태")]
-    protected bool isActing = false; // 현재 어떤 행동(Idle, Move 등)을 하고 있는지 여부
-    
-    // 무조건 인식 상태로 만들 것이므로 isAware 함수는 필요없음
-    // protected bool isAware = false;
-
-    [Header("AI Configuration")]
-    [Tooltip("전투 시, 이동 가능한 가장 왼쪽 아래 경계를 나타내는 트랜스폼")]
-    [SerializeField] private Transform combatMinBoundary;
-    [Tooltip("전투 시, 이동 가능한 가장 오른쪽 위 경계를 나타내는 트랜스폼")]
-    [SerializeField] private Transform combatMaxBoundary;
-
-    [SerializeField] private GameObject meteorPrefab; // 비노슈가 소환할 메테오
-
     private bool isDead // HP가 0이하로 떨어졌는가 (사망 로직 중복 실행 방지용)
     {
         get
@@ -79,14 +54,38 @@ public class Vinoshu : Monster
         {
             anim.SetBool("isDead", value);
         }
-    } 
+    }
 
-    private CancellationTokenSource aiLoopCts; // 비동기 작업 관리. 외부에서는 CancellationToken만 사용
+    [Header("물리 변수")]
+    private const float ORIGINAL_GRAVITY = 10f;
+    public float verticalVelocity; // 현재 수직 속도. 에어본 시 y축 계산에 이용
+    private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
+    private int airHitCounter = 0;
+
+    [Header("공격 판정")]
+    [SerializeField] private GameObject attackHitboxObject;
+    private MonsterHitbox attackHitbox;
+    
+    // 무조건 인식 상태로 만들 것이므로 고블린과 다르게 isAware 변수는 필요없음
+    // protected bool isAware = false;
+
+    [Header("AI 관련 변수")]
+    protected bool isActing = false; // 현재 어떤 행동(Idle, Move 등)을 하고 있는지 여부
+    [Tooltip("전투 시, 이동 가능한 가장 왼쪽 아래 경계를 나타내는 트랜스폼")]
+    [SerializeField] private Transform combatMinBoundary;
+    [Tooltip("전투 시, 이동 가능한 가장 오른쪽 위 경계를 나타내는 트랜스폼")]
+    [SerializeField] private Transform combatMaxBoundary;
+
+    [SerializeField] private GameObject meteorPrefab; // 비노슈가 소환할 메테오
+
+
+    private CancellationTokenSource aiLoopCts; // 비동기 작업 관리
 
     #region Unity Lifecycle
     protected override void Awake()
     {
         base.Awake();
+        
         // 히트박스 스크립트 참조
         if (attackHitboxObject != null)
         {
@@ -117,7 +116,7 @@ public class Vinoshu : Monster
     #region AI System
     private void StartAILoop()
     {
-        // 이전 CancellationTokenSource가 있다면 return
+        // 이전 CancellationTokenSource가 있다면. 실행중이던 AI Loop가 있다면 return
         if (aiLoopCts != null) return;
 
         // 오브젝트 파괴 시 취소되는 토큰과 연결된 새로운 CancellationTokenSource 생성
@@ -161,30 +160,36 @@ public class Vinoshu : Monster
             // 행동 결정용 변수
             float action = Random.value;
 
-            // 60% 확률로 근접 공격
+            // 근접 공격 (60% 확률)
             if (action > 0.4f)
             {
-                await Attack(token); // 공격 실행
-            } else if (action < 0.1f)
+                await Attack(token);
+            }
+            else if (action < 0.1f) // 메테오 공격 (10% 확률)
             {
-                // 메테오
-                await Meteor(token); // 메테오 공격 실행
+                await Meteor(token);
 
-            } else
+            }
+            else
             {
-                // 전진 or 후퇴
                 Vector3 destination; // 이동 목표 지점
-                float directionFactor = -1f;
-                IsBackward = true;
-                if (action == 1)
-                {
-                    directionFactor = 1f;
-                    IsBackward = false;
-                }
-                Vector3 direction = (playerTransform.position - transform.position).normalized * directionFactor;
-                destination = transform.position + direction * Random.Range(1f, 3f);
 
-                // 목표 지점을 combatMinBoundary/combatMaxBoundary 내로 보정
+                if (action > 0.25f) // 전진 (15% 확률)
+                {
+                    IsBackward = false;
+                    // 플레이어 방향으로 이동
+                    Vector3 direction = (playerTransform.position - transform.position).normalized;
+                    destination = transform.position + direction * Random.Range(1f, 3f);
+                }
+                else // 후퇴 (15% 확률)
+                {
+                    IsBackward = true;
+                    // 플레이어 반대 방향으로 이동
+                    Vector3 direction = (playerTransform.position - transform.position).normalized * -1f;
+                    destination = transform.position + direction * Random.Range(1f, 2f);
+                }
+
+                // 목표 지점을 정해진 전투 구역 (combatMinBoundary/combatMaxBoundary. ) 내로 보정
                 if (combatMinBoundary != null && combatMaxBoundary != null)
                 {
                     destination.x = Mathf.Clamp(destination.x, combatMinBoundary.position.x, combatMaxBoundary.position.x);
@@ -193,19 +198,18 @@ public class Vinoshu : Monster
                 await MoveTo(destination, token);
             }
         }
-        else // 공격 범위 밖에 있으면
+        else // 자신의 근접 공격 범위 밖에 있으면
         {
             // 행동 결정용 변수
             float action = Random.value;
             Vector3 destination;
 
-            // 10% 확률로 메테오
+            // 메테오 공격 (10% 확률)
             if (action < 0.1f)
             {
-                // 메테오
                 await Meteor(token);
             }
-            else if (action > 0.7f) // 나머지. 대기 / 전진 / 후퇴
+            else // 대기 / 전진 / 후퇴 (90% 확률)
             {
                 action = Random.Range(0, 3);
                 switch (action)
@@ -216,14 +220,15 @@ public class Vinoshu : Monster
                         break;
                     case 1: // 플레이어에게 접근
                     case 2: // 플레이어에게서 후퇴
-                            // 접근이면 +, 후퇴면 - 방향
-                        float directionFactor = -1f;
+                        float directionFactor = -1f; // 접근이면 +, 후퇴면 - 방향
                         IsBackward = true;
-                        if (action == 1)
+
+                        if (action == 1) // 접근할 경우라면 상태 변수와 방향 수정
                         {
                             directionFactor = 1f;
                             IsBackward = false;
                         }
+
                         Vector3 direction = (playerTransform.position - transform.position).normalized * directionFactor;
                         destination = transform.position + direction * Random.Range(1f, 3f);
 
@@ -261,6 +266,7 @@ public class Vinoshu : Monster
             anim.SetTrigger("attack");
             Debug.Log("비노슈의 근접 공격!");
 
+            // 다른 행동 진행을 막기 위해 attack 애니메이션 길이만큼 대기
             await UniTask.Delay(1100, cancellationToken: token);
         }
         catch (OperationCanceledException)
@@ -288,7 +294,7 @@ public class Vinoshu : Monster
             Vector3 targetPosition = new Vector3(playerTransform.position.x, playerTransform.position.y + 0.4f, playerTransform.position.z);
             EffectManager.Instance.PlayEffect("MagicCircle", targetPosition, Quaternion.identity);
 
-            // 다른 행동 진행을 막기 위해 cast애니메이션의 길이 1.1초 만큼 대기
+            // 다른 행동 진행을 막기 위해 cast 애니메이션의 길이만큼 대기
             await UniTask.Delay(1100, cancellationToken: token);
 
             targetPosition.y -= 0.4f; // 정확한 타겟 위치를 구하기 위해 위에서 더해줬던 0.4를 다시 빼줌
@@ -442,7 +448,7 @@ public class Vinoshu : Monster
 
         // UIManager에 자신을 타겟으로 알림
         UIManager.Instance.OnMonsterDamaged(this);
-        //UIManager.Instance.UpdateMonsterHP();
+        // UIManager.Instance.UpdateMonsterHP();
 
     }
 
@@ -462,8 +468,6 @@ public class Vinoshu : Monster
         IsWalking = false;
        
         rb.linearVelocity = Vector2.zero; // 넉백 전에 속도 초기화
-
-        // 이펙트 재생 요청
 
         // hurtbox 지점에 이펙트를 생성
         Vector3 hurtPoint = hurtboxTransform.position;

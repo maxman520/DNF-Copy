@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using UnityEngine;
+using Unity.Cinemachine;
 
 public class VinoshuMeteor : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class VinoshuMeteor : MonoBehaviour
     private float fallSpeed = 8f;
     private bool isFalling = false;
 
+    [SerializeField] private CinemachineImpulseSource impulseSource; // 카메라 흔들림
     private Transform visualsTransform;
     private MonsterHitbox meteorHitbox; // Visuals의 히트박스 스크립트 참조
 
@@ -17,6 +19,8 @@ public class VinoshuMeteor : MonoBehaviour
     {
         this.visualsTransform = transform.Find("Visuals");
         meteorHitbox = visualsTransform.GetComponent<MonsterHitbox>();
+        if (impulseSource == null)
+            impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
     // Vinoshu가 이 함수를 호출하여 메테오를 시작시킴
@@ -63,6 +67,10 @@ public class VinoshuMeteor : MonoBehaviour
         GameObject meteorExplosion = EffectManager.Instance.PlayEffect("FireExplosion", transform.position, Quaternion.identity);
         attackDetails.yOffset += 0.3f; // 폭발 이펙트의 y축 범위는 메테오 자체의 y축 범위보다 넓게
         meteorExplosion?.GetComponentInChildren<MonsterHitbox>().Initialize(attackDetails, origin);
+        
+        if (impulseSource != null) // 카메라 흔들림. 흔들림의 x방향은 랜덤으로
+            impulseSource.GenerateImpulse(new Vector3((Random.value < 0.5f ? -1 : 1), 1, 0));
+
         Destroy(gameObject);
     }
 

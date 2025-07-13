@@ -4,11 +4,11 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - CameraBound
   - PlayerHurtbox
   - PlayerHitbox
   - MonsterHurtbox
   - MonsterHitbox
+  - PlayerGround
   layers:
   - Default
   - TransparentFX

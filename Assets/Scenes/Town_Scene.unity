@@ -2026,9 +2026,9 @@ GameObject:
   m_Component:
   - component: {fileID: 872737049}
   - component: {fileID: 872737051}
-  - component: {fileID: 872737050}
+  - component: {fileID: 872737052}
   m_Layer: 0
-  m_Name: Portal_Dungeon1
+  m_Name: Portal_Dungeon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2049,19 +2049,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1043665173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &872737050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 872737048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d63ccb80791f9a54b817dffdc1634524, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  destinationSceneName: Dungeon1_Scene
 --- !u!61 &872737051
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2108,6 +2095,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 4.304735}
   m_EdgeRadius: 0
+--- !u!114 &872737052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 872737048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d63ccb80791f9a54b817dffdc1634524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destinationSceneName: Dungeon1_Scene
 --- !u!1 &998874425
 GameObject:
   m_ObjectHideFlags: 0
@@ -2824,7 +2824,7 @@ GameObject:
   - component: {fileID: 1273313048}
   m_Layer: 3
   m_Name: Player_Ground
-  m_TagString: Untagged
+  m_TagString: PlayerGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3260,6 +3260,50 @@ Transform:
   - {fileID: 50138841}
   m_Father: {fileID: 1043665173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1324211848
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1324211850}
+  - component: {fileID: 1324211849}
+  m_Layer: 0
+  m_Name: Dungeon_Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1324211849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324211848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0cde5a5276fab54e82f2772a4b6f801, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1324211850
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324211848}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 15.27587, y: 4.81161, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1341680559
 GameObject:
   m_ObjectHideFlags: 0
@@ -3272,7 +3316,7 @@ GameObject:
   - component: {fileID: 1341680561}
   - component: {fileID: 1341680565}
   - component: {fileID: 1341680564}
-  - component: {fileID: 1341680566}
+  - component: {fileID: 1341680567}
   m_Layer: 0
   m_Name: Virtual_Camera
   m_TagString: Untagged
@@ -3352,7 +3396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoundingShape2D: {fileID: 1383277095}
   Damping: 0
-  SlowingDistance: 5
+  SlowingDistance: 0
   OversizeWindow:
     Enabled: 0
     MaxWindowSize: 0
@@ -3389,7 +3433,7 @@ MonoBehaviour:
     Time: 0
     Smoothing: 0
     IgnoreY: 0
---- !u!114 &1341680566
+--- !u!114 &1341680567
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3398,9 +3442,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1341680559}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b297a08edd679944a5a018fcbba5ed9, type: 3}
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ApplyAfter: 2
+  ChannelMask: 1
+  Gain: 0.3
+  Use2DDistance: 0
+  UseCameraSpace: 1
+  SignalCombinationMode: 0
+  ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1382315502
 GameObject:
   m_ObjectHideFlags: 0
@@ -3500,7 +3556,7 @@ GameObject:
   - component: {fileID: 1383277095}
   m_Layer: 0
   m_Name: Camera_Bound
-  m_TagString: CameraBound
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5087,10 +5143,11 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 1341680562}
+  - {fileID: 1383277096}
   - {fileID: 1968469321}
+  - {fileID: 1324211850}
   - {fileID: 433814385}
   - {fileID: 1231408414}
   - {fileID: 1043665173}
   - {fileID: 1448341283}
   - {fileID: 1729363174}
-  - {fileID: 1383277096}
