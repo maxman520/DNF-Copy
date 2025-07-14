@@ -38,7 +38,6 @@ public class VinoshuMeteor : MonoBehaviour
         if (meteorHitbox != null)
         {
             meteorHitbox.Initialize(this.attackDetails, origin);
-            Debug.Log("origin position " + origin.x + " " + origin.y);
         }
         else
         {

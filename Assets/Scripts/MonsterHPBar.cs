@@ -12,7 +12,7 @@ public class MonsterHPBar : MonoBehaviour
     [SerializeField] private Image hpOverallImage; // 전체 HP 바
     [SerializeField] private Image hpFillFrontImage; // 앞쪽 HP 바
     [SerializeField] private Image hpFillBackImage;  // 뒤쪽 HP 바
-    [SerializeField] private Image hpFlashImage;   // 전체 HP 점멸 이미지
+    // [SerializeField] private Image hpFlashImage;   // 전체 HP 점멸 이미지
 
     [Header("HP 바 색상 (스프라이트)")]
     [SerializeField] private List<Sprite> hpBarSprites;
@@ -156,7 +156,7 @@ public class MonsterHPBar : MonoBehaviour
     private async UniTaskVoid OverallFlashAsync(float previousFillRatio)
     {
         // 1. 점멸용 이미지 복제
-        var flash = EffectManager.Instance.PlayEffect("MonsterHPBarFlash", hpFlashParent);
+        var flash = EffectManager.Instance.PlayEffect(hpFlashPrefab.name, hpFlashParent);
 
         Image flashImage = flash.GetComponent<Image>();
         flashImage.fillAmount = previousFillRatio;
@@ -176,7 +176,7 @@ public class MonsterHPBar : MonoBehaviour
         // 3. 정리
         if (EffectManager.Instance != null)
         {
-            EffectManager.Instance.ReturnEffectToPool("MonsterHPBarFlash", flash);
+            EffectManager.Instance.ReturnEffectToPool(hpFlashPrefab.name, flash);
         }
         else
         {
@@ -189,23 +189,18 @@ public class MonsterHPBar : MonoBehaviour
     // UI 보이기
     public void Show(Monster newTarget)
     {
-        // 두 가지 조건을 모두 만족할 때만 flash 이펙트 정리
+        // 두 가지 조건을 모두 만족할 때 이전 flash 이펙트 정리
+        // 1. 타겟이 바뀌었는지
+        // 2. 활성된 상태의 이펙트가 남아있는지
         bool targetChanged = (currentTarget != null && currentTarget != newTarget);
-        bool hasActiveFlashes = EffectManager.Instance.GetActiveEffectCount("MonsterHPBarFlash") > 0;
+        bool hasActiveFlashes = EffectManager.Instance.GetActiveEffectCount(hpFlashPrefab.name) > 0;
         
         if (targetChanged && hasActiveFlashes)
-            EffectManager.Instance.ClearEffectsByName("MonsterHPBarFlash");
+            EffectManager.Instance.ClearEffectsByName(hpFlashPrefab.name);
 
         // 새로운 타겟 설정
         this.currentTarget = newTarget;
 
         canvasGroup.alpha = 1f;
-    }
-    
-
-    // UI 숨기기
-    public void Hide()
-    {
-        canvasGroup.alpha = 0f;
     }
 }

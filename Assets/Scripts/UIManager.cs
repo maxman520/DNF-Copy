@@ -13,63 +13,118 @@ public class UIManager : Singleton<UIManager>
     [Header("MP Gauge")]
     [SerializeField] private Image mpGauge;
 
-    [Header("몬스터 HP 바")]
-    [SerializeField] private MonsterHPBar monsterHPBar;
-    
-    private Monster currentTargetMonster; // 현재 몬스터 HP바가 추적하는 몬스터
+    [Header("몬스터 UI")]
+    [Tooltip("일반 몬스터용 HP바")]
+    [SerializeField] private MonsterHPBar monsterHPBar; // 일반 몬스터 HP 바
+    [Tooltip("보스 몬스터용 HP바")]
+    [SerializeField] private MonsterHPBar bossHPBar; // 보스 몬스터 HP 바
 
-    private CancellationTokenSource hpBarCts; // 몬스터 HP바 자동 숨김 작업을 위한 토큰
+    private Monster currentTarget; // 현재 추적 중인 타겟 몬스터
+    private CancellationTokenSource monsterHPBarCts; // 몬스터 HP바 자동 숨김 작업을 위한 토큰
     private void Start()
     {
-        // 시작할 때 몬스터 HP바는 숨겨둠
-        if (monsterHPBar != null)
-        {
-            monsterHPBar.gameObject.SetActive(false);
-        }
+        // 시작할 때 모든 몬스터 HP바는 숨겨둠
+        monsterHPBar?.gameObject.SetActive(false);
+        bossHPBar?.gameObject.SetActive(false);
     }
 
     // 몬스터가 데미지를 입었을 때 호출될 함수
     public void OnMonsterDamaged(Monster monster)
     {
-        // 타겟이 바뀌었거나, HP바가 비활성화 상태라면 새로 표시
-        if (currentTargetMonster != monster || !monsterHPBar.gameObject.activeSelf)
+        // 보스인지 일반 몬스터인지 확인하여 분기 처리
+        if (monster.GetMonsterData().isBoss)
+        {
+            HandleBossDamaged(monster);
+        }
+        else
+        {
+            HandleMonsterDamaged(monster);
+        }
+    }
+    #region Boss
+    private void HandleBossDamaged(Monster boss)
+    {
+        // 1. 일반 몬스터 HP바가 켜져 있다면 즉시 숨김
+        HideMonsterHPBar();
+
+        // 2. 현재 타겟이 아니거나, 보스 HP바가 꺼져있다면 새로 표시
+        if (currentTarget != boss || !bossHPBar.gameObject.activeSelf)
+        {
+            ShowBossHPBar(boss);
+        }
+
+        // 3. HP 업데이트
+        UpdateBossHP();
+    }
+    private void ShowBossHPBar(Monster boss)
+    {
+        currentTarget = boss;
+        bossHPBar.SetFace(boss.GetMonsterData().FaceSprite);
+        bossHPBar.gameObject.SetActive(true);
+        bossHPBar.Show(currentTarget);
+    }
+
+    private void UpdateBossHP()
+    {
+        if (currentTarget == null) return;
+        bossHPBar.UpdateHP(
+            currentTarget.GetMaxHP(),
+            currentTarget.GetPreviousHP(),
+            currentTarget.GetCurrentHP(),
+            currentTarget.GetHpPerLine()
+        );
+    }
+
+    // 보스 몬스터 HP바를 숨김
+    public void HideBossHPBar()
+    {
+        if (bossHPBar == null || !bossHPBar.gameObject.activeSelf) return;
+
+        bossHPBar.gameObject.SetActive(false);
+
+        currentTarget = null;
+    }
+    #endregion Boss 
+
+    #region Regular Monster
+    // --- 일반 몬스터 HP 바 처리 ---
+    private void HandleMonsterDamaged(Monster monster)
+    {
+        // 보스 HP바가 활성화되어 있다면, 일반 몬스터 HP바를 표시하지 않음
+        if (bossHPBar.gameObject.activeSelf) return;
+
+        // 타겟이 바뀌었거나 HP바가 꺼져있다면 새로 표시
+        if (currentTarget != monster || !monsterHPBar.gameObject.activeSelf)
         {
             ShowMonsterHPBar(monster);
-            UpdateMonsterHP();
         }
-        else // 같은 타겟을 계속 때리고 있다면
-        {
-            // HP만 업데이트하고, 자동 숨김 타이머를 리셋
-            UpdateMonsterHP();
-            ResetHideTimer();
-        }
-    }
-    // 새로운 몬스터를 타겟으로 HP바를 보여줌
-    public void ShowMonsterHPBar(Monster target)
-    {
-        if (monsterHPBar == null || target == null) return;
 
-        currentTargetMonster = target;
+        // HP 업데이트 및 자동 숨김 타이머 리셋
+        UpdateMonsterHP();
+        RestartHideTimer();
+    }
+    private void ShowMonsterHPBar(Monster monster)
+    {
+        if (monsterHPBar == null || monster == null) return;
+
+        currentTarget = monster;
 
         // 몬스터 데이터에서 초상화 가져와서 설정
-        monsterHPBar.SetFace(target.GetMonsterData().FaceSprite);
+        monsterHPBar.SetFace(monster.GetMonsterData().FaceSprite);
 
         monsterHPBar.gameObject.SetActive(true);
-        monsterHPBar.Show(currentTargetMonster);
-
-        ResetHideTimer(); // 자동 숨김 타이머 시작
+        monsterHPBar.Show(currentTarget);
     }
-
     // 현재 타겟 몬스터의 HP를 업데이트
     public void UpdateMonsterHP()
     {
-        if (monsterHPBar == null || currentTargetMonster == null || !monsterHPBar.gameObject.activeSelf) return;
+        if (monsterHPBar == null || currentTarget == null || !monsterHPBar.gameObject.activeSelf) return;
 
         monsterHPBar.UpdateHP(
-            currentTargetMonster.GetMaxHP(),
-            currentTargetMonster.GetPreviousHP(),
-            currentTargetMonster.GetCurrentHP(),
-            currentTargetMonster.GetHpPerLine()
+            currentTarget.GetMaxHP(),
+            currentTarget.GetPreviousHP(),
+            currentTarget.GetCurrentHP(),
+            currentTarget.GetHpPerLine()
         );
     }
 
@@ -78,21 +133,19 @@ public class UIManager : Singleton<UIManager>
     {
         if (monsterHPBar == null || !monsterHPBar.gameObject.activeSelf) return;
 
-        monsterHPBar.Hide();
-        // Hide 애니메이션이 끝난 후 비활성화하는 로직을 추가할 수도 있음
-        // await monsterHPBar.Hide();
-        // monsterHPBar.gameObject.SetActive(false);
+        monsterHPBar.gameObject.SetActive(false);
 
-        currentTargetMonster = null;
+        currentTarget = null;
     }
 
     // 자동 숨김 타이머를 리셋하고 새로 시작
-    private void ResetHideTimer()
+    private void RestartHideTimer()
     {
-        hpBarCts?.Cancel(); // 이전 타이머가 있다면 취소
+        monsterHPBarCts?.Cancel(); // 이전 타이머가 있다면 취소
+        monsterHPBarCts?.Dispose();
         var destroyToken = this.GetCancellationTokenOnDestroy();
-        hpBarCts = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
-        AutoHideAsync(hpBarCts.Token).Forget();
+        monsterHPBarCts = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
+        AutoHideAsync(monsterHPBarCts.Token).Forget();
     }
 
     // 일정 시간 후 HP바를 자동으로 숨기는 비동기 함수
@@ -109,7 +162,11 @@ public class UIManager : Singleton<UIManager>
             // 타이머가 리셋되면 여기로 들어옴. 정상적인 동작이므로 아무것도 안 함.
         }
     }
+    #endregion Regular Monster
 
+
+
+    #region Player
     // HP 게이지 업데이트
     public void UpdateHP(float maxHP, float currentHP)
     {
@@ -127,4 +184,5 @@ public class UIManager : Singleton<UIManager>
             mpGauge.fillAmount = currentMP / maxMP;
         }
     }
+    #endregion Player
 }

@@ -7,6 +7,7 @@ public class MonsterData : ScriptableObject
     public string MonsterName;
     public Sprite FaceSprite; // 몬스터 초상화 스프라이트
     public GameObject Prefab; // 몬스터의 외형 프리팹
+    public bool isBoss = false; // 보스 몬스터 인지
 
     [Header("핵심 스탯")]
     public float MaxHP;

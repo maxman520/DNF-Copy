@@ -15,6 +15,7 @@ MonoBehaviour:
   MonsterName: "\uBE44\uB178\uC288"
   FaceSprite: {fileID: 21300000, guid: 20a503b9808e46e44bb8c9d0478ac462, type: 3}
   Prefab: {fileID: 6296903932047600178, guid: 88ddcb5810e85694c8fc5ab54df920d5, type: 3}
+  isBoss: 1
   MaxHP: 300
   HpPerLine: 100
   Atk: 20

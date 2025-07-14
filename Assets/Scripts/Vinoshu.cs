@@ -448,7 +448,6 @@ public class Vinoshu : Monster
 
         // UIManager에 자신을 타겟으로 알림
         UIManager.Instance.OnMonsterDamaged(this);
-        // UIManager.Instance.UpdateMonsterHP();
 
     }
 
@@ -521,7 +520,7 @@ public class Vinoshu : Monster
     {
         StopAILoop(); // 모든 비동기 작업 중단
         isActing = false;
-        UIManager.Instance.HideMonsterHPBar(); // HP바를 숨기도록 요청
+        UIManager.Instance.HideBossHPBar(); // HP바를 숨기도록 요청
 
         Debug.Log($"{monsterData.MonsterName}이(가) 죽었습니다.");
 
