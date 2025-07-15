@@ -107,7 +107,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""MultiTap"",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Jump"",
@@ -122,6 +122,132 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""Attack"",
                     ""type"": ""Button"",
                     ""id"": ""7b379677-7156-4f60-bc40-4ea16f0d9b17"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_1"",
+                    ""type"": ""Button"",
+                    ""id"": ""f5758c7b-b0ad-4c5a-bf48-e3341122cb8a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_2"",
+                    ""type"": ""Button"",
+                    ""id"": ""63dcc384-e73e-4d3f-9146-6f34c710da08"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_3"",
+                    ""type"": ""Button"",
+                    ""id"": ""38d2340b-9191-4bda-b01e-29bd4ed094dd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_4"",
+                    ""type"": ""Button"",
+                    ""id"": ""c00e80cb-c1ed-49e3-bae3-3bb6e7f48d07"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_5"",
+                    ""type"": ""Button"",
+                    ""id"": ""aa3cb3b1-74ff-47fc-b3cc-cb2212f9dd09"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_6"",
+                    ""type"": ""Button"",
+                    ""id"": ""e9fa45e5-1e28-4c0d-aa1a-26a84fe5fe5c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_7"",
+                    ""type"": ""Button"",
+                    ""id"": ""178fe8b3-1580-4b55-a5a4-d6c757fca2c4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_8"",
+                    ""type"": ""Button"",
+                    ""id"": ""b331c523-43b2-4c44-be7e-448466a6d808"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_9"",
+                    ""type"": ""Button"",
+                    ""id"": ""15888f38-ca7e-45c7-8833-84d3b4b3f9e8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_10"",
+                    ""type"": ""Button"",
+                    ""id"": ""aad3d5c0-a283-4831-8c26-e2c8edc33ee5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_11"",
+                    ""type"": ""Button"",
+                    ""id"": ""4a1f8002-cdc1-4f11-9e55-2cba7bb444cb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_12"",
+                    ""type"": ""Button"",
+                    ""id"": ""b0c5d6e1-b927-4762-96db-52f68ac338f1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_13"",
+                    ""type"": ""Button"",
+                    ""id"": ""81030047-bf39-4ab8-8b88-82b31183a4f4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkillSlot_14"",
+                    ""type"": ""Button"",
+                    ""id"": ""11561272-0406-4435-b40a-412a9f51e4a4"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -227,6 +353,160 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aef0eeea-65cd-40f3-bedf-da87f016c64a"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ac1e3347-2a6d-427d-b20f-6397ea24d165"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""46fb3e07-dcf1-4dab-84be-37025a1a8569"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b2bd6c60-96f3-4c64-8497-50e40d3b27fb"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ed47657b-238b-4902-bef6-0e1dbd6e78a8"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65b5d14d-2089-49c1-9a8b-14928c945a30"",
+                    ""path"": ""<Keyboard>/h"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_6"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b6b85206-7f72-4a63-a466-e657fbb75b2e"",
+                    ""path"": ""<Keyboard>/leftAlt"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_7"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ad7d2ca2-11b7-4ba3-9368-19b7f131ff0c"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_8"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a177e54b-4354-4004-8619-b8f4ba5dfa72"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_9"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9b2f0b7f-16e9-41de-a31b-55e6fa42c8d5"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_10"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""188c8b11-56e2-4d9b-944e-67440e9593c6"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_11"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f0adabf4-6d97-4661-b429-3cdcb4c59c94"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_12"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d7ac513-2a5e-40d9-bf52-92ef9e4e2a2b"",
+                    ""path"": ""<Keyboard>/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_13"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1f12f5b9-fe52-4fd9-a6c8-74bff5089969"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkillSlot_14"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -239,6 +519,20 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
+        m_Player_SkillSlot_1 = m_Player.FindAction("SkillSlot_1", throwIfNotFound: true);
+        m_Player_SkillSlot_2 = m_Player.FindAction("SkillSlot_2", throwIfNotFound: true);
+        m_Player_SkillSlot_3 = m_Player.FindAction("SkillSlot_3", throwIfNotFound: true);
+        m_Player_SkillSlot_4 = m_Player.FindAction("SkillSlot_4", throwIfNotFound: true);
+        m_Player_SkillSlot_5 = m_Player.FindAction("SkillSlot_5", throwIfNotFound: true);
+        m_Player_SkillSlot_6 = m_Player.FindAction("SkillSlot_6", throwIfNotFound: true);
+        m_Player_SkillSlot_7 = m_Player.FindAction("SkillSlot_7", throwIfNotFound: true);
+        m_Player_SkillSlot_8 = m_Player.FindAction("SkillSlot_8", throwIfNotFound: true);
+        m_Player_SkillSlot_9 = m_Player.FindAction("SkillSlot_9", throwIfNotFound: true);
+        m_Player_SkillSlot_10 = m_Player.FindAction("SkillSlot_10", throwIfNotFound: true);
+        m_Player_SkillSlot_11 = m_Player.FindAction("SkillSlot_11", throwIfNotFound: true);
+        m_Player_SkillSlot_12 = m_Player.FindAction("SkillSlot_12", throwIfNotFound: true);
+        m_Player_SkillSlot_13 = m_Player.FindAction("SkillSlot_13", throwIfNotFound: true);
+        m_Player_SkillSlot_14 = m_Player.FindAction("SkillSlot_14", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -323,6 +617,20 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Run;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Attack;
+    private readonly InputAction m_Player_SkillSlot_1;
+    private readonly InputAction m_Player_SkillSlot_2;
+    private readonly InputAction m_Player_SkillSlot_3;
+    private readonly InputAction m_Player_SkillSlot_4;
+    private readonly InputAction m_Player_SkillSlot_5;
+    private readonly InputAction m_Player_SkillSlot_6;
+    private readonly InputAction m_Player_SkillSlot_7;
+    private readonly InputAction m_Player_SkillSlot_8;
+    private readonly InputAction m_Player_SkillSlot_9;
+    private readonly InputAction m_Player_SkillSlot_10;
+    private readonly InputAction m_Player_SkillSlot_11;
+    private readonly InputAction m_Player_SkillSlot_12;
+    private readonly InputAction m_Player_SkillSlot_13;
+    private readonly InputAction m_Player_SkillSlot_14;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -350,6 +658,62 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Attack".
         /// </summary>
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_1".
+        /// </summary>
+        public InputAction @SkillSlot_1 => m_Wrapper.m_Player_SkillSlot_1;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_2".
+        /// </summary>
+        public InputAction @SkillSlot_2 => m_Wrapper.m_Player_SkillSlot_2;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_3".
+        /// </summary>
+        public InputAction @SkillSlot_3 => m_Wrapper.m_Player_SkillSlot_3;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_4".
+        /// </summary>
+        public InputAction @SkillSlot_4 => m_Wrapper.m_Player_SkillSlot_4;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_5".
+        /// </summary>
+        public InputAction @SkillSlot_5 => m_Wrapper.m_Player_SkillSlot_5;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_6".
+        /// </summary>
+        public InputAction @SkillSlot_6 => m_Wrapper.m_Player_SkillSlot_6;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_7".
+        /// </summary>
+        public InputAction @SkillSlot_7 => m_Wrapper.m_Player_SkillSlot_7;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_8".
+        /// </summary>
+        public InputAction @SkillSlot_8 => m_Wrapper.m_Player_SkillSlot_8;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_9".
+        /// </summary>
+        public InputAction @SkillSlot_9 => m_Wrapper.m_Player_SkillSlot_9;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_10".
+        /// </summary>
+        public InputAction @SkillSlot_10 => m_Wrapper.m_Player_SkillSlot_10;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_11".
+        /// </summary>
+        public InputAction @SkillSlot_11 => m_Wrapper.m_Player_SkillSlot_11;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_12".
+        /// </summary>
+        public InputAction @SkillSlot_12 => m_Wrapper.m_Player_SkillSlot_12;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_13".
+        /// </summary>
+        public InputAction @SkillSlot_13 => m_Wrapper.m_Player_SkillSlot_13;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SkillSlot_14".
+        /// </summary>
+        public InputAction @SkillSlot_14 => m_Wrapper.m_Player_SkillSlot_14;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -388,6 +752,48 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
+            @SkillSlot_1.started += instance.OnSkillSlot_1;
+            @SkillSlot_1.performed += instance.OnSkillSlot_1;
+            @SkillSlot_1.canceled += instance.OnSkillSlot_1;
+            @SkillSlot_2.started += instance.OnSkillSlot_2;
+            @SkillSlot_2.performed += instance.OnSkillSlot_2;
+            @SkillSlot_2.canceled += instance.OnSkillSlot_2;
+            @SkillSlot_3.started += instance.OnSkillSlot_3;
+            @SkillSlot_3.performed += instance.OnSkillSlot_3;
+            @SkillSlot_3.canceled += instance.OnSkillSlot_3;
+            @SkillSlot_4.started += instance.OnSkillSlot_4;
+            @SkillSlot_4.performed += instance.OnSkillSlot_4;
+            @SkillSlot_4.canceled += instance.OnSkillSlot_4;
+            @SkillSlot_5.started += instance.OnSkillSlot_5;
+            @SkillSlot_5.performed += instance.OnSkillSlot_5;
+            @SkillSlot_5.canceled += instance.OnSkillSlot_5;
+            @SkillSlot_6.started += instance.OnSkillSlot_6;
+            @SkillSlot_6.performed += instance.OnSkillSlot_6;
+            @SkillSlot_6.canceled += instance.OnSkillSlot_6;
+            @SkillSlot_7.started += instance.OnSkillSlot_7;
+            @SkillSlot_7.performed += instance.OnSkillSlot_7;
+            @SkillSlot_7.canceled += instance.OnSkillSlot_7;
+            @SkillSlot_8.started += instance.OnSkillSlot_8;
+            @SkillSlot_8.performed += instance.OnSkillSlot_8;
+            @SkillSlot_8.canceled += instance.OnSkillSlot_8;
+            @SkillSlot_9.started += instance.OnSkillSlot_9;
+            @SkillSlot_9.performed += instance.OnSkillSlot_9;
+            @SkillSlot_9.canceled += instance.OnSkillSlot_9;
+            @SkillSlot_10.started += instance.OnSkillSlot_10;
+            @SkillSlot_10.performed += instance.OnSkillSlot_10;
+            @SkillSlot_10.canceled += instance.OnSkillSlot_10;
+            @SkillSlot_11.started += instance.OnSkillSlot_11;
+            @SkillSlot_11.performed += instance.OnSkillSlot_11;
+            @SkillSlot_11.canceled += instance.OnSkillSlot_11;
+            @SkillSlot_12.started += instance.OnSkillSlot_12;
+            @SkillSlot_12.performed += instance.OnSkillSlot_12;
+            @SkillSlot_12.canceled += instance.OnSkillSlot_12;
+            @SkillSlot_13.started += instance.OnSkillSlot_13;
+            @SkillSlot_13.performed += instance.OnSkillSlot_13;
+            @SkillSlot_13.canceled += instance.OnSkillSlot_13;
+            @SkillSlot_14.started += instance.OnSkillSlot_14;
+            @SkillSlot_14.performed += instance.OnSkillSlot_14;
+            @SkillSlot_14.canceled += instance.OnSkillSlot_14;
         }
 
         /// <summary>
@@ -411,6 +817,48 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
+            @SkillSlot_1.started -= instance.OnSkillSlot_1;
+            @SkillSlot_1.performed -= instance.OnSkillSlot_1;
+            @SkillSlot_1.canceled -= instance.OnSkillSlot_1;
+            @SkillSlot_2.started -= instance.OnSkillSlot_2;
+            @SkillSlot_2.performed -= instance.OnSkillSlot_2;
+            @SkillSlot_2.canceled -= instance.OnSkillSlot_2;
+            @SkillSlot_3.started -= instance.OnSkillSlot_3;
+            @SkillSlot_3.performed -= instance.OnSkillSlot_3;
+            @SkillSlot_3.canceled -= instance.OnSkillSlot_3;
+            @SkillSlot_4.started -= instance.OnSkillSlot_4;
+            @SkillSlot_4.performed -= instance.OnSkillSlot_4;
+            @SkillSlot_4.canceled -= instance.OnSkillSlot_4;
+            @SkillSlot_5.started -= instance.OnSkillSlot_5;
+            @SkillSlot_5.performed -= instance.OnSkillSlot_5;
+            @SkillSlot_5.canceled -= instance.OnSkillSlot_5;
+            @SkillSlot_6.started -= instance.OnSkillSlot_6;
+            @SkillSlot_6.performed -= instance.OnSkillSlot_6;
+            @SkillSlot_6.canceled -= instance.OnSkillSlot_6;
+            @SkillSlot_7.started -= instance.OnSkillSlot_7;
+            @SkillSlot_7.performed -= instance.OnSkillSlot_7;
+            @SkillSlot_7.canceled -= instance.OnSkillSlot_7;
+            @SkillSlot_8.started -= instance.OnSkillSlot_8;
+            @SkillSlot_8.performed -= instance.OnSkillSlot_8;
+            @SkillSlot_8.canceled -= instance.OnSkillSlot_8;
+            @SkillSlot_9.started -= instance.OnSkillSlot_9;
+            @SkillSlot_9.performed -= instance.OnSkillSlot_9;
+            @SkillSlot_9.canceled -= instance.OnSkillSlot_9;
+            @SkillSlot_10.started -= instance.OnSkillSlot_10;
+            @SkillSlot_10.performed -= instance.OnSkillSlot_10;
+            @SkillSlot_10.canceled -= instance.OnSkillSlot_10;
+            @SkillSlot_11.started -= instance.OnSkillSlot_11;
+            @SkillSlot_11.performed -= instance.OnSkillSlot_11;
+            @SkillSlot_11.canceled -= instance.OnSkillSlot_11;
+            @SkillSlot_12.started -= instance.OnSkillSlot_12;
+            @SkillSlot_12.performed -= instance.OnSkillSlot_12;
+            @SkillSlot_12.canceled -= instance.OnSkillSlot_12;
+            @SkillSlot_13.started -= instance.OnSkillSlot_13;
+            @SkillSlot_13.performed -= instance.OnSkillSlot_13;
+            @SkillSlot_13.canceled -= instance.OnSkillSlot_13;
+            @SkillSlot_14.started -= instance.OnSkillSlot_14;
+            @SkillSlot_14.performed -= instance.OnSkillSlot_14;
+            @SkillSlot_14.canceled -= instance.OnSkillSlot_14;
         }
 
         /// <summary>
@@ -479,5 +927,103 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_1(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_4(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_5(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_6" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_6(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_7" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_7(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_8" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_8(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_9" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_9(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_10" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_10(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_11" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_11(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_12" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_12(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_13" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_13(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkillSlot_14" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkillSlot_14(InputAction.CallbackContext context);
     }
 }

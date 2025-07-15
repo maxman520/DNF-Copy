@@ -202,7 +202,7 @@ public class BehaviourController
             }
             else // 일반 공격
             {
-                // 짧은 수평 넉백 (transform.position 직접 조작 또는 AddForce)
+                // 짧은 수평 넉백
                 player.Rb.linearVelocity = Vector2.zero; // 기존 속도 초기화
                 player.transform.position += new Vector3(direction * attackDetails.knockbackForce * 0.1f, 0);
                 // player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);

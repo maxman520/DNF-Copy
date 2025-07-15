@@ -19,6 +19,9 @@ public class UIManager : Singleton<UIManager>
     [Tooltip("보스 몬스터용 HP바")]
     [SerializeField] private MonsterHPBar bossHPBar; // 보스 몬스터 HP 바
 
+    [Header("스킬창")]
+    [SerializeField] private SkillShopUI skillShopUI; // 스킬샵 창
+
     private Monster currentTarget; // 현재 추적 중인 타겟 몬스터
     private CancellationTokenSource monsterHPBarCts; // 몬스터 HP바 자동 숨김 작업을 위한 토큰
     private void Start()
@@ -26,6 +29,18 @@ public class UIManager : Singleton<UIManager>
         // 시작할 때 모든 몬스터 HP바는 숨겨둠
         monsterHPBar?.gameObject.SetActive(false);
         bossHPBar?.gameObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        // 'K' 키를 누르면 스킬샵 창을 토글
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            if (skillShopUI != null)
+            {
+                skillShopUI.ToggleShop();
+            }
+        }
     }
 
     // 몬스터가 데미지를 입었을 때 호출될 함수

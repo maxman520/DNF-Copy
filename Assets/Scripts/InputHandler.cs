@@ -31,6 +31,20 @@ public class InputHandler : System.IDisposable
         inputActions.Player.Run.performed += ctx => OnRunPerformed?.Invoke(ctx);
         inputActions.Player.Jump.performed += ctx => inputBuffer.AddCommand(new JumpCommand(ctx));
         inputActions.Player.Attack.performed += ctx => inputBuffer.AddCommand(new AttackCommand(ctx));
+        inputActions.Player.SkillSlot_1.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 0));
+        inputActions.Player.SkillSlot_2.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 1));
+        inputActions.Player.SkillSlot_3.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 2));
+        inputActions.Player.SkillSlot_4.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 3));
+        inputActions.Player.SkillSlot_5.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 4));
+        inputActions.Player.SkillSlot_6.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 5));
+        inputActions.Player.SkillSlot_7.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 6));
+        inputActions.Player.SkillSlot_8.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 7));
+        inputActions.Player.SkillSlot_9.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 8));
+        inputActions.Player.SkillSlot_10.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 9));
+        inputActions.Player.SkillSlot_11.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 10));
+        inputActions.Player.SkillSlot_12.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 11));
+        inputActions.Player.SkillSlot_13.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 12));
+        inputActions.Player.SkillSlot_14.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 13));
 
     }
     // 버퍼의 맨 위 커맨드 '확인'

@@ -14,7 +14,6 @@ public class MonsterHitbox : MonoBehaviour
     {
         this.attackDetails = details;
         this.originPosition = origin.HasValue ? origin.Value : this.transform.position;
-        Debug.Log("Monster Hitbox origin position " + originPosition.x + " " + originPosition.y);
 
         // 히트박스가 활성화될 때마다 초기화
         this.alreadyHit = false;

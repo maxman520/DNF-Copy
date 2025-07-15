@@ -21,9 +21,4 @@ public class AnimEventReceiver : MonoBehaviour
         player?.AnimEvent_OnComboWindowClose();
     }
 
-    public void SetComboAttackDetails(int index)
-    {
-        player?.SetComboAttackDetails(index);
-    }
-
 }

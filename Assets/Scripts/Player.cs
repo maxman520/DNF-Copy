@@ -1,5 +1,4 @@
 using System;
-using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -50,6 +49,7 @@ public class Player : Singleton<Player>
     private InputHandler inputHandler;
     private BehaviourController behaviourController;
     private AnimController animController;
+    private SkillManager skillManager;
 
     public PlayerAnimState CurrentAnimState { get; set; }
 
@@ -78,6 +78,7 @@ public class Player : Singleton<Player>
         inputHandler = new InputHandler();
         animController = new AnimController(this);
         behaviourController = new BehaviourController(this, inputHandler, animController);
+        skillManager = GetComponent<SkillManager>();
 
         if (PlayerGround == null)
             Debug.LogError("PlayerGround를 찾을 수 없습니다.", this);
@@ -119,7 +120,7 @@ public class Player : Singleton<Player>
         if (command != null)
         {
             // 커맨드를 실행, 성공하면 커맨드를 버퍼에서 제거
-            if (command.Execute(behaviourController))
+            if (command.Execute(behaviourController, skillManager))
             {
                 inputHandler.RemoveCommand();
             }
@@ -192,7 +193,7 @@ public class Player : Singleton<Player>
         behaviourController?.OnComboWindowClose();
 
     }
-    public void SetComboAttackDetails(int index)
+    public void SetAttackDetails(int index)
     {
         // 1. 공격 정보 가져오기
         AttackDetails details = AttackDetails[index];
