@@ -2,9 +2,13 @@ using UnityEngine;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 
+
+public enum RoomType { Normal, Start, Boss } // 방의 종류
+
 public class Room : MonoBehaviour
 {
     [Header("방 설정")]
+    [SerializeField] public RoomType roomType;
     [SerializeField] public CinemachineCamera virtualCamera; // 이 방에서 사용할 가상 카메라
     [SerializeField] private List<Monster> monsters; // 이 방에 있는 모든 몬스터 리스트
     [SerializeField] private List<Portal> portals; // 이 방의 모든 포탈 리스트

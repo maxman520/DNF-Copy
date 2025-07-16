@@ -2,16 +2,19 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
     public SkillData skillData; // 이 아이콘이 어떤 스킬인지
+    private SkillShopUI skillShopUI;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Vector3 startPosition;
     private Transform startParent;
+
+
     
-    // ★★★ 자신을 담고 있는 최상위 캔버스를 저장할 변수
+    // 자신을 담고 있는 최상위 캔버스를 저장할 변수
     [SerializeField]private Canvas parentCanvas;
 
     private void Awake()
@@ -19,6 +22,24 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         parentCanvas = GetComponentInParent<Canvas>();
+        skillShopUI = GetComponentInParent<SkillShopUI>();
+    }
+
+    // 아이콘이 클릭되었을 때 호출
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // 드래그 중인 상태에서는 클릭으로 처리하지 않음 (선택적)
+        if (eventData.dragging)
+        {
+            return;
+        }
+
+        if (skillShopUI != null)
+        {
+            // 스킬샵 매니저의 ShowDescription 함수를 호출
+            skillShopUI.ShowDescription(this.skillData);
+            Debug.Log($"'{skillData.skillName}' 아이콘 클릭됨. 설명 표시 요청");
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)

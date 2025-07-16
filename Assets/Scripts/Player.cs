@@ -77,8 +77,8 @@ public class Player : Singleton<Player>
         // 컨트롤러 초기화
         inputHandler = new InputHandler();
         animController = new AnimController(this);
-        behaviourController = new BehaviourController(this, inputHandler, animController);
         skillManager = GetComponent<SkillManager>();
+        behaviourController = new BehaviourController(this, inputHandler, animController, skillManager);
 
         if (PlayerGround == null)
             Debug.LogError("PlayerGround를 찾을 수 없습니다.", this);
@@ -104,7 +104,7 @@ public class Player : Singleton<Player>
     {
         HandleCommands();
         behaviourController.Flip(); // 방향 전환 처리
-        behaviourController.HandleGravity(); // 플레이어 visuals의 localPosition에 따라 중력 처리
+        behaviourController.HandleGravity(); // 플레이어 visuals의 localPosition.y에 따라 중력 처리
         animController.UpdateAnimations(); // 애니메이션 처리
     }
 
@@ -120,7 +120,7 @@ public class Player : Singleton<Player>
         if (command != null)
         {
             // 커맨드를 실행, 성공하면 커맨드를 버퍼에서 제거
-            if (command.Execute(behaviourController, skillManager))
+            if (command.Execute(behaviourController))
             {
                 inputHandler.RemoveCommand();
             }
@@ -163,13 +163,11 @@ public class Player : Singleton<Player>
     // 던전 입장 시 GameManager에 의해 호출
     public void OnEnterDungeon()
     {
-        behaviourController.SubscribeToEvents();
         Anim.Play("Idle_Battle");
     }
     // 던전 퇴장 시 GameManager에 의해 호출
     public void OnExitDungeon()
     {
-        behaviourController.UnsubscribeFromEvents();
         animController.ResetAnimations();
     }
 
@@ -250,11 +248,12 @@ public class Player : Singleton<Player>
             }
         }
 
-        GUI.Label(new Rect(10, 10, 200, 20), "IsRunning: " + IsRunning);
-        GUI.Label(new Rect(10, 20, 200, 20), "CanMove: " + CanMove);
-        GUI.Label(new Rect(10, 30, 200, 20), "CanAttack: " + CanAttack);
-        GUI.Label(new Rect(10, 40, 200, 20), "CanContinueAttack: " + CanContinueAttack);
-        GUI.Label(new Rect(10, 50, 200, 20), "AttackCounter: " + AttackCounter);
+        int i = 100;
+        GUI.Label(new Rect(10, i+10, 200, 20), "IsRunning: " + IsRunning);
+        GUI.Label(new Rect(10, i+20, 200, 20), "CanMove: " + CanMove);
+        GUI.Label(new Rect(10, i+30, 200, 20), "CanAttack: " + CanAttack);
+        GUI.Label(new Rect(10, i+40, 200, 20), "CanContinueAttack: " + CanContinueAttack);
+        GUI.Label(new Rect(10, i+50, 200, 20), "AttackCounter: " + AttackCounter);
 
 
         GUILayout.EndArea();

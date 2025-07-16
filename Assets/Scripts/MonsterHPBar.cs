@@ -1,13 +1,15 @@
+using Cysharp.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
-using System.Threading;
-using System;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class MonsterHPBar : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI monsterNameText;
     [SerializeField] private Image faceImage;
     [SerializeField] private Image hpOverallImage; // 전체 HP 바
     [SerializeField] private Image hpFillFrontImage; // 앞쪽 HP 바
@@ -46,10 +48,12 @@ public class MonsterHPBar : MonoBehaviour
 
     
     // HP 업데이트
-    public void UpdateHP(float maxHP,  float previousHP, float currentHP,  float hpPerLine)
+    public void UpdateInfo(string name, float maxHP,  float previousHP, float currentHP,  float hpPerLine)
     {
         if (hpOverallImage == null) return;
         if (hpFillFrontImage == null || hpFillBackImage == null || hpBarSprites.Count == 0) return;
+        
+        monsterNameText.text = name;
 
         // --- 1. 전체 HP 바 크기 및 점멸 처리 ---
         float currentTotalHPRatio = currentHP / maxHP;

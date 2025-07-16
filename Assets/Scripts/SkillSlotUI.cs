@@ -16,7 +16,7 @@ public class SkillSlotUI : MonoBehaviour, IDropHandler
         // 매니저를 찾아 연결
         skillManager = Player.Instance.GetComponent<SkillManager>();
 
-        // SkillManager의 이벤트에 UpdateSlot 함수를 구독
+        // OnSkillSlotChanged 이벤트에 UpdateSlot 함수를 구독
         if (skillManager != null)
         {
             skillManager.OnSkillSlotChanged += HandleSkillSlotChanged;
@@ -56,7 +56,7 @@ public class SkillSlotUI : MonoBehaviour, IDropHandler
         }
     }
 
-    // skillManager에서 OnSkillSlotChanged 이벤트가 발생하면 호출될 함수
+    // OnSkillSlotChanged 이벤트 처리
     private void HandleSkillSlotChanged(int updatedSlotIndex, SkillData skillData)
     {
         // 변경된 슬롯이 바로 나 자신일 때만, 내 아이콘을 업데이트
@@ -66,7 +66,7 @@ public class SkillSlotUI : MonoBehaviour, IDropHandler
         }
     }
 
-    // SkillManager가 호출하여 UI를 업데이트
+    // SkillManager가 호출하여 슬롯 UI를 업데이트
     public void UpdateSlot(int index, SkillData skillData)
     {
         Debug.Log("UpdateSlot 호출");

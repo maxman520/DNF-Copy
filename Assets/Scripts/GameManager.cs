@@ -1,9 +1,22 @@
-using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum GameState
+{
+    // --- 게임 플로우 상태 ---
+    //MainMenu,           // 메인 메뉴 화면 (게임 시작 화면)
+    CharacterSelect,    // 캐릭터 선택창
+    Loading,            // 로딩 중
+
+    // --- 인게임 상태 (In-Game) ---
+    Town,               // 마을
+    Dungeon,            // 던전
+}
+
 public class GameManager : Singleton<GameManager>
 {
+    public GameState CurrentState { get; private set; } = GameState.Town;
+
     private Player player;
     public float CurrentHealth { get; private set; }
     public float CurrentMana { get; private set; }
@@ -47,13 +60,20 @@ public class GameManager : Singleton<GameManager>
         {
             case "Dungeon1_Scene":
             // case Dungeon2, Dungeon3, ...
-                Debug.Log("던전에 입장. 전투 시스템 활성화.");
+
+                Debug.Log("게임 상태: Dungeon");
+                CurrentState = GameState.Dungeon;
+
                 player.OnEnterDungeon();
+
                 break;
 
             case "Town_Scene":
-                Debug.Log("마을 씬 로드");
+                Debug.Log("게임 상태: Town");
+                CurrentState = GameState.Town;
+
                 player.OnExitDungeon();
+
                 // 마을로 이동시 체력, 마나 회복
                 CurrentHealth = player.MaxHP;
                 CurrentMana = player.MaxMP;

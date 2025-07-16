@@ -12,9 +12,6 @@ public class InputHandler : System.IDisposable
     // 입력 상태 프로퍼티
     public Vector2 MoveInput;
 
-    // 이벤트
-    public event Action<InputAction.CallbackContext> OnRunPerformed;
-
     public InputHandler()
     {
         inputActions = new PlayerInputActions();
@@ -28,23 +25,23 @@ public class InputHandler : System.IDisposable
             MoveInput = Vector2.zero;
             Player.Instance.IsRunning = false;
         };
-        inputActions.Player.Run.performed += ctx => OnRunPerformed?.Invoke(ctx);
-        inputActions.Player.Jump.performed += ctx => inputBuffer.AddCommand(new JumpCommand(ctx));
-        inputActions.Player.Attack.performed += ctx => inputBuffer.AddCommand(new AttackCommand(ctx));
-        inputActions.Player.SkillSlot_1.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 0));
-        inputActions.Player.SkillSlot_2.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 1));
-        inputActions.Player.SkillSlot_3.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 2));
-        inputActions.Player.SkillSlot_4.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 3));
-        inputActions.Player.SkillSlot_5.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 4));
-        inputActions.Player.SkillSlot_6.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 5));
-        inputActions.Player.SkillSlot_7.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 6));
-        inputActions.Player.SkillSlot_8.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 7));
-        inputActions.Player.SkillSlot_9.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 8));
-        inputActions.Player.SkillSlot_10.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 9));
-        inputActions.Player.SkillSlot_11.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 10));
-        inputActions.Player.SkillSlot_12.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 11));
-        inputActions.Player.SkillSlot_13.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 12));
-        inputActions.Player.SkillSlot_14.performed += ctx => inputBuffer.AddCommand(new SkillCommand(ctx, 13));
+        inputActions.Player.Run.performed += ctx => AddCommandIfInDungeon(new RunCommand(ctx));
+        inputActions.Player.Jump.performed += ctx => AddCommandIfInDungeon(new JumpCommand(ctx));
+        inputActions.Player.Attack.performed += ctx => AddCommandIfInDungeon(new AttackCommand(ctx));
+        inputActions.Player.SkillSlot_1.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 0));
+        inputActions.Player.SkillSlot_2.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 1));
+        inputActions.Player.SkillSlot_3.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 2));
+        inputActions.Player.SkillSlot_4.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 3));
+        inputActions.Player.SkillSlot_5.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 4));
+        inputActions.Player.SkillSlot_6.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 5));
+        inputActions.Player.SkillSlot_7.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 6));
+        inputActions.Player.SkillSlot_8.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 7));
+        inputActions.Player.SkillSlot_9.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 8));
+        inputActions.Player.SkillSlot_10.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 9));
+        inputActions.Player.SkillSlot_11.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 10));
+        inputActions.Player.SkillSlot_12.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 11));
+        inputActions.Player.SkillSlot_13.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 12));
+        inputActions.Player.SkillSlot_14.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 13));
 
     }
     // 버퍼의 맨 위 커맨드 '확인'
@@ -63,6 +60,16 @@ public class InputHandler : System.IDisposable
     {
         return inputBuffer.GetBufferedCommandNames();
     }
+    // 던전 상태일 때만 커맨드를 버퍼에 추가
+    private void AddCommandIfInDungeon(ICommand command)
+    {
+        // GameManager가 존재하고, 현재 상태가 Dungeon일 때만 실행
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Dungeon)
+        {
+            inputBuffer.AddCommand(command);
+        }
+    }
+
 
     // Player가 파괴될 때 호출될 정리 메서드
     public void Dispose()

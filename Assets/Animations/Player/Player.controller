@@ -244,6 +244,26 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &-6812031793511738227
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0195f83b4adda3548b7fe98a94a637a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Idle: 0
+  Move: 0
+  Run: 0
+  Jump: 1
+  Attack: 1
+  Hurt: 0
+  Airborne: 0
+  AttackDetailsIndex: 3
 --- !u!1101 &-6177375008025190881
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -497,26 +517,6 @@ MonoBehaviour:
   Hurt: 0
   Airborne: 0
   AttackDetailsIndex: 5
---- !u!114 &-3481310504917272808
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79435fa1e53668341b70146f9bfcd2ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Idle: 0
-  Move: 0
-  Run: 0
-  Jump: 1
-  Attack: 1
-  Hurt: 0
-  Airborne: 0
-  AttackDetailsIndex: 3
 --- !u!1107 &-3346516776834721033
 AnimatorStateMachine:
   serializedVersion: 6
@@ -1160,7 +1160,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: 274168113813664358}
   m_StateMachineBehaviours:
-  - {fileID: -3481310504917272808}
+  - {fileID: -6812031793511738227}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1

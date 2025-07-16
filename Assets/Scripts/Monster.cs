@@ -6,6 +6,7 @@ public abstract class Monster : MonoBehaviour
     [SerializeField] protected MonsterData monsterData; // 몬스터의 원본 데이터를 담는 ScriptableObject
 
     [Header("실시간 스탯")]
+    protected string name;
     protected float maxHP;
     protected float previousHP;
     protected float currentHP;
@@ -17,6 +18,7 @@ public abstract class Monster : MonoBehaviour
     protected float attackRange;
 
     public MonsterData GetMonsterData() => monsterData;
+    public string GetName() => name;
     public float GetMaxHP() => maxHP;
     public float GetPreviousHP() => previousHP;
     public float GetCurrentHP() => currentHP;
@@ -50,6 +52,7 @@ public abstract class Monster : MonoBehaviour
         startPos = visualsTransform.localPosition;
 
         // 데이터 초기화
+        name = monsterData.MonsterName;
         maxHP = monsterData.MaxHP;
         currentHP = monsterData.MaxHP;
         previousHP = monsterData.MaxHP;

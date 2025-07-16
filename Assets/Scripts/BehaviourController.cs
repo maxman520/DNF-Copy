@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,32 +7,24 @@ public class BehaviourController
     private readonly Player player;
     private readonly InputHandler inputHandler;
     private readonly AnimController animController;
+    private readonly SkillManager skillManager;
     Vector3 startPos;
 
     // 가상 물리 변수
     private const float ORIGINAL_GRAVITY = 12f;
     private const float JUMP_FORCE = 8f;     // 점프 시 위로 가하는 초기 '힘'(속도)
-    private const float JUMP_MOVEMENT_PENALTY = 0.3f;
+    private const float JUMP_MOVEMENT_PENALTY = 0.5f;
     private float verticalVelocity; // 수직 '힘'의 결과로 나타나는 현재 속도
     private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
 
-    public BehaviourController(Player player, InputHandler inputHandler, AnimController animController)
+    public BehaviourController(Player player, InputHandler inputHandler, AnimController animController, SkillManager skillManager)
     {
         this.player = player;
         this.inputHandler = inputHandler;
         this.animController = animController;
+        this.skillManager = skillManager;
         startPos = player.VisualsTransform.localPosition;
     }
-    public void SubscribeToEvents()
-    {
-        inputHandler.OnRunPerformed += OnRunPerformed;
-    }
-
-    public void UnsubscribeFromEvents()
-    {
-        inputHandler.OnRunPerformed -= OnRunPerformed;
-    }
-
 
     // 캐릭터 방향 조절
     public void Flip()
@@ -56,6 +49,8 @@ public class BehaviourController
 
         Vector2 velocity = inputHandler.MoveInput.normalized * currentSpeed;
 
+        velocity.y *= 0.7f; // y축은 x축보다 느리게 움직이도록
+
         // 점프중이라면 y축 속도에 패널티 부과
         if (player.HasState(PlayerAnimState.Jump))
         {
@@ -67,10 +62,12 @@ public class BehaviourController
 
 
     // 달리기 시작
-    public void OnRunPerformed(InputAction.CallbackContext context)
+    public bool PerformRun(InputAction.CallbackContext context)
     {
         if (!player.HasState(PlayerAnimState.Jump) && player.CanMove)
             player.IsRunning = true;
+
+        return player.IsRunning;
     }
     // 점프
     public bool PerformJump(InputAction.CallbackContext context)
@@ -88,7 +85,7 @@ public class BehaviourController
 
         return true;
     }
-
+    #region Attack
     // 공격
     public bool PerformAttack(InputAction.CallbackContext context)
     {
@@ -136,7 +133,8 @@ public class BehaviourController
     public void PerformComboAttack()
     {
         float direction = player.transform.localScale.x;
-        player.Rb.AddForceX(direction * 0.05f, ForceMode2D.Impulse);
+        // player.Rb.AddForceX(direction * 0.05f, ForceMode2D.Impulse);
+        player.Rb.linearVelocity = new Vector3(direction * 0.05f, 0 , 0);
 
         player.CanContinueAttack = false; // 다음 공격을 위해 일단 닫아둠
         animController.PlayAttack(player.AttackCounter);
@@ -180,7 +178,7 @@ public class BehaviourController
         player.AttackCounter = 0;
         player.CanContinueAttack = false;
     }
-
+    #endregion Attack
     // Player로부터 피격 처리를 위임받는 함수
     public void HandleHurt(AttackDetails attackDetails, Vector3 attackPosition)
     {
@@ -269,4 +267,60 @@ public class BehaviourController
         }
     }
     #endregion Jump
+
+
+    #region Skill
+    // 스킬을 실행하는 새로운 함수
+    public bool PerformSkill(InputAction.CallbackContext context, int slotIndex)
+    {
+        // 공격 가능 체크
+        if (!player.CanAttack || player.HasState(PlayerAnimState.Attack))
+            return false;
+
+        // 스킬 사용이 가능한지 체크
+        if (skillManager.IsSkillReady(slotIndex, out SkillData skillToExecute))
+        {
+            Debug.Log($"'{skillToExecute.skillName}' 스킬 시전");
+
+            player.Rb.linearVelocity = Vector3.zero;
+            player.Anim.Play(skillToExecute.animName);
+
+            // 마나 소모
+            // player.ConsumeMana(skillToExecute.manaCost);
+
+            // 스킬 쿨타임을 시작
+            skillManager.StartCooldown(slotIndex);
+
+            return true;
+        }
+
+       // 스킬 사용이 불가능함을 애니메이션으로 플레이어에게 인식시킴
+        CooldownShake().Forget();
+
+        // 스킬 사용이 불가능하므로 false
+        return false;
+    }
+
+    // 스킬이 쿨타임일시 부들부들 떠는 애니메이션
+    private async UniTask CooldownShake()
+    {
+        float shakeDuration = 0.05f; // 전체 떨림 시간
+        float shakeAmount = 0.04f;   // 떨림의 강도 (움직이는 거리)
+        float elapsedTime = 0f;
+
+        while (elapsedTime < shakeDuration)
+        {
+            // 랜덤한 방향으로 살짝 이동
+            float x = Random.Range(-1f, 1f) * shakeAmount;
+
+            player.VisualsTransform.localPosition = startPos + new Vector3(x, 0, 0);
+
+            elapsedTime += Time.deltaTime;
+            await UniTask.Yield();
+        }
+
+        // 떨림이 끝나면 원래 위치로 복원
+        player.VisualsTransform.localPosition = startPos;
+    }
+    #endregion Skill
 }

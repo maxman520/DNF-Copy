@@ -82,7 +82,8 @@ public class UIManager : Singleton<UIManager>
     private void UpdateBossHP()
     {
         if (currentTarget == null) return;
-        bossHPBar.UpdateHP(
+        bossHPBar.UpdateInfo(
+            currentTarget.GetName(),
             currentTarget.GetMaxHP(),
             currentTarget.GetPreviousHP(),
             currentTarget.GetCurrentHP(),
@@ -135,7 +136,8 @@ public class UIManager : Singleton<UIManager>
     {
         if (monsterHPBar == null || currentTarget == null || !monsterHPBar.gameObject.activeSelf) return;
 
-        monsterHPBar.UpdateHP(
+        monsterHPBar.UpdateInfo(
+            currentTarget.GetName(),
             currentTarget.GetMaxHP(),
             currentTarget.GetPreviousHP(),
             currentTarget.GetCurrentHP(),
