@@ -1,17 +1,31 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
 using Unity.Cinemachine;
-
-
-public enum RoomType { Normal, Start, Boss } // 방의 종류
+using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+    public enum RoomType { Normal, Start, Boss } // 방의 종류
+
+    [Flags]
+    public enum HasExit // 방 연결 정보
+    {
+        None = 0,
+        Right = 1 << 0,
+        Left = 1 << 1,
+        Bottom = 1 << 2,
+        Top = 1 << 3,
+    }
+
     [Header("방 설정")]
     [SerializeField] public RoomType roomType;
+    [SerializeField] public HasExit hasExit;
     [SerializeField] public CinemachineCamera virtualCamera; // 이 방에서 사용할 가상 카메라
     [SerializeField] private List<Monster> monsters; // 이 방에 있는 모든 몬스터 리스트
     [SerializeField] private List<Portal> portals; // 이 방의 모든 포탈 리스트
+
+    [Header("미니맵 좌표")]
+    public Vector2Int coordinates; // 이 방의 미니맵 상 좌표
 
     private bool isCleared = false;
 

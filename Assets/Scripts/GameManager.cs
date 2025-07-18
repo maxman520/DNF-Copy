@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public enum GameState
 {
     // --- 게임 플로우 상태 ---
-    //MainMenu,           // 메인 메뉴 화면 (게임 시작 화면)
+    // MainMenu,           // 메인 메뉴 화면 (게임 시작 화면)
     CharacterSelect,    // 캐릭터 선택창
     Loading,            // 로딩 중
 

@@ -1534,6 +1534,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9dd338101f8b254f8eb907b70b3f29c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roomType: 0
+  hasExit: 9
   virtualCamera: {fileID: 1473337583}
   monsters:
   - {fileID: 1304288322}
@@ -1541,6 +1543,7 @@ MonoBehaviour:
   portals:
   - {fileID: 1819839816}
   - {fileID: 2128254115}
+  coordinates: {x: 1, y: 1}
 --- !u!1 &197682234
 GameObject:
   m_ObjectHideFlags: 0
@@ -2870,6 +2873,7 @@ MonoBehaviour:
   - {fileID: 532446191}
   - {fileID: 187648635}
   StartPosition: {x: -5.28, y: -2, z: 0}
+  mapSize: {x: 2, y: 2}
 --- !u!4 &403611542
 Transform:
   m_ObjectHideFlags: 0
@@ -3330,11 +3334,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9dd338101f8b254f8eb907b70b3f29c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roomType: 1
+  hasExit: 4
   virtualCamera: {fileID: 754430678}
   monsters:
   - {fileID: 36497915}
   portals:
   - {fileID: 160440919}
+  coordinates: {x: 0, y: 1}
 --- !u!1 &569683864
 GameObject:
   m_ObjectHideFlags: 0

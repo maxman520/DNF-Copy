@@ -32,6 +32,10 @@ public class DungeonManager : Singleton<DungeonManager>
         // currentRoom을 새로운 방으로 설정
         currentRoom = currentDungeon.Rooms[targetRoomIndex];
 
+        // 플레이어 미니맵 위치 업데이트
+        if (UIManager.Instance != null)
+            UIManager.Instance.UpdateMinimapPlayerPosition(targetRoomIndex);
+
         // 새로운 방의 로직 시작
         currentRoom.OnEnterRoom();
 
@@ -44,6 +48,8 @@ public class DungeonManager : Singleton<DungeonManager>
     {
         Debug.Log($"새로운 던전 '{dungeonToStart.DungeonName}'을 시작");
         this.currentDungeon = dungeonToStart;
+        if (UIManager.Instance != null) 
+            UIManager.Instance.SetMapName(dungeonToStart.DungeonName);
 
         if (currentDungeon.Rooms == null)
             Debug.LogError("Dungeon_Data에 Room들이 할당되지 않았음");
@@ -58,6 +64,12 @@ public class DungeonManager : Singleton<DungeonManager>
         currentRoom = currentDungeon.Rooms[0];
         currentRoom.OnEnterRoom();
 
+        // 미니맵 생성 요청 & 플레이어 미니맵 위치 업데이트
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.GenerateMinimap(dungeonToStart);
+            UIManager.Instance.UpdateMinimapPlayerPosition(0);
+        }
 
         Player.Instance.transform.position = currentDungeon.StartPosition;
         

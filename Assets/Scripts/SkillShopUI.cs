@@ -20,8 +20,7 @@ public class SkillShopUI : MonoBehaviour
     void Start()
     {
         InitializeShop();
-        skillShopPanel.SetActive(false); // 시작 시에는 꺼둠
-        descriptionPanel.SetActive(false);
+        descriptionPanel.SetActive(false); // 시작시엔 스킬 설명창은 꺼둠
     }
 
     // 스킬샵 UI를 토글하는 함수

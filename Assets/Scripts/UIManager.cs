@@ -1,6 +1,8 @@
 using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Triggers;
 using System;
 using System.Threading;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +24,11 @@ public class UIManager : Singleton<UIManager>
     [Header("스킬창")]
     [SerializeField] private SkillShopUI skillShopUI; // 스킬샵 창
 
+
+    [Header("미니맵")]
+    [SerializeField] private MinimapUI minimapUI; // 미니맵
+    [SerializeField] private TextMeshProUGUI mapName; // 맵 이름
+
     private Monster currentTarget; // 현재 추적 중인 타겟 몬스터
     private CancellationTokenSource monsterHPBarCts; // 몬스터 HP바 자동 숨김 작업을 위한 토큰
     private void Start()
@@ -29,6 +36,9 @@ public class UIManager : Singleton<UIManager>
         // 시작할 때 모든 몬스터 HP바는 숨겨둠
         monsterHPBar?.gameObject.SetActive(false);
         bossHPBar?.gameObject.SetActive(false);
+
+        skillShopUI?.gameObject.SetActive(false); // 스킬샵 창 비활성화
+        minimapUI.gameObject.SetActive(false); // 미니맵 비활성화
     }
 
     private void Update()
@@ -202,4 +212,36 @@ public class UIManager : Singleton<UIManager>
         }
     }
     #endregion Player
+
+    #region Minimap
+    // 미니맵 생성 요청을 받는 함수
+    public void GenerateMinimap(Dungeon dungeonData)
+    {
+        if (minimapUI != null)
+        {
+            minimapUI.gameObject.SetActive(true); // 미니맵 활성화
+            minimapUI.GenerateMap(dungeonData);
+        }
+    }
+
+    // 플레이어 위치 업데이트 요청을 받는 함수
+    public void UpdateMinimapPlayerPosition(int roomIndex)
+    {
+        if (minimapUI != null && minimapUI.gameObject.activeSelf)
+            minimapUI.UpdatePlayerPosition(roomIndex);
+    }
+
+    // 던전 퇴장 시 미니맵을 숨기는 함수
+    public void HideMinimap()
+    {
+        if (minimapUI != null)
+            minimapUI.gameObject.SetActive(false);
+    }
+    #endregion Minimap
+
+    public void SetMapName(string name)
+    {
+        if (this.mapName != null)
+            this.mapName.text = name;
+    }
 }
