@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -80,5 +82,37 @@ public class GameManager : Singleton<GameManager>
                 break;
         }
 
+    }
+
+    private bool isSlowing = false;
+
+    // 슬로우 모션을 요청하는 메인 함수
+    public UniTask DoSlowMotion(float duration, float slowFactor)
+    {
+        // 이미 다른 슬로우 모션이 진행 중이면 무시
+        if (isSlowing) return UniTask.CompletedTask;
+
+
+        return SlowMotionSequence(duration, slowFactor);
+    }
+    private async UniTask SlowMotionSequence(float duration, float slowFactor)
+    {
+        isSlowing = true;
+        try
+        {
+            // 1. 시간을 느리게 만듦
+            Time.timeScale = slowFactor;
+            Debug.Log($"슬로우 모션 시작. TimeScale: {slowFactor}");
+
+            // duration을 초 단위로 직접 사용 (더 간단함)
+            await UniTask.Delay(TimeSpan.FromSeconds(duration), ignoreTimeScale: true);
+        }
+        finally
+        {
+            // 작업이 성공적으로 끝나든, 중간에 취소되든 항상 시간을 복원
+            Time.timeScale = 1f;
+            isSlowing = false;
+            Debug.Log("슬로우 모션 종료. TimeScale: 1.0");
+        }
     }
 }

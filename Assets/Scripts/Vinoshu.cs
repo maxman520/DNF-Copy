@@ -385,10 +385,6 @@ public class Vinoshu : Monster
     #endregion State Behaviour
 
     #region Utilities
-    private bool IsPlayerInRecognitionRange()
-    {
-        return playerTransform != null && Vector2.Distance(transform.position, playerTransform.position) <= recognitionRange;
-    }
 
     private bool IsPlayerInAttackRange(AttackDetails currentAttackDetails)
     {
@@ -444,6 +440,7 @@ public class Vinoshu : Monster
         {
             isDead = true; // 죽음 절차 시작 플래그
             WaitUntilGroundedAndDie(this.GetCancellationTokenOnDestroy()).Forget();
+            GameManager.Instance.DoSlowMotion(3f, 0.2f); // 1.5초 동안, 게임 속도를 20%로
         }
 
         // UIManager에 자신을 타겟으로 알림
@@ -559,7 +556,11 @@ public class Vinoshu : Monster
         
         sr.enabled = false;
 
-        // 3. 최종 오브젝트 파괴
+        // 3. 던전 결과 창 표시 요청
+        Debug.Log("던전 결과 창 표시를 요청");
+        DungeonManager.Instance.ShowResultPanel();
+
+        // 4. 최종 오브젝트 파괴
         await UniTask.Delay(System.TimeSpan.FromSeconds(1.0), cancellationToken: token);
         Destroy(gameObject);
     }

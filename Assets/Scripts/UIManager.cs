@@ -29,6 +29,9 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private MinimapUI minimapUI; // 미니맵
     [SerializeField] private TextMeshProUGUI mapName; // 맵 이름
 
+    [Header("던전 결과 창")]
+    [SerializeField] private ResultPanel resultPanel; // 던전 결과 창
+
     private Monster currentTarget; // 현재 추적 중인 타겟 몬스터
     private CancellationTokenSource monsterHPBarCts; // 몬스터 HP바 자동 숨김 작업을 위한 토큰
     private void Start()
@@ -243,5 +246,10 @@ public class UIManager : Singleton<UIManager>
     {
         if (this.mapName != null)
             this.mapName.text = name;
+    }
+
+    public void ShowResultPanel(DungeonResultData resultData)
+    {
+        resultPanel.Show(resultData);
     }
 }

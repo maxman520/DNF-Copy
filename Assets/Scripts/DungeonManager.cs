@@ -1,4 +1,6 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DungeonManager : Singleton<DungeonManager>
 {
@@ -48,6 +50,8 @@ public class DungeonManager : Singleton<DungeonManager>
     {
         Debug.Log($"새로운 던전 '{dungeonToStart.DungeonName}'을 시작");
         this.currentDungeon = dungeonToStart;
+
+
         if (UIManager.Instance != null) 
             UIManager.Instance.SetMapName(dungeonToStart.DungeonName);
 
@@ -73,5 +77,52 @@ public class DungeonManager : Singleton<DungeonManager>
 
         Player.Instance.transform.position = currentDungeon.StartPosition;
         
+    }
+
+    // 보스 몬스터가 호출할 함수
+    public void ShowResultPanel()
+    {
+        // 던전 클리어 보상 계산
+        DungeonResultData resultData = CalculateDungeonResult();
+
+        // 결과창 표시
+        UIManager.Instance.ShowResultPanel(resultData);
+    }
+
+    // 보상 계산 로직
+    private DungeonResultData CalculateDungeonResult()
+    {
+        // 실제로는 던전 데이터나 처치한 몬스터 리스트 등을 기반으로 계산해야 함
+        // 임시 값. 나중에 수정할 것
+        return new DungeonResultData
+        {
+            // clearTime도 추가해야 함
+            HuntEXP = 12345,
+            ClearEXP = 67890
+        };
+    }
+
+    // "마을로 돌아가기" 버튼이 호출할 함수
+    public void ReturnToTown()
+    {
+        Debug.Log("결과를 확인했습니다. 마을로 돌아갑니다.");
+
+        string townToReturn = currentDungeon.TownToReturn;
+
+        // 던전 관련 데이터 초기화
+        currentDungeon = null;
+
+        // 마을 씬 로드
+        SceneManager.LoadScene(townToReturn);
+    }
+
+    // "다음 던전 시작" 버튼이 호출할 함수
+    public void GoToNextDungeon()
+    {
+        Debug.Log("결과를 확인했습니다. 다음 던전으로 이동합니다.");
+
+        string nextDungeonSceneName = currentDungeon.NextDungeonName; // 임시 값. 현재 던전 데이터에 다음 던전 이름도 추가할 것
+
+        SceneManager.LoadScene(nextDungeonSceneName);
     }
 }

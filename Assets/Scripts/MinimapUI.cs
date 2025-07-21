@@ -1,15 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MinimapUI : MonoBehaviour
 {
     [SerializeField] private GameObject roomIconPrefab;
     [SerializeField] private Transform gridParent; // Grid Layout Group이 있는 Transform
 
+    private GridLayoutGroup gridLayout;
+    
     // 2차원 딕셔너리로 방 아이콘들을 관리
     private Dictionary<Vector2Int, MinimapRoomIconController> roomIcons = new Dictionary<Vector2Int, MinimapRoomIconController>();
     private Dungeon currentDungeon;
     private int currentRoomIndex = -1; // 현재 방 인덱스를 추적
+
+    private void Awake()
+    {
+        gridLayout = GetComponent<GridLayoutGroup>();
+    }
 
     // 던전이 시작될 때 DungeonManager가 호출
     public void GenerateMap(Dungeon dungeon)
@@ -18,10 +26,13 @@ public class MinimapUI : MonoBehaviour
         this.currentDungeon = dungeon;
         ClearMap();
 
+        // Constraint Count를 현재 던전의 가로 크기(mapSize.x)로 설정
+        gridLayout.constraintCount = dungeon.MapSize.x;
+
         // 1. 맵 크기에 맞춰 빈 격자판(아이콘)을 생성
-        for (int y = 0; y < dungeon.mapSize.y; y++)
+        for (int y = 0; y < dungeon.MapSize.y; y++)
         {
-            for (int x = 0; x < dungeon.mapSize.x; x++)
+            for (int x = 0; x < dungeon.MapSize.x; x++)
             {
                 GameObject iconObj = Instantiate(roomIconPrefab, gridParent);
                 MinimapRoomIconController controller = iconObj.GetComponent<MinimapRoomIconController>();

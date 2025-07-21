@@ -19,7 +19,7 @@ public class InputHandler : System.IDisposable
         inputBuffer = new InputBuffer(0.3f); // 0.3초 동안 입력을 기억하도록 버퍼 생성
 
 
-        // 입력 액션 이벤트가 발생하면, 이 클래스의 이벤트를 호출
+        // 입력 액션 이벤트가 발생하면, 그에 맞는 커맨드를 생성해 입력 버퍼에 집어넣음
         inputActions.Player.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
         inputActions.Player.Move.canceled += ctx => { 
             MoveInput = Vector2.zero;
