@@ -6,7 +6,7 @@ using System;
 
 public class Vinoshu : Monster
 {
-    [Header("»óÅÂ º¯¼ö")]
+    [Header("ìƒíƒœ ë³€ìˆ˜")]
     public bool IsGrounded
     {
         get
@@ -43,7 +43,7 @@ public class Vinoshu : Monster
             anim.SetBool("isBackward", value);
         }
     }
-    private bool isDead // HP°¡ 0ÀÌÇÏ·Î ¶³¾îÁ³´Â°¡ (»ç¸Á ·ÎÁ÷ Áßº¹ ½ÇÇà ¹æÁö¿ë)
+    private bool isDead // HPê°€ 0ì´í•˜ë¡œ ë–¨ì–´ì¡ŒëŠ”ê°€ (ì‚¬ë§ ë¡œì§ ì¤‘ë³µ ì‹¤í–‰ ë°©ì§€ìš©)
     {
         get
         {
@@ -56,37 +56,37 @@ public class Vinoshu : Monster
         }
     }
 
-    [Header("¹°¸® º¯¼ö")]
+    [Header("ë¬¼ë¦¬ ë³€ìˆ˜")]
     private const float ORIGINAL_GRAVITY = 10f;
-    public float verticalVelocity; // ÇöÀç ¼öÁ÷ ¼Óµµ. ¿¡¾îº» ½Ã yÃà °è»ê¿¡ ÀÌ¿ë
-    private float gravity = ORIGINAL_GRAVITY; // °¡»ó Áß·Â°ª
+    public float verticalVelocity; // í˜„ì¬ ìˆ˜ì§ ì†ë„. ì—ì–´ë³¸ ì‹œ yì¶• ê³„ì‚°ì— ì´ìš©
+    private float gravity = ORIGINAL_GRAVITY; // ê°€ìƒ ì¤‘ë ¥ê°’
     private int airHitCounter = 0;
 
-    [Header("°ø°İ ÆÇÁ¤")]
+    [Header("ê³µê²© íŒì •")]
     [SerializeField] private GameObject attackHitboxObject;
     private MonsterHitbox attackHitbox;
     
-    // ¹«Á¶°Ç ÀÎ½Ä »óÅÂ·Î ¸¸µé °ÍÀÌ¹Ç·Î °íºí¸°°ú ´Ù¸£°Ô isAware º¯¼ö´Â ÇÊ¿ä¾øÀ½
+    // ë¬´ì¡°ê±´ ì¸ì‹ ìƒíƒœë¡œ ë§Œë“¤ ê²ƒì´ë¯€ë¡œ ê³ ë¸”ë¦°ê³¼ ë‹¤ë¥´ê²Œ isAware ë³€ìˆ˜ëŠ” í•„ìš”ì—†ìŒ
     // protected bool isAware = false;
 
-    [Header("AI °ü·Ã º¯¼ö")]
-    protected bool isActing = false; // ÇöÀç ¾î¶² Çàµ¿(Idle, Move µî)À» ÇÏ°í ÀÖ´ÂÁö ¿©ºÎ
-    [Tooltip("ÀüÅõ ½Ã, ÀÌµ¿ °¡´ÉÇÑ °¡Àå ¿ŞÂÊ ¾Æ·¡ °æ°è¸¦ ³ªÅ¸³»´Â Æ®·£½ºÆû")]
+    [Header("AI ê´€ë ¨ ë³€ìˆ˜")]
+    protected bool isActing = false; // í˜„ì¬ ì–´ë–¤ í–‰ë™(Idle, Move ë“±)ì„ í•˜ê³  ìˆëŠ”ì§€ ì—¬ë¶€
+    [Tooltip("ì „íˆ¬ ì‹œ, ì´ë™ ê°€ëŠ¥í•œ ê°€ì¥ ì™¼ìª½ ì•„ë˜ ê²½ê³„ë¥¼ ë‚˜íƒ€ë‚´ëŠ” íŠ¸ëœìŠ¤í¼")]
     [SerializeField] private Transform combatMinBoundary;
-    [Tooltip("ÀüÅõ ½Ã, ÀÌµ¿ °¡´ÉÇÑ °¡Àå ¿À¸¥ÂÊ À§ °æ°è¸¦ ³ªÅ¸³»´Â Æ®·£½ºÆû")]
+    [Tooltip("ì „íˆ¬ ì‹œ, ì´ë™ ê°€ëŠ¥í•œ ê°€ì¥ ì˜¤ë¥¸ìª½ ìœ„ ê²½ê³„ë¥¼ ë‚˜íƒ€ë‚´ëŠ” íŠ¸ëœìŠ¤í¼")]
     [SerializeField] private Transform combatMaxBoundary;
 
-    [SerializeField] private GameObject meteorPrefab; // ºñ³ë½´°¡ ¼ÒÈ¯ÇÒ ¸ŞÅ×¿À
+    [SerializeField] private GameObject meteorPrefab; // ë¹„ë…¸ìŠˆê°€ ì†Œí™˜í•  ë©”í…Œì˜¤
 
 
-    private CancellationTokenSource aiLoopCts; // ºñµ¿±â ÀÛ¾÷ °ü¸®
+    private CancellationTokenSource aiLoopCts; // ë¹„ë™ê¸° ì‘ì—… ê´€ë¦¬
 
     #region Unity Lifecycle
     protected override void Awake()
     {
         base.Awake();
         
-        // È÷Æ®¹Ú½º ½ºÅ©¸³Æ® ÂüÁ¶
+        // íˆíŠ¸ë°•ìŠ¤ ìŠ¤í¬ë¦½íŠ¸ ì°¸ì¡°
         if (attackHitboxObject != null)
         {
             attackHitbox = attackHitboxObject.GetComponent<MonsterHitbox>();
@@ -96,7 +96,7 @@ public class Vinoshu : Monster
     {
         base.Start();
 
-        // AI ·çÇÁ ½ÃÀÛ
+        // AI ë£¨í”„ ì‹œì‘
         StartAILoop();
     }
     private void Update()
@@ -116,14 +116,14 @@ public class Vinoshu : Monster
     #region AI System
     private void StartAILoop()
     {
-        // ÀÌÀü CancellationTokenSource°¡ ÀÖ´Ù¸é. ½ÇÇàÁßÀÌ´ø AI Loop°¡ ÀÖ´Ù¸é return
+        // ì´ì „ CancellationTokenSourceê°€ ìˆë‹¤ë©´. ì‹¤í–‰ì¤‘ì´ë˜ AI Loopê°€ ìˆë‹¤ë©´ return
         if (aiLoopCts != null) return;
 
-        // ¿ÀºêÁ§Æ® ÆÄ±« ½Ã Ãë¼ÒµÇ´Â ÅäÅ«°ú ¿¬°áµÈ »õ·Î¿î CancellationTokenSource »ı¼º
+        // ì˜¤ë¸Œì íŠ¸ íŒŒê´´ ì‹œ ì·¨ì†Œë˜ëŠ” í† í°ê³¼ ì—°ê²°ëœ ìƒˆë¡œìš´ CancellationTokenSource ìƒì„±
         var destroyToken = this.GetCancellationTokenOnDestroy();
         aiLoopCts = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
 
-        // AI ·çÇÁ ½ÃÀÛ
+        // AI ë£¨í”„ ì‹œì‘
         AI_Loop(aiLoopCts.Token).Forget();
     }
     private void StopAILoop()
@@ -132,7 +132,7 @@ public class Vinoshu : Monster
         aiLoopCts?.Dispose();
         aiLoopCts = null;
 
-        // ¹°¸®Àû ÀÌµ¿ Áï½Ã Áß´Ü
+        // ë¬¼ë¦¬ì  ì´ë™ ì¦‰ì‹œ ì¤‘ë‹¨
         rb.linearVelocity = Vector2.zero;
         IsWalking = false;
     }
@@ -143,53 +143,53 @@ public class Vinoshu : Monster
         {
             await Pattern_Boss(token);
 
-            // ¸Å ÇÁ·¹ÀÓ ½ÇÇàµÇÁö ¾Ê°í, ¾à°£ÀÇ µô·¹ÀÌ¸¦ ÁÖ¾î ¼º´É ºÎÇÏ¸¦ ÁÙÀÓ
+            // ë§¤ í”„ë ˆì„ ì‹¤í–‰ë˜ì§€ ì•Šê³ , ì•½ê°„ì˜ ë”œë ˆì´ë¥¼ ì£¼ì–´ ì„±ëŠ¥ ë¶€í•˜ë¥¼ ì¤„ì„
             await UniTask.Delay(100, cancellationToken: token);
         }
     }
 
-    // --- ÀüÅõ ÆĞÅÏ ---
+    // --- ì „íˆ¬ íŒ¨í„´ ---
     private async UniTask Pattern_Boss(CancellationToken token)
     {
-        if (isActing) return; // ÀÌ¹Ì ´Ù¸¥ Çàµ¿ÁßÀÌ¸é ½ÇÇàÇÏÁö ¾ÊÀ½
+        if (isActing) return; // ì´ë¯¸ ë‹¤ë¥¸ í–‰ë™ì¤‘ì´ë©´ ì‹¤í–‰í•˜ì§€ ì•ŠìŒ
 
 
-        // ÇÃ·¹ÀÌ¾î°¡ ±ÙÁ¢ °ø°İ ¹üÀ§ ¾È¿¡ ÀÖÀ» °æ¿ì
-        if (IsPlayerInAttackRange(monsterData.attackDetails[0])) // ±ÙÁ¢ °ø°İ ±âÁØÀ¸·Î ÆÇ´Ü
+        // í”Œë ˆì´ì–´ê°€ ê·¼ì ‘ ê³µê²© ë²”ìœ„ ì•ˆì— ìˆì„ ê²½ìš°
+        if (IsPlayerInAttackRange(monsterData.attackDetails[0])) // ê·¼ì ‘ ê³µê²© ê¸°ì¤€ìœ¼ë¡œ íŒë‹¨
         {
-            // Çàµ¿ °áÁ¤¿ë º¯¼ö
+            // í–‰ë™ ê²°ì •ìš© ë³€ìˆ˜
             float action = Random.value;
 
-            // ±ÙÁ¢ °ø°İ (60% È®·ü)
+            // ê·¼ì ‘ ê³µê²© (60% í™•ë¥ )
             if (action > 0.4f)
             {
                 await Attack(token);
             }
-            else if (action < 0.1f) // ¸ŞÅ×¿À °ø°İ (10% È®·ü)
+            else if (action < 0.1f) // ë©”í…Œì˜¤ ê³µê²© (10% í™•ë¥ )
             {
                 await Meteor(token);
 
             }
             else
             {
-                Vector3 destination; // ÀÌµ¿ ¸ñÇ¥ ÁöÁ¡
+                Vector3 destination; // ì´ë™ ëª©í‘œ ì§€ì 
 
-                if (action > 0.25f) // ÀüÁø (15% È®·ü)
+                if (action > 0.25f) // ì „ì§„ (15% í™•ë¥ )
                 {
                     IsBackward = false;
-                    // ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î ÀÌµ¿
+                    // í”Œë ˆì´ì–´ ë°©í–¥ìœ¼ë¡œ ì´ë™
                     Vector3 direction = (playerTransform.position - transform.position).normalized;
                     destination = transform.position + direction * Random.Range(1f, 3f);
                 }
-                else // ÈÄÅğ (15% È®·ü)
+                else // í›„í‡´ (15% í™•ë¥ )
                 {
                     IsBackward = true;
-                    // ÇÃ·¹ÀÌ¾î ¹İ´ë ¹æÇâÀ¸·Î ÀÌµ¿
+                    // í”Œë ˆì´ì–´ ë°˜ëŒ€ ë°©í–¥ìœ¼ë¡œ ì´ë™
                     Vector3 direction = (playerTransform.position - transform.position).normalized * -1f;
                     destination = transform.position + direction * Random.Range(1f, 2f);
                 }
 
-                // ¸ñÇ¥ ÁöÁ¡À» Á¤ÇØÁø ÀüÅõ ±¸¿ª (combatMinBoundary/combatMaxBoundary. ) ³»·Î º¸Á¤
+                // ëª©í‘œ ì§€ì ì„ ì •í•´ì§„ ì „íˆ¬ êµ¬ì—­ (combatMinBoundary/combatMaxBoundary. ) ë‚´ë¡œ ë³´ì •
                 if (combatMinBoundary != null && combatMaxBoundary != null)
                 {
                     destination.x = Mathf.Clamp(destination.x, combatMinBoundary.position.x, combatMaxBoundary.position.x);
@@ -198,32 +198,32 @@ public class Vinoshu : Monster
                 await MoveTo(destination, token);
             }
         }
-        else // ÀÚ½ÅÀÇ ±ÙÁ¢ °ø°İ ¹üÀ§ ¹Û¿¡ ÀÖÀ¸¸é
+        else // ìì‹ ì˜ ê·¼ì ‘ ê³µê²© ë²”ìœ„ ë°–ì— ìˆìœ¼ë©´
         {
-            // Çàµ¿ °áÁ¤¿ë º¯¼ö
+            // í–‰ë™ ê²°ì •ìš© ë³€ìˆ˜
             float action = Random.value;
             Vector3 destination;
 
-            // ¸ŞÅ×¿À °ø°İ (10% È®·ü)
+            // ë©”í…Œì˜¤ ê³µê²© (10% í™•ë¥ )
             if (action < 0.1f)
             {
                 await Meteor(token);
             }
-            else // ´ë±â / ÀüÁø / ÈÄÅğ (90% È®·ü)
+            else // ëŒ€ê¸° / ì „ì§„ / í›„í‡´ (90% í™•ë¥ )
             {
                 action = Random.Range(0, 3);
                 switch (action)
                 {
-                    case 0: // Àá½Ã 1 ~ 2ÃÊ ´ë±â
+                    case 0: // ì ì‹œ 1 ~ 2ì´ˆ ëŒ€ê¸°
                         float idleTime = Random.Range(1f, 2f);
                         await UniTask.Delay(System.TimeSpan.FromSeconds(idleTime), cancellationToken: token);
                         break;
-                    case 1: // ÇÃ·¹ÀÌ¾î¿¡°Ô Á¢±Ù
-                    case 2: // ÇÃ·¹ÀÌ¾î¿¡°Ô¼­ ÈÄÅğ
-                        float directionFactor = -1f; // Á¢±ÙÀÌ¸é +, ÈÄÅğ¸é - ¹æÇâ
+                    case 1: // í”Œë ˆì´ì–´ì—ê²Œ ì ‘ê·¼
+                    case 2: // í”Œë ˆì´ì–´ì—ê²Œì„œ í›„í‡´
+                        float directionFactor = -1f; // ì ‘ê·¼ì´ë©´ +, í›„í‡´ë©´ - ë°©í–¥
                         IsBackward = true;
 
-                        if (action == 1) // Á¢±ÙÇÒ °æ¿ì¶ó¸é »óÅÂ º¯¼ö¿Í ¹æÇâ ¼öÁ¤
+                        if (action == 1) // ì ‘ê·¼í•  ê²½ìš°ë¼ë©´ ìƒíƒœ ë³€ìˆ˜ì™€ ë°©í–¥ ìˆ˜ì •
                         {
                             directionFactor = 1f;
                             IsBackward = false;
@@ -232,7 +232,7 @@ public class Vinoshu : Monster
                         Vector3 direction = (playerTransform.position - transform.position).normalized * directionFactor;
                         destination = transform.position + direction * Random.Range(1f, 3f);
 
-                        // ¸ñÇ¥ ÁöÁ¡À» combatMinBoundary/combatMaxBoundary ³»·Î º¸Á¤
+                        // ëª©í‘œ ì§€ì ì„ combatMinBoundary/combatMaxBoundary ë‚´ë¡œ ë³´ì •
                         if (combatMinBoundary != null && combatMaxBoundary != null)
                         {
                             destination.x = Mathf.Clamp(destination.x, combatMinBoundary.position.x, combatMaxBoundary.position.x);
@@ -251,27 +251,27 @@ public class Vinoshu : Monster
         isActing = true;
         try
         {
-            // Ã¹ ¹øÂ° °ø°İ Á¤º¸¸¦ °¡Á®¿È
+            // ì²« ë²ˆì§¸ ê³µê²© ì •ë³´ë¥¼ ê°€ì ¸ì˜´
             currentAttackDetails = monsterData.attackDetails[0];
 
-            // ÃÖÁ¾ µ¥¹ÌÁö¸¦ °è»êÇÏ¿© AttackDetails¿¡ Ã¤¿ö³ÖÀ½
+            // ìµœì¢… ë°ë¯¸ì§€ë¥¼ ê³„ì‚°í•˜ì—¬ AttackDetailsì— ì±„ì›Œë„£ìŒ
             currentAttackDetails.damageRate *= this.atk;
 
-            // È÷Æ®¹Ú½º¿¡ ¿Ï¼ºµÈ °ø°İ Á¤º¸¸¦ Àü´ŞÇÏ¿© ÃÊ±âÈ­
+            // íˆíŠ¸ë°•ìŠ¤ì— ì™„ì„±ëœ ê³µê²© ì •ë³´ë¥¼ ì „ë‹¬í•˜ì—¬ ì´ˆê¸°í™”
             if (attackHitbox != null)
             {
                 attackHitbox.Initialize(currentAttackDetails);
             }
             FlipTowardsPlayer();
             anim.SetTrigger("attack");
-            Debug.Log("ºñ³ë½´ÀÇ ±ÙÁ¢ °ø°İ!");
+            Debug.Log("ë¹„ë…¸ìŠˆì˜ ê·¼ì ‘ ê³µê²©!");
 
-            // ´Ù¸¥ Çàµ¿ ÁøÇàÀ» ¸·±â À§ÇØ attack ¾Ö´Ï¸ŞÀÌ¼Ç ±æÀÌ¸¸Å­ ´ë±â
+            // ë‹¤ë¥¸ í–‰ë™ ì§„í–‰ì„ ë§‰ê¸° ìœ„í•´ attack ì• ë‹ˆë©”ì´ì…˜ ê¸¸ì´ë§Œí¼ ëŒ€ê¸°
             await UniTask.Delay(1100, cancellationToken: token);
         }
         catch (OperationCanceledException)
         {
-            // ¿¹¿Ü Ã³¸®
+            // ì˜ˆì™¸ ì²˜ë¦¬
         }
         finally
         {
@@ -283,42 +283,42 @@ public class Vinoshu : Monster
         isActing = true;
         try
         {
-            // ÀÎ½ºÆåÅÍ¿¡¼­ ¼³Á¤ÇØ³õÀº µÎ ¹øÂ° °ø°İ Á¤º¸(¸ŞÅ×¿À °ø°İ Á¤º¸)¸¦ °¡Á®¿È
-            Debug.Log("ºñ³ë½´ÀÇ ¸ŞÅ×¿À ½ÃÀü!");
+            // ì¸ìŠ¤í™í„°ì—ì„œ ì„¤ì •í•´ë†“ì€ ë‘ ë²ˆì§¸ ê³µê²© ì •ë³´(ë©”í…Œì˜¤ ê³µê²© ì •ë³´)ë¥¼ ê°€ì ¸ì˜´
+            Debug.Log("ë¹„ë…¸ìŠˆì˜ ë©”í…Œì˜¤ ì‹œì „!");
             currentAttackDetails = monsterData.attackDetails[1];
-            currentAttackDetails.damageRate *= this.atk; // °ø°İ·ÂÀÌ °öÇØÁø Á¤º¸¸¦ ¸ŞÅ×¿À¿¡°Ô Àü´ŞÇÒ °ÍÀÓ
+            currentAttackDetails.damageRate *= this.atk; // ê³µê²©ë ¥ì´ ê³±í•´ì§„ ì •ë³´ë¥¼ ë©”í…Œì˜¤ì—ê²Œ ì „ë‹¬í•  ê²ƒì„
             FlipTowardsPlayer();
             anim.SetTrigger("cast");
 
-            // ¸¶¹ıÁø »ı¼º. MagicCircle ÀÌÆåÆ®ÀÇ visuals°¡ 0.4f ¸¸Å­ ¹ØÀ¸·Î ³»·Á°¡ÀÖ¾î ±×¸¸Å­ offsetÀ» ³Ö¾îÁà¾ßÇÔ
+            // ë§ˆë²•ì§„ ìƒì„±. MagicCircle ì´í™íŠ¸ì˜ visualsê°€ 0.4f ë§Œí¼ ë°‘ìœ¼ë¡œ ë‚´ë ¤ê°€ìˆì–´ ê·¸ë§Œí¼ offsetì„ ë„£ì–´ì¤˜ì•¼í•¨
             Vector3 targetPosition = new Vector3(playerTransform.position.x, playerTransform.position.y + 0.4f, playerTransform.position.z);
             EffectManager.Instance.PlayEffect("MagicCircle", targetPosition, Quaternion.identity);
 
-            // ´Ù¸¥ Çàµ¿ ÁøÇàÀ» ¸·±â À§ÇØ cast ¾Ö´Ï¸ŞÀÌ¼ÇÀÇ ±æÀÌ¸¸Å­ ´ë±â
+            // ë‹¤ë¥¸ í–‰ë™ ì§„í–‰ì„ ë§‰ê¸° ìœ„í•´ cast ì• ë‹ˆë©”ì´ì…˜ì˜ ê¸¸ì´ë§Œí¼ ëŒ€ê¸°
             await UniTask.Delay(1100, cancellationToken: token);
 
-            targetPosition.y -= 0.4f; // Á¤È®ÇÑ Å¸°Ù À§Ä¡¸¦ ±¸ÇÏ±â À§ÇØ À§¿¡¼­ ´õÇØÁá´ø 0.4¸¦ ´Ù½Ã »©ÁÜ
+            targetPosition.y -= 0.4f; // ì •í™•í•œ íƒ€ê²Ÿ ìœ„ì¹˜ë¥¼ êµ¬í•˜ê¸° ìœ„í•´ ìœ„ì—ì„œ ë”í•´ì¤¬ë˜ 0.4ë¥¼ ë‹¤ì‹œ ë¹¼ì¤Œ
 
-            Debug.Log("¸ŞÅ×¿À ¼ÒÈ¯!");
+            Debug.Log("ë©”í…Œì˜¤ ì†Œí™˜!");
             if (meteorPrefab != null)
             {
                 GameObject meteorInstance = Instantiate(meteorPrefab, targetPosition, Quaternion.identity);
 
-                // ¸ŞÅ×¿À°¡ Å¸°ÙÀ» ÇâÇÏµµ·Ï ÇöÀç °ø°İ Á¤º¸¿Í ÇÔ²² ÃÊ±âÈ­
+                // ë©”í…Œì˜¤ê°€ íƒ€ê²Ÿì„ í–¥í•˜ë„ë¡ í˜„ì¬ ê³µê²© ì •ë³´ì™€ í•¨ê»˜ ì´ˆê¸°í™”
                 meteorInstance.GetComponent<VinoshuMeteor>().Initialize(currentAttackDetails, targetPosition);
             }
 
         }
         catch (OperationCanceledException)
         {
-            // ¿¹¿Ü Ã³¸®
+            // ì˜ˆì™¸ ì²˜ë¦¬
         }
         finally
         {
             isActing = false;
         }        
     }
-    // ¸ñÇ¥ ÁöÁ¡±îÁö ÀÌµ¿
+    // ëª©í‘œ ì§€ì ê¹Œì§€ ì´ë™
     private async UniTask MoveTo(Vector3 destination, CancellationToken token)
     {
         IsWalking = true;
@@ -339,7 +339,7 @@ public class Vinoshu : Monster
         }
         catch (OperationCanceledException)
         {
-            // ¿¹¿Ü Ã³¸®
+            // ì˜ˆì™¸ ì²˜ë¦¬
         }
         finally
         {
@@ -351,10 +351,10 @@ public class Vinoshu : Monster
     #endregion AI System
 
     #region State Behaviour
-    // ´ë±â ¾Ö´Ï¸ŞÀÌ¼ÇÀ¸·Î ÁøÀÔ ½Ã È£Ãâ
+    // ëŒ€ê¸° ì• ë‹ˆë©”ì´ì…˜ìœ¼ë¡œ ì§„ì… ì‹œ í˜¸ì¶œ
     public override void OnIdleStateEnter()
     {
-        // AI ·çÇÁ Àç½ÃÀÛ ÇÔ¼ö È£Ãâ
+        // AI ë£¨í”„ ì¬ì‹œì‘ í•¨ìˆ˜ í˜¸ì¶œ
         StartAILoop();
     }
 
@@ -363,22 +363,22 @@ public class Vinoshu : Monster
         // Do nothing
     }
 
-    // °ø°İ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public override void OnAttackStateExit()
     {
         isActing = false;
     }
 
-    // ÇÇ°İ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // í”¼ê²© ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public override void OnHurtStateExit() {
-        // ÇÇ°İÀÌ ³¡³ª¸é ÀüÅõ »óÅÂ·Î º¹±ÍÇÏ°í AI ·çÇÁ Àç½ÃÀÛ
+        // í”¼ê²©ì´ ëë‚˜ë©´ ì „íˆ¬ ìƒíƒœë¡œ ë³µê·€í•˜ê³  AI ë£¨í”„ ì¬ì‹œì‘
         isActing = false;
     }
 
-    // ±â»ó ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // ê¸°ìƒ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public override void OnGetUpStateExit()
     {
-        // ÇÇ°İÀÌ ³¡³ª¸é ÀüÅõ »óÅÂ·Î º¹±ÍÇÏ°í AI ·çÇÁ Àç½ÃÀÛ
+        // í”¼ê²©ì´ ëë‚˜ë©´ ì „íˆ¬ ìƒíƒœë¡œ ë³µê·€í•˜ê³  AI ë£¨í”„ ì¬ì‹œì‘
         isActing = false;
         visualsTransform.localPosition = startPos;
     }
@@ -390,13 +390,13 @@ public class Vinoshu : Monster
     {
         if (playerTransform == null) return false;
 
-        // XÃà °Å¸® °è»ê
+        // Xì¶• ê±°ë¦¬ ê³„ì‚°
         float distanceX = Mathf.Abs(playerTransform.position.x - transform.position.x);
 
-        // YÃà °Å¸® °è»ê (VisualsÀÇ Y À§Ä¡¸¦ ±âÁØÀ¸·Î)
+        // Yì¶• ê±°ë¦¬ ê³„ì‚° (Visualsì˜ Y ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ)
         float distanceY = Mathf.Abs((playerTransform.position.y) - (transform.position.y));
 
-        // XÃà °Å¸®°¡ °ø°İ ¹üÀ§ ³»¿¡ ÀÖ°í, YÃà °Å¸®µµ °ø°İ ¹üÀ§(yOffset) ³»¿¡ ÀÖ´ÂÁö È®ÀÎ
+        // Xì¶• ê±°ë¦¬ê°€ ê³µê²© ë²”ìœ„ ë‚´ì— ìˆê³ , Yì¶• ê±°ë¦¬ë„ ê³µê²© ë²”ìœ„(yOffset) ë‚´ì— ìˆëŠ”ì§€ í™•ì¸
         return distanceX <= attackRange && distanceY <= currentAttackDetails.yOffset;
     }
 
@@ -419,39 +419,39 @@ public class Vinoshu : Monster
 
     public override void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition)
     {
-        // ÀÔÀ» µ¥¹ÌÁö °è»ê
+        // ì…ì„ ë°ë¯¸ì§€ ê³„ì‚°
         float damage = CalculateDamage(attackDetails);
 
-        // µ¥¹ÌÁö ÅØ½ºÆ® Ãâ·Â
+        // ë°ë¯¸ì§€ í…ìŠ¤íŠ¸ ì¶œë ¥
         EffectManager.Instance.PlayEffect("DefaultDamageText", hurtboxTransform.position, Quaternion.identity, damage);
 
-        // ÇÇ°İ ¹İÀÀ
+        // í”¼ê²© ë°˜ì‘
         Hurt(attackDetails, attackPosition);
 
-        // ÀÌ¹Ì Á×¾ú´Ù¸é µ¥¹ÌÁö Àû¿ëX. return
+        // ì´ë¯¸ ì£½ì—ˆë‹¤ë©´ ë°ë¯¸ì§€ ì ìš©X. return
         if (isDead) return;
 
-        // µ¥¹ÌÁö Àû¿ë
+        // ë°ë¯¸ì§€ ì ìš©
         previousHP = currentHP;
         currentHP -= damage;
-        Debug.Log($"{monsterData.MonsterName}ÀÌ(°¡) {damage}ÀÇ µ¥¹ÌÁö¸¦ ÀÔÀ½. ÇöÀç Ã¼·Â: {currentHP}");
+        Debug.Log($"{monsterData.MonsterName}ì´(ê°€) {damage}ì˜ ë°ë¯¸ì§€ë¥¼ ì…ìŒ. í˜„ì¬ ì²´ë ¥: {currentHP}");
 
         if (currentHP <= 0)
         {
-            isDead = true; // Á×À½ ÀıÂ÷ ½ÃÀÛ ÇÃ·¡±×
+            isDead = true; // ì£½ìŒ ì ˆì°¨ ì‹œì‘ í”Œë˜ê·¸
             WaitUntilGroundedAndDie(this.GetCancellationTokenOnDestroy()).Forget();
-            GameManager.Instance.DoSlowMotion(3f, 0.2f); // 1.5ÃÊ µ¿¾È, °ÔÀÓ ¼Óµµ¸¦ 20%·Î
+            GameManager.Instance.DoSlowMotion(3f, 0.2f); // 1.5ì´ˆ ë™ì•ˆ, ê²Œì„ ì†ë„ë¥¼ 20%ë¡œ
         }
 
-        // UIManager¿¡ ÀÚ½ÅÀ» Å¸°ÙÀ¸·Î ¾Ë¸²
+        // UIManagerì— ìì‹ ì„ íƒ€ê²Ÿìœ¼ë¡œ ì•Œë¦¼
         UIManager.Instance.OnMonsterDamaged(this);
 
     }
 
-    // ÂøÁö¸¦ ±â´Ù·È´Ù°¡ Die()¸¦ È£ÃâÇÏ´Â ºñµ¿±â ÇÔ¼ö
+    // ì°©ì§€ë¥¼ ê¸°ë‹¤ë ¸ë‹¤ê°€ Die()ë¥¼ í˜¸ì¶œí•˜ëŠ” ë¹„ë™ê¸° í•¨ìˆ˜
     private async UniTask WaitUntilGroundedAndDie(CancellationToken token)
     {
-        // IsGrounded°¡ true°¡ µÉ ¶§±îÁö ¸Å ÇÁ·¹ÀÓ È®ÀÎÇÏ¸ç ´ë±â
+        // IsGroundedê°€ trueê°€ ë  ë•Œê¹Œì§€ ë§¤ í”„ë ˆì„ í™•ì¸í•˜ë©° ëŒ€ê¸°
         await UniTask.WaitUntil(() => IsGrounded, cancellationToken: token);
 
         Die();
@@ -459,19 +459,19 @@ public class Vinoshu : Monster
 
     protected override void Hurt(AttackDetails attackDetails, Vector2 attackPosition)
     {
-        StopAILoop(); // ºñµ¿±â ÀÛ¾÷ Áï½Ã Áß´Ü
+        StopAILoop(); // ë¹„ë™ê¸° ì‘ì—… ì¦‰ì‹œ ì¤‘ë‹¨
         isActing = false;
         IsWalking = false;
        
-        rb.linearVelocity = Vector2.zero; // ³Ë¹é Àü¿¡ ¼Óµµ ÃÊ±âÈ­
+        rb.linearVelocity = Vector2.zero; // ë„‰ë°± ì „ì— ì†ë„ ì´ˆê¸°í™”
 
-        // hurtbox ÁöÁ¡¿¡ ÀÌÆåÆ®¸¦ »ı¼º
+        // hurtbox ì§€ì ì— ì´í™íŠ¸ë¥¼ ìƒì„±
         Vector3 hurtPoint = hurtboxTransform.position;
 
-        // ÀÌÆåÆ®ÀÇ ¹æÇâÀº ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹æÇâÀ» µû¸£°Å³ª, ±âº» ¹æÇâÀ¸·Î ¼³Á¤
+        // ì´í™íŠ¸ì˜ ë°©í–¥ì€ í”Œë ˆì´ì–´ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ì„ ë”°ë¥´ê±°ë‚˜, ê¸°ë³¸ ë°©í–¥ìœ¼ë¡œ ì„¤ì •
         Quaternion effectRotation = (transform.position.x > attackPosition.x) ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
 
-        // attackDetails¿¡ ÀÌÆåÆ® ÀÌ¸§ÀÌ ÀÖ´Ù¸é ±×°É »ç¿ë, ¾ø´Ù¸é ±âº» ÀÌÆåÆ® »ç¿ë
+        // attackDetailsì— ì´í™íŠ¸ ì´ë¦„ì´ ìˆë‹¤ë©´ ê·¸ê±¸ ì‚¬ìš©, ì—†ë‹¤ë©´ ê¸°ë³¸ ì´í™íŠ¸ ì‚¬ìš©
         // string effectToPlay = string.IsNullOrEmpty(attackDetails.effectName) ? "NormalHit_Slash" : attackDetails.effectName;
         string effectToPlay = "SlashSmall" + Random.Range(1, 4);
         EffectManager.Instance.PlayEffect(effectToPlay, hurtPoint, Quaternion.identity);
@@ -480,15 +480,15 @@ public class Vinoshu : Monster
 
         float direction = (transform.position.x > attackPosition.x) ? 1 : -1;
 
-        if (IsGrounded) // ¶¥¿¡ ÀÖÀ» ¶§
+        if (IsGrounded) // ë•…ì— ìˆì„ ë•Œ
         {
             
             if (attackDetails.launchForce > 0)
             {
-                // ¼öÆò ³Ë¹é
+                // ìˆ˜í‰ ë„‰ë°±
                 rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
-                // °øÁß¿¡ ¶ß´Â Èû Àû¿ë
+                // ê³µì¤‘ì— ëœ¨ëŠ” í˜ ì ìš©
                 verticalVelocity = attackDetails.launchForce;
 
                 IsGrounded = false;
@@ -496,15 +496,15 @@ public class Vinoshu : Monster
             }
             else
             {   
-                // ¼öÆò ³Ë¹é
+                // ìˆ˜í‰ ë„‰ë°±
                 transform.position += new Vector3(direction * attackDetails.knockbackForce * 0.1f, 0);
 
                 anim.SetTrigger("hurt" + Random.Range(1, 3));
             }
         }
-        else // °øÁß¿¡ ÀÖÀ» ¶§
+        else // ê³µì¤‘ì— ìˆì„ ë•Œ
         {   
-            // ¼öÆò ³Ë¹é
+            // ìˆ˜í‰ ë„‰ë°±
             rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
             if (attackDetails.launchForce > 0) airHitCounter++;
@@ -515,13 +515,17 @@ public class Vinoshu : Monster
 
     protected override void Die()
     {
-        StopAILoop(); // ¸ğµç ºñµ¿±â ÀÛ¾÷ Áß´Ü
+        StopAILoop(); // ëª¨ë“  ë¹„ë™ê¸° ì‘ì—… ì¤‘ë‹¨
         isActing = false;
-        UIManager.Instance.HideBossHPBar(); // HP¹Ù¸¦ ¼û±âµµ·Ï ¿äÃ»
+        UIManager.Instance.HideBossHPBar(); // HPë°”ë¥¼ ìˆ¨ê¸°ë„ë¡ ìš”ì²­
 
-        Debug.Log($"{monsterData.MonsterName}ÀÌ(°¡) Á×¾ú½À´Ï´Ù.");
+        Debug.Log($"{monsterData.MonsterName}ì´(ê°€) ì£½ì—ˆìŠµë‹ˆë‹¤.");
+        
+        // í”Œë ˆì´ì–´ì—ê²Œ ê²½í—˜ì¹˜ ì§€ê¸‰
+        GameManager.Instance.AddExp(monsterData.EXP);
+        DungeonManager.Instance.AddHuntExp(monsterData.EXP);
 
-        // ¹°¸®Àû ¿òÁ÷ÀÓ°ú Ãæµ¹À» ÁßÁö
+        // ë¬¼ë¦¬ì  ì›€ì§ì„ê³¼ ì¶©ëŒì„ ì¤‘ì§€
         rb.linearVelocity = Vector2.zero;
         GetComponentInChildren<Collider2D>().enabled = false;
 
@@ -530,75 +534,75 @@ public class Vinoshu : Monster
 
     private async UniTask DeathSequenceAsync(CancellationToken token)
     {
-        // 1. ÇÏ¾é°Ô º¯ÇÏ°í Á¡Á¡ Åõ¸íÇÏ°Ô
+        // 1. í•˜ì–—ê²Œ ë³€í•˜ê³  ì ì  íˆ¬ëª…í•˜ê²Œ
         var mat = sr.material;
         mat.SetFloat("_Blend", 1f);
-        float duration = 0.3f; // Åõ¸íÇÏ°Ô º¯ÇÏ´Â µ¥ °É¸®´Â ½Ã°£
+        float duration = 0.3f; // íˆ¬ëª…í•˜ê²Œ ë³€í•˜ëŠ” ë° ê±¸ë¦¬ëŠ” ì‹œê°„
         float elapsedTime = 0f;
 
-        // ¸ÓÆ¼¸®¾óÀÇ ÇÁ·ÎÆÛÆ¼ °ªÀ» ¾Ö´Ï¸ŞÀÌ¼Ç
+        // ë¨¸í‹°ë¦¬ì–¼ì˜ í”„ë¡œí¼í‹° ê°’ì„ ì• ë‹ˆë©”ì´ì…˜
         while (elapsedTime < duration)
         {
-            // º¸°£ °è¼ö °è»ê (0¿¡¼­ 1·Î Áõ°¡)
+            // ë³´ê°„ ê³„ìˆ˜ ê³„ì‚° (0ì—ì„œ 1ë¡œ ì¦ê°€)
             float alpha = Mathf.Lerp(1f, 0f, elapsedTime / duration);
 
-            // ·»´õ·¯°¡ »ç¿ëÇÏ´Â ¸ÓÆ¼¸®¾óÀÇ "_Alpha" ÇÁ·ÎÆÛÆ¼ °ªÀ» º¯°æ
+            // ë Œë”ëŸ¬ê°€ ì‚¬ìš©í•˜ëŠ” ë¨¸í‹°ë¦¬ì–¼ì˜ "_Alpha" í”„ë¡œí¼í‹° ê°’ì„ ë³€ê²½
             mat.SetFloat("_Alpha", alpha);
 
             elapsedTime += Time.deltaTime;
             await UniTask.Yield(token);
         }
 
-        // 2. ¼Ò¸ê ¹× ÆÄÆí »ı¼º
-        // ¸ó½ºÅÍ À§Ä¡¿¡ ÀÌÆåÆ®¸¦ »ı¼º
+        // 2. ì†Œë©¸ ë° íŒŒí¸ ìƒì„±
+        // ëª¬ìŠ¤í„° ìœ„ì¹˜ì— ì´í™íŠ¸ë¥¼ ìƒì„±
         Vector3 hurtPoint = hurtboxTransform.position;
         EffectManager.Instance.PlayEffect("MonsterDieFlash", hurtPoint, Quaternion.identity);
         
         sr.enabled = false;
 
-        // 3. ´øÀü °á°ú Ã¢ Ç¥½Ã ¿äÃ»
-        Debug.Log("´øÀü °á°ú Ã¢ Ç¥½Ã¸¦ ¿äÃ»");
+        // 3. ë˜ì „ ê²°ê³¼ ì°½ í‘œì‹œ ìš”ì²­
+        Debug.Log("ë˜ì „ ê²°ê³¼ ì°½ í‘œì‹œë¥¼ ìš”ì²­");
         DungeonManager.Instance.ShowResultPanel();
 
-        // 4. ÃÖÁ¾ ¿ÀºêÁ§Æ® ÆÄ±«
+        // 4. ìµœì¢… ì˜¤ë¸Œì íŠ¸ íŒŒê´´
         await UniTask.Delay(System.TimeSpan.FromSeconds(1.0), cancellationToken: token);
         Destroy(gameObject);
     }
     public void HandleGravity()
     {
-        // 1. °øÁß¿¡ ¶° ÀÖ´Ù¸é
+        // 1. ê³µì¤‘ì— ë–  ìˆë‹¤ë©´
         if (!IsGrounded)
         {
-            // 2. Áß·ÂÀ» °è¼Ó Àû¿ë
+            // 2. ì¤‘ë ¥ì„ ê³„ì† ì ìš©
             verticalVelocity += (-gravity) * Time.deltaTime;
 
-            // 3. °è»êµÈ ¼Óµµ·Î VisualsÀÇ local YÁÂÇ¥¸¦ º¯°æ
+            // 3. ê³„ì‚°ëœ ì†ë„ë¡œ Visualsì˜ local Yì¢Œí‘œë¥¼ ë³€ê²½
             visualsTransform.localPosition += new Vector3(0, verticalVelocity * Time.deltaTime, 0);
 
-            // 4. ÂøÁöÇß´ÂÁö È®ÀÎ
+            // 4. ì°©ì§€í–ˆëŠ”ì§€ í™•ì¸
             CheckForLanding();
         }
     }
 
-    // ÂøÁö ÆÇº° ·ÎÁ÷
+    // ì°©ì§€ íŒë³„ ë¡œì§
     private void CheckForLanding()
     {
-        // VisualsÀÇ Y ÁÂÇ¥°¡ ½ÃÀÛ YÁÂÇ¥º¸´Ù ¾Æ·¡·Î ³»·Á°¬´Ù¸é ÂøÁö·Î °£ÁÖ
-        if (visualsTransform.localPosition.y <= startPos.y - 0.25f) // ºñ³ë½´´Â ¶¥¿¡¼­ »ìÂ¦ ¶°ÀÖ´Â Ã¤·Î ¿òÁ÷ÀÌ´Â ¸ó½ºÅÍ±â ¶§¹®¿¡ 0.25¸¸Å­ y°ªÀ» »©ÁÖ¾î¾ß ¶¥¿¡ Á¦´ë·Î ÂøÁöÇÑ µíÀÌ º¸ÀÓ
+        // Visualsì˜ Y ì¢Œí‘œê°€ ì‹œì‘ Yì¢Œí‘œë³´ë‹¤ ì•„ë˜ë¡œ ë‚´ë ¤ê°”ë‹¤ë©´ ì°©ì§€ë¡œ ê°„ì£¼
+        if (visualsTransform.localPosition.y <= startPos.y - 0.25f) // ë¹„ë…¸ìŠˆëŠ” ë•…ì—ì„œ ì‚´ì§ ë– ìˆëŠ” ì±„ë¡œ ì›€ì§ì´ëŠ” ëª¬ìŠ¤í„°ê¸° ë•Œë¬¸ì— 0.25ë§Œí¼ yê°’ì„ ë¹¼ì£¼ì–´ì•¼ ë•…ì— ì œëŒ€ë¡œ ì°©ì§€í•œ ë“¯ì´ ë³´ì„
         {
             if (verticalVelocity < -1.5f)
             {
                 verticalVelocity *= -0.5f;
                 return;
             }
-            // »óÅÂ ÃÊ±âÈ­
+            // ìƒíƒœ ì´ˆê¸°í™”
             IsGrounded = true;
             airHitCounter = 0;
 
 
-            // À§Ä¡¿Í ¼Óµµ, Áß·Â ÃÊ±âÈ­
+            // ìœ„ì¹˜ì™€ ì†ë„, ì¤‘ë ¥ ì´ˆê¸°í™”
             rb.linearVelocity = Vector2.zero;
-            // OnGetUpStateExit()¿¡¼­ visualsTransformÀ» ¿ø À§Ä¡·Î º¹±¸ÇÏµµ·Ï ·ÎÁ÷ ¿Å±è
+            // OnGetUpStateExit()ì—ì„œ visualsTransformì„ ì› ìœ„ì¹˜ë¡œ ë³µêµ¬í•˜ë„ë¡ ë¡œì§ ì˜®ê¹€
             // visualsTransform.localPosition = startPos;
             verticalVelocity = 0f;
             gravity = ORIGINAL_GRAVITY;
@@ -606,9 +610,9 @@ public class Vinoshu : Monster
     }
     protected override void OnDrawGizmosSelected()
     {
-        base.OnDrawGizmosSelected(); // ±âº» ÀÎ½Ä/°ø°İ ¹üÀ§ ±âÁî¸ğ ±×¸®±â
+        base.OnDrawGizmosSelected(); // ê¸°ë³¸ ì¸ì‹/ê³µê²© ë²”ìœ„ ê¸°ì¦ˆëª¨ ê·¸ë¦¬ê¸°
 
-        // 2. ÀüÅõ ¿µ¿ª ±×¸®±â (ÆÄ¶õ»ö)
+        // 2. ì „íˆ¬ ì˜ì—­ ê·¸ë¦¬ê¸° (íŒŒë€ìƒ‰)
         if (combatMinBoundary != null && combatMaxBoundary != null)
         {
             Gizmos.color = Color.blue;

@@ -3,24 +3,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Monster Data", menuName = "Data/Monster Data")]
 public class MonsterData : ScriptableObject
 {
-    [Header("±âº» Á¤º¸")]
+    [Header("ê¸°ë³¸ ì •ë³´")]
     public string MonsterName;
-    public Sprite FaceSprite; // ¸ó½ºÅÍ ÃÊ»óÈ­ ½ºÇÁ¶óÀÌÆ®
-    public GameObject Prefab; // ¸ó½ºÅÍÀÇ ¿ÜÇü ÇÁ¸®ÆÕ
-    public bool isBoss = false; // º¸½º ¸ó½ºÅÍ ÀÎÁö. UI ManagerÀÇ Ã¼·Â¹Ù Ç¥½Ã¿¡ »ç¿ë
+    public Sprite FaceSprite; // ëª¬ìŠ¤í„° ì´ˆìƒí™” ìŠ¤í”„ë¼ì´íŠ¸
+    public GameObject Prefab; // ëª¬ìŠ¤í„°ì˜ ì™¸í˜• í”„ë¦¬íŒ¹
+    public bool isBoss = false; // ë³´ìŠ¤ ëª¬ìŠ¤í„° ì¸ì§€. UI Managerì˜ ì²´ë ¥ë°” í‘œì‹œì— ì‚¬ìš©
 
-    [Header("ÇÙ½É ½ºÅÈ")]
+    [Header("í•µì‹¬ ìŠ¤íƒ¯")]
     public float MaxHP;
-    public float HpPerLine; // HP °ÔÀÌÁö ÇÑ ÁÙ´ç Ã¼·Â
+    public float HpPerLine; // HP ê²Œì´ì§€ í•œ ì¤„ë‹¹ ì²´ë ¥
     public float Atk;
     public float Def;
     public float MoveSpeed;
+    public int EXP; // í”Œë ˆì´ì–´ì—ê²Œ ì§€ê¸‰í•  ê²½í—˜ì¹˜
 
-    [Header("AI °ü·Ã ½ºÅÈ")]
-    public float RecognitionRange; // ÇÃ·¹ÀÌ¾î ÀÎ½Ä ¹üÀ§
-    public float AttackRange;      // °ø°İ °¡´É ¹üÀ§
+    [Header("AI ê´€ë ¨ ìŠ¤íƒ¯")]
+    public float RecognitionRange; // í”Œë ˆì´ì–´ ì¸ì‹ ë²”ìœ„
+    public float AttackRange;      // ê³µê²© ê°€ëŠ¥ ë²”ìœ„
 
-    [Header("°ø°İ Á¤º¸")]
-    public AttackDetails[] attackDetails; // ¸ó½ºÅÍÀÇ °ø°İ Á¤º¸¸¦ ´ãÀ» ±¸Á¶Ã¼
+    [Header("ê³µê²© ì •ë³´")]
+    public AttackDetails[] attackDetails; // ëª¬ìŠ¤í„°ì˜ ê³µê²© ì •ë³´ë¥¼ ë‹´ì„ êµ¬ì¡°ì²´
 
 }

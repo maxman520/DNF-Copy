@@ -4,71 +4,77 @@ using UnityEngine.SceneManagement;
 
 public class DungeonManager : Singleton<DungeonManager>
 {
-    private Dungeon currentDungeon; // ÇöÀç ÇÃ·¹ÀÌ ÁßÀÎ ´øÀüÀÇ Á¤º¸
+    private Dungeon currentDungeon; // í˜„ì¬ í”Œë ˆì´ ì¤‘ì¸ ë˜ì „ì˜ ì •ë³´
     private Room currentRoom;
+    private float dungeonStartTime; // ë˜ì „ ì‹œì‘ ì‹œê°„
+    private int totalHuntExp; // ëˆ„ì ëœ ì‚¬ëƒ¥ ê²½í—˜ì¹˜
 
     protected override void Awake()
     {
         base.Awake();
     }
 
-    // ¸ñÇ¥ Æ÷Å» ÁöÁ¡À¸·Î ÀÌµ¿ÇÏ´Â ÇÔ¼ö
+    // ëª©í‘œ í¬íƒˆ ì§€ì ìœ¼ë¡œ ì´ë™í•˜ëŠ” í•¨ìˆ˜
     public void EnterRoom(int targetRoomIndex, Portal targetPortal)
     {
 
         if (targetPortal == null)
         {
-            Debug.LogError("targetPortalÀÌ ÇÒ´çµÇÁö ¾Ê¾ÒÀ½");
+            Debug.LogError("targetPortalì´ í• ë‹¹ë˜ì§€ ì•Šì•˜ìŒ");
             return;
         }
 
         if (targetRoomIndex < 0 || targetRoomIndex >= currentDungeon.Rooms.Count)
         {
-            Debug.LogError("targetRoomIndex°¡ Àß¸øµÇ¾úÀ½");
+            Debug.LogError("targetRoomIndexê°€ ì˜ëª»ë˜ì—ˆìŒ");
             return;
         }
 
-        // ÀÌÀü ¹æÀÌ ÀÖ¾ú´Ù¸é ÅğÀå Ã³¸®
+        // ì´ì „ ë°©ì´ ìˆì—ˆë‹¤ë©´ í‡´ì¥ ì²˜ë¦¬
         currentRoom?.OnExitRoom();
 
-        // currentRoomÀ» »õ·Î¿î ¹æÀ¸·Î ¼³Á¤
+        // currentRoomì„ ìƒˆë¡œìš´ ë°©ìœ¼ë¡œ ì„¤ì •
         currentRoom = currentDungeon.Rooms[targetRoomIndex];
 
-        // ÇÃ·¹ÀÌ¾î ¹Ì´Ï¸Ê À§Ä¡ ¾÷µ¥ÀÌÆ®
+        // í”Œë ˆì´ì–´ ë¯¸ë‹ˆë§µ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
         if (UIManager.Instance != null)
             UIManager.Instance.UpdateMinimapPlayerPosition(targetRoomIndex);
 
-        // »õ·Î¿î ¹æÀÇ ·ÎÁ÷ ½ÃÀÛ
+        // ìƒˆë¡œìš´ ë°©ì˜ ë¡œì§ ì‹œì‘
         currentRoom.OnEnterRoom();
 
-        // ÇÃ·¹ÀÌ¾î À§Ä¡ ÀÌµ¿
+        // í”Œë ˆì´ì–´ ìœ„ì¹˜ ì´ë™
         Player.Instance.transform.position = targetPortal.transform.position;
     }
 
-    // »õ·Î¿î ´øÀüÀ» ½ÃÀÛÇÏ´Â ÇÔ¼ö
+    // ìƒˆë¡œìš´ ë˜ì „ì„ ì‹œì‘í•˜ëŠ” í•¨ìˆ˜
     public void StartDungeon(Dungeon dungeonToStart)
     {
-        Debug.Log($"»õ·Î¿î ´øÀü '{dungeonToStart.DungeonName}'À» ½ÃÀÛ");
+        Debug.Log($"ìƒˆë¡œìš´ ë˜ì „ '{dungeonToStart.DungeonName}'ì„ ì‹œì‘");
         this.currentDungeon = dungeonToStart;
+
+        // ë˜ì „ ê´€ë ¨ ì •ë³´ ì´ˆê¸°í™”
+        dungeonStartTime = Time.time;
+        totalHuntExp = 0;
 
 
         if (UIManager.Instance != null) 
             UIManager.Instance.SetMapName(dungeonToStart.DungeonName);
 
         if (currentDungeon.Rooms == null)
-            Debug.LogError("Dungeon_Data¿¡ RoomµéÀÌ ÇÒ´çµÇÁö ¾Ê¾ÒÀ½");
+            Debug.LogError("Dungeon_Dataì— Roomë“¤ì´ í• ë‹¹ë˜ì§€ ì•Šì•˜ìŒ");
 
-        // ¸ğµç ¹æÀ» ÀÏ´Ü ²ö´Ù
+        // ëª¨ë“  ë°©ì„ ì¼ë‹¨ ëˆë‹¤
         foreach (var room in currentDungeon.Rooms)
         {
             room.gameObject.SetActive(false);
         }
 
-        // Ã¹ ¹øÂ° ¹æºÎÅÍ ½ÃÀÛ
+        // ì²« ë²ˆì§¸ ë°©ë¶€í„° ì‹œì‘
         currentRoom = currentDungeon.Rooms[0];
         currentRoom.OnEnterRoom();
 
-        // ¹Ì´Ï¸Ê »ı¼º ¿äÃ» & ÇÃ·¹ÀÌ¾î ¹Ì´Ï¸Ê À§Ä¡ ¾÷µ¥ÀÌÆ®
+        // ë¯¸ë‹ˆë§µ ìƒì„± ìš”ì²­ & í”Œë ˆì´ì–´ ë¯¸ë‹ˆë§µ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
         if (UIManager.Instance != null)
         {
             UIManager.Instance.GenerateMinimap(dungeonToStart);
@@ -79,50 +85,80 @@ public class DungeonManager : Singleton<DungeonManager>
         
     }
 
-    // º¸½º ¸ó½ºÅÍ°¡ È£ÃâÇÒ ÇÔ¼ö
+    // ëª¬ìŠ¤í„°ê°€ ì£½ì—ˆì„ ë•Œ ê²½í—˜ì¹˜ë¥¼ ì¶”ê°€í•˜ëŠ” í•¨ìˆ˜
+    public void AddHuntExp(int exp)
+    {
+        totalHuntExp += exp;
+    }
+
+    // ë³´ìŠ¤ ëª¬ìŠ¤í„°ê°€ í˜¸ì¶œí•  í•¨ìˆ˜
     public void ShowResultPanel()
     {
-        // ´øÀü Å¬¸®¾î º¸»ó °è»ê
+        // ë˜ì „ í´ë¦¬ì–´ ë³´ìƒ ê³„ì‚°
         DungeonResultData resultData = CalculateDungeonResult();
 
-        // °á°úÃ¢ Ç¥½Ã
+        // ê²°ê³¼ì°½ í‘œì‹œ
         UIManager.Instance.ShowResultPanel(resultData);
     }
 
-    // º¸»ó °è»ê ·ÎÁ÷
+    // ë³´ìƒ ê³„ì‚° ë¡œì§
     private DungeonResultData CalculateDungeonResult()
     {
-        // ½ÇÁ¦·Î´Â ´øÀü µ¥ÀÌÅÍ³ª Ã³Ä¡ÇÑ ¸ó½ºÅÍ ¸®½ºÆ® µîÀ» ±â¹İÀ¸·Î °è»êÇØ¾ß ÇÔ
-        // ÀÓ½Ã °ª. ³ªÁß¿¡ ¼öÁ¤ÇÒ °Í
+        float clearTime = Time.time - dungeonStartTime;
+        Sprite rankSprite = null;
+
+        // ë­í¬ ê³„ì‚°
+        if (currentDungeon.RankTimeThresholds != null && currentDungeon.RankSprites != null &&
+            currentDungeon.RankTimeThresholds.Count == currentDungeon.RankSprites.Count)
+        {
+            // ê°€ì¥ ì¢‹ì€ ë­í¬(ê°€ì¥ ì§§ì€ ì‹œê°„)ë¶€í„° ìˆœíšŒ
+            for (int i = 0; i < currentDungeon.RankTimeThresholds.Count; i++)
+            {
+                if (clearTime <= currentDungeon.RankTimeThresholds[i])
+                {
+                    rankSprite = currentDungeon.RankSprites[i];
+                    break; // ì¡°ê±´ì— ë§ëŠ” ì²« ë­í¬ë¥¼ ì°¾ìœ¼ë©´ ì¤‘ë‹¨
+                }
+            }
+
+            // ëª¨ë“  ì‹œê°„ ê¸°ì¤€ì„ ì´ˆê³¼í–ˆë‹¤ë©´ ê°€ì¥ ë‚®ì€ ë­í¬ë¥¼ ë¶€ì—¬
+            if (rankSprite == null && currentDungeon.RankSprites.Count > 0)
+            {
+                rankSprite = currentDungeon.RankSprites[currentDungeon.RankSprites.Count - 1];
+            }
+        }
+
         return new DungeonResultData
         {
-            // clearTimeµµ Ãß°¡ÇØ¾ß ÇÔ
-            HuntEXP = 12345,
-            ClearEXP = 67890
+            ClearTime = clearTime,
+            HuntEXP = totalHuntExp,
+            ClearEXP = currentDungeon.ClearEXP,
+            RankSprite = rankSprite
         };
     }
 
-    // "¸¶À»·Î µ¹¾Æ°¡±â" ¹öÆ°ÀÌ È£ÃâÇÒ ÇÔ¼ö
+    // "ë§ˆì„ë¡œ ëŒì•„ê°€ê¸°" ë²„íŠ¼ì´ í˜¸ì¶œí•  í•¨ìˆ˜
     public void ReturnToTown()
     {
-        Debug.Log("°á°ú¸¦ È®ÀÎÇß½À´Ï´Ù. ¸¶À»·Î µ¹¾Æ°©´Ï´Ù.");
+        Debug.Log("ê²°ê³¼ë¥¼ í™•ì¸í–ˆìŠµë‹ˆë‹¤. ë§ˆì„ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤.");
 
         string townToReturn = currentDungeon.TownToReturn;
 
-        // ´øÀü °ü·Ã µ¥ÀÌÅÍ ÃÊ±âÈ­
+        // ë˜ì „ ê´€ë ¨ ë°ì´í„° ì´ˆê¸°í™”
         currentDungeon = null;
 
-        // ¸¶À» ¾À ·Îµå
-        SceneManager.LoadScene(townToReturn);
+        // ë§ˆì„ ì”¬ ë¡œë“œ
+        GameManager.Instance.LoadScene(townToReturn);
     }
 
-    // "´ÙÀ½ ´øÀü ½ÃÀÛ" ¹öÆ°ÀÌ È£ÃâÇÒ ÇÔ¼ö
+    // "ë‹¤ìŒ ë˜ì „ ì‹œì‘" ë²„íŠ¼ì´ í˜¸ì¶œí•  í•¨ìˆ˜
     public void GoToNextDungeon()
     {
-        Debug.Log("°á°ú¸¦ È®ÀÎÇß½À´Ï´Ù. ´ÙÀ½ ´øÀüÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+        Debug.Log("ê²°ê³¼ë¥¼ í™•ì¸í–ˆìŠµë‹ˆë‹¤. ë‹¤ìŒ ë˜ì „ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.");
 
-        string nextDungeonSceneName = currentDungeon.NextDungeonName; // ÀÓ½Ã °ª. ÇöÀç ´øÀü µ¥ÀÌÅÍ¿¡ ´ÙÀ½ ´øÀü ÀÌ¸§µµ Ãß°¡ÇÒ °Í
+        string nextDungeonSceneName = currentDungeon.NextDungeonName; // ì„ì‹œ ê°’. í˜„ì¬ ë˜ì „ ë°ì´í„°ì— ë‹¤ìŒ ë˜ì „ ì´ë¦„ë„ ì¶”ê°€í•  ê²ƒ
 
-        SceneManager.LoadScene(nextDungeonSceneName);
+        // ë‹¤ìŒ ë˜ì „ ì”¬ ë¡œë“œ
+        GameManager.Instance.LoadScene(nextDungeonSceneName);
     }
 }

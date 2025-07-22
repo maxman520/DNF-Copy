@@ -5,15 +5,15 @@ using Unity.Cinemachine;
 
 public class VinoshuMeteor : MonoBehaviour
 {
-    private AttackDetails attackDetails; // ÀÌ ¸ŞÅ×¿À¸¦ È£ÃâÇÑ ¸ó½ºÅÍÀÇ °ø°İ Á¤º¸
-    Vector3 origin; // È÷Æ®¹Ú½º ÆÇÁ¤ Ã³¸® ±âÁØ À§Ä¡
+    private AttackDetails attackDetails; // ì´ ë©”í…Œì˜¤ë¥¼ í˜¸ì¶œí•œ ëª¬ìŠ¤í„°ì˜ ê³µê²© ì •ë³´
+    Vector3 origin; // íˆíŠ¸ë°•ìŠ¤ íŒì • ì²˜ë¦¬ ê¸°ì¤€ ìœ„ì¹˜
 
     private float fallSpeed = 8f;
     private bool isFalling = false;
 
-    [SerializeField] private CinemachineImpulseSource impulseSource; // Ä«¸Ş¶ó Èçµé¸²
+    [SerializeField] private CinemachineImpulseSource impulseSource; // ì¹´ë©”ë¼ í”ë“¤ë¦¼
     private Transform visualsTransform;
-    private MonsterHitbox meteorHitbox; // VisualsÀÇ È÷Æ®¹Ú½º ½ºÅ©¸³Æ® ÂüÁ¶
+    private MonsterHitbox meteorHitbox; // Visualsì˜ íˆíŠ¸ë°•ìŠ¤ ìŠ¤í¬ë¦½íŠ¸ ì°¸ì¡°
 
     public void Awake()
     {
@@ -23,7 +23,7 @@ public class VinoshuMeteor : MonoBehaviour
             impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
-    // Vinoshu°¡ ÀÌ ÇÔ¼ö¸¦ È£ÃâÇÏ¿© ¸ŞÅ×¿À¸¦ ½ÃÀÛ½ÃÅ´
+    // Vinoshuê°€ ì´ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ì—¬ ë©”í…Œì˜¤ë¥¼ ì‹œì‘ì‹œí‚´
     public void Initialize(AttackDetails details, Vector3 origin)
     {
         this.visualsTransform.localPosition = new Vector3 (8f, 8f ,0);
@@ -34,14 +34,14 @@ public class VinoshuMeteor : MonoBehaviour
         var token = this.GetCancellationTokenOnDestroy();
         Glow(token).Forget();
 
-        // VisualsÀÇ È÷Æ®¹Ú½º¿¡ °ø°İ Á¤º¸¸¦ Àü´ŞÇÏ¿© ÃÊ±âÈ­
+        // Visualsì˜ íˆíŠ¸ë°•ìŠ¤ì— ê³µê²© ì •ë³´ë¥¼ ì „ë‹¬í•˜ì—¬ ì´ˆê¸°í™”
         if (meteorHitbox != null)
         {
             meteorHitbox.Initialize(this.attackDetails, origin);
         }
         else
         {
-            Debug.LogError("¸ŞÅ×¿ÀÀÇ Visuals¿¡ MonsterHitbox ½ºÅ©¸³Æ®°¡ ¾ø½À´Ï´Ù!");
+            Debug.LogError("ë©”í…Œì˜¤ì˜ Visualsì— MonsterHitbox ìŠ¤í¬ë¦½íŠ¸ê°€ ì—†ìŠµë‹ˆë‹¤!");
         }
     }
 
@@ -49,14 +49,14 @@ public class VinoshuMeteor : MonoBehaviour
     {
         if (isFalling)
         {
-            // ´Ü¼øÇÏ°Ô Å¸°ÙÀ» ÇâÇØ µî¼Ó ÀÌµ¿
+            // ë‹¨ìˆœí•˜ê²Œ íƒ€ê²Ÿì„ í–¥í•´ ë“±ì† ì´ë™
             visualsTransform.localPosition = Vector3.MoveTowards(visualsTransform.localPosition, Vector3.zero, fallSpeed * Time.deltaTime);
 
-            // Å¸°Ù¿¡ °ÅÀÇ µµÂøÇß´Ù¸é Æø¹ß
+            // íƒ€ê²Ÿì— ê±°ì˜ ë„ì°©í–ˆë‹¤ë©´ í­ë°œ
             if (Vector3.Distance(visualsTransform.localPosition, Vector3.zero) < 0.1f)
             {
                 Explode();
-                isFalling = false; // Áßº¹ Æø¹ß ¹æÁö
+                isFalling = false; // ì¤‘ë³µ í­ë°œ ë°©ì§€
             }
         }
     }
@@ -64,16 +64,16 @@ public class VinoshuMeteor : MonoBehaviour
     private void Explode()
     {
         GameObject meteorExplosion = EffectManager.Instance.PlayEffect("FireExplosion", transform.position, Quaternion.identity);
-        attackDetails.yOffset += 0.3f; // Æø¹ß ÀÌÆåÆ®ÀÇ yÃà ¹üÀ§´Â ¸ŞÅ×¿À ÀÚÃ¼ÀÇ yÃà ¹üÀ§º¸´Ù ³Ğ°Ô
+        attackDetails.yOffset += 0.3f; // í­ë°œ ì´í™íŠ¸ì˜ yì¶• ë²”ìœ„ëŠ” ë©”í…Œì˜¤ ìì²´ì˜ yì¶• ë²”ìœ„ë³´ë‹¤ ë„“ê²Œ
         meteorExplosion?.GetComponentInChildren<MonsterHitbox>().Initialize(attackDetails, origin);
         
-        if (impulseSource != null) // Ä«¸Ş¶ó Èçµé¸². Èçµé¸²ÀÇ x¹æÇâÀº ·£´ıÀ¸·Î
+        if (impulseSource != null) // ì¹´ë©”ë¼ í”ë“¤ë¦¼. í”ë“¤ë¦¼ì˜ xë°©í–¥ì€ ëœë¤ìœ¼ë¡œ
             impulseSource.GenerateImpulse(new Vector3((Random.value < 0.5f ? -1 : 1), 1, 0));
 
         Destroy(gameObject);
     }
 
-    // ¶³¾îÁö°í ÀÖÀ» ¶§ÀÇ ÀÜ»ó ÀÌÆåÆ®
+    // ë–¨ì–´ì§€ê³  ìˆì„ ë•Œì˜ ì”ìƒ ì´í™íŠ¸
     private async UniTaskVoid Glow(CancellationToken token)
     {
         while (true)

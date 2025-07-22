@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 public class YSorter : MonoBehaviour
 {
     private SortingGroup sortingGroup;
-    private Transform rootTransform; // ÀÌ ¿ÀºêÁ§Æ®ÀÇ ÃÖ»óÀ§ Transform ÂüÁ¶
+    private Transform rootTransform; // ì´ ì˜¤ë¸Œì íŠ¸ì˜ ìµœìƒìœ„ Transform ì°¸ì¡°
 
     void Awake()
     {

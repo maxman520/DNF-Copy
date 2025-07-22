@@ -2,10 +2,10 @@ using UnityEngine;
 
 public abstract class Monster : MonoBehaviour
 {
-    [Header("µ¥ÀÌÅÍ ÂüÁ¶")]
-    [SerializeField] protected MonsterData monsterData; // ¸ó½ºÅÍÀÇ ¿øº» µ¥ÀÌÅÍ¸¦ ´ã´Â ScriptableObject
+    [Header("ë°ì´í„° ì°¸ì¡°")]
+    [SerializeField] protected MonsterData monsterData; // ëª¬ìŠ¤í„°ì˜ ì›ë³¸ ë°ì´í„°ë¥¼ ë‹´ëŠ” ScriptableObject
 
-    [Header("½Ç½Ã°£ ½ºÅÈ")]
+    [Header("ì‹¤ì‹œê°„ ìŠ¤íƒ¯")]
     protected string name;
     protected float maxHP;
     protected float previousHP;
@@ -25,7 +25,7 @@ public abstract class Monster : MonoBehaviour
     public float GetHpPerLine() => hpPerLine;
     public float GetAtk() => atk;
 
-    [Header("ÄÄÆ÷³ÍÆ® ÂüÁ¶")]
+    [Header("ì»´í¬ë„ŒíŠ¸ ì°¸ì¡°")]
     protected Rigidbody2D rb;
     protected Animator anim;
     protected SpriteRenderer sr;
@@ -34,9 +34,9 @@ public abstract class Monster : MonoBehaviour
     protected Transform hitboxTransform;
     protected Transform playerTransform;
 
-    protected Vector3 startPos; // ³»ºÎ visuals À§Ä¡ Á¦¾î¿ë
+    protected Vector3 startPos; // ë‚´ë¶€ visuals ìœ„ì¹˜ ì œì–´ìš©
 
-    [Header("°ø°İ Á¤º¸")]
+    [Header("ê³µê²© ì •ë³´")]
     public AttackDetails currentAttackDetails;
 
 
@@ -51,7 +51,7 @@ public abstract class Monster : MonoBehaviour
         hitboxTransform = visualsTransform.Find("Hitbox");
         startPos = visualsTransform.localPosition;
 
-        // µ¥ÀÌÅÍ ÃÊ±âÈ­
+        // ë°ì´í„° ì´ˆê¸°í™”
         name = monsterData.MonsterName;
         maxHP = monsterData.MaxHP;
         currentHP = monsterData.MaxHP;
@@ -71,13 +71,13 @@ public abstract class Monster : MonoBehaviour
             playerTransform = Player.Instance.transform;
     }
 
-    // µ¥¹ÌÁö¸¦ ÀÔ¾úÀ» ¶§
+    // ë°ë¯¸ì§€ë¥¼ ì…ì—ˆì„ ë•Œ
     public abstract void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition);
 
-    // µ¥¹ÌÁö °è»ê ·ÎÁ÷
+    // ë°ë¯¸ì§€ ê³„ì‚° ë¡œì§
     protected virtual float CalculateDamage(AttackDetails attackDetails)
     {
-        // !! µ¥¹ÌÁö ¹èÀ²¿¡ ÇÃ·¹ÀÌ¾îÀÇ °ø°İ·ÂÀÌ ÀÌ¹Ì °öÇØÁ®ÀÖÀ½ !!
+        // !! ë°ë¯¸ì§€ ë°°ìœ¨ì— í”Œë ˆì´ì–´ì˜ ê³µê²©ë ¥ì´ ì´ë¯¸ ê³±í•´ì ¸ìˆìŒ !!
         float finalDamage = (attackDetails.damageRate) - (def * 0.5f);
         finalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage * Random.Range(0.8f, 1.2f)));
 
@@ -87,22 +87,22 @@ public abstract class Monster : MonoBehaviour
     protected abstract void Hurt(AttackDetails attackDetails, Vector2 attackPosition);
     protected abstract void Die();
 
-    // ´ë±â ¾Ö´Ï¸ŞÀÌ¼ÇÀ¸·Î ÁøÀÔ ½Ã È£Ãâ
+    // ëŒ€ê¸° ì• ë‹ˆë©”ì´ì…˜ìœ¼ë¡œ ì§„ì… ì‹œ í˜¸ì¶œ
     public abstract void OnIdleStateEnter();
-    // °È±â ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // ê±·ê¸° ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public abstract void OnWalkStateExit();
-    // °ø°İ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public abstract void OnAttackStateExit();
-    // ÇÇ°İ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // í”¼ê²© ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public abstract void OnHurtStateExit();
-    // ±â»ó ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // ê¸°ìƒ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public abstract void OnGetUpStateExit();
 
 
-    // ¿¡µğÅÍ¿¡¼­¸¸ º¸ÀÌ´Â ±âÁî¸ğ(Gizmo)¸¦ ±×·Á¼­ AI ¹üÀ§¸¦ ½Ã°¢ÀûÀ¸·Î È®ÀÎ
+    // ì—ë””í„°ì—ì„œë§Œ ë³´ì´ëŠ” ê¸°ì¦ˆëª¨(Gizmo)ë¥¼ ê·¸ë ¤ì„œ AI ë²”ìœ„ë¥¼ ì‹œê°ì ìœ¼ë¡œ í™•ì¸
     protected virtual void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red; // °ø°İ ¹üÀ§´Â »¡°£»ö
+        Gizmos.color = Color.red; // ê³µê²© ë²”ìœ„ëŠ” ë¹¨ê°„ìƒ‰
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

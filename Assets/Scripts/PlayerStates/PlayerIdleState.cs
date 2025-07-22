@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerIdleState : PlayerStateBehaviourBase
 {
-    // ÀÌ »óÅÂ·Î ÁøÀÔÇÒ ¶§ È£Ãâ
+    // ì´ ìƒíƒœë¡œ ì§„ì…í•  ë•Œ í˜¸ì¶œ
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
@@ -12,7 +12,7 @@ public class PlayerIdleState : PlayerStateBehaviourBase
         player.CanAttack = true;
     }
 
-    // ÀÌ »óÅÂ¿¡¼­ ºüÁ®³ª°¥ ¶§ È£Ãâ
+    // ì´ ìƒíƒœì—ì„œ ë¹ ì ¸ë‚˜ê°ˆ ë•Œ í˜¸ì¶œ
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateExit(animator, stateInfo, layerIndex);

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MonsterStateBehaviour : StateMachineBehaviour
 {
-    [Header("»óÅÂ ¼³Á¤")]
+    [Header("ìƒíƒœ ì„¤ì •")]
     [SerializeField] private bool idle = false;
     [SerializeField] private bool walk = false;
     [SerializeField] private bool attack = false;
@@ -12,7 +12,7 @@ public class MonsterStateBehaviour : StateMachineBehaviour
 
     private Monster monster;
 
-    // ÀÌ »óÅÂ·Î ÁøÀÔÇÒ ¶§ È£Ãâ
+    // ì´ ìƒíƒœë¡œ ì§„ì…í•  ë•Œ í˜¸ì¶œ
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         monster = animator.GetComponentInParent<Monster>();
@@ -24,7 +24,7 @@ public class MonsterStateBehaviour : StateMachineBehaviour
         }
     }
 
-    // ÀÌ »óÅÂ¿¡¼­ ºüÁ®³ª°¥ ¶§ È£Ãâ
+    // ì´ ìƒíƒœì—ì„œ ë¹ ì ¸ë‚˜ê°ˆ ë•Œ í˜¸ì¶œ
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (monster == null) return;

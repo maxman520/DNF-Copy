@@ -9,44 +9,43 @@ using UnityEngine.UI;
 public class UIManager : Singleton<UIManager>
 {
 
-    [Header("HP Gauge")]
+    [Header("HP, MP, EXP ê²Œì´ì§€")]
     [SerializeField] private Image hpGauge;
-
-    [Header("MP Gauge")]
     [SerializeField] private Image mpGauge;
+    [SerializeField] private Image expGauge;
 
-    [Header("¸ó½ºÅÍ UI")]
-    [Tooltip("ÀÏ¹İ ¸ó½ºÅÍ¿ë HP¹Ù")]
-    [SerializeField] private MonsterHPBar monsterHPBar; // ÀÏ¹İ ¸ó½ºÅÍ HP ¹Ù
-    [Tooltip("º¸½º ¸ó½ºÅÍ¿ë HP¹Ù")]
-    [SerializeField] private MonsterHPBar bossHPBar; // º¸½º ¸ó½ºÅÍ HP ¹Ù
+    [Header("ëª¬ìŠ¤í„° UI")]
+    [Tooltip("ì¼ë°˜ ëª¬ìŠ¤í„°ìš© HPë°”")]
+    [SerializeField] private MonsterHPBar monsterHPBar; // ì¼ë°˜ ëª¬ìŠ¤í„° HP ë°”
+    [Tooltip("ë³´ìŠ¤ ëª¬ìŠ¤í„°ìš© HPë°”")]
+    [SerializeField] private MonsterHPBar bossHPBar; // ë³´ìŠ¤ ëª¬ìŠ¤í„° HP ë°”
 
-    [Header("½ºÅ³Ã¢")]
-    [SerializeField] private SkillShopUI skillShopUI; // ½ºÅ³¼¥ Ã¢
+    [Header("ìŠ¤í‚¬ì°½")]
+    [SerializeField] private SkillShopUI skillShopUI; // ìŠ¤í‚¬ìƒµ ì°½
 
 
-    [Header("¹Ì´Ï¸Ê")]
-    [SerializeField] private MinimapUI minimapUI; // ¹Ì´Ï¸Ê
-    [SerializeField] private TextMeshProUGUI mapName; // ¸Ê ÀÌ¸§
+    [Header("ë¯¸ë‹ˆë§µ")]
+    [SerializeField] private MinimapUI minimapUI; // ë¯¸ë‹ˆë§µ
+    [SerializeField] private TextMeshProUGUI mapName; // ë§µ ì´ë¦„
 
-    [Header("´øÀü °á°ú Ã¢")]
-    [SerializeField] private ResultPanel resultPanel; // ´øÀü °á°ú Ã¢
+    [Header("ë˜ì „ ê²°ê³¼ ì°½")]
+    [SerializeField] private ResultPanel resultPanel; // ë˜ì „ ê²°ê³¼ ì°½
 
-    private Monster currentTarget; // ÇöÀç ÃßÀû ÁßÀÎ Å¸°Ù ¸ó½ºÅÍ
-    private CancellationTokenSource monsterHPBarCts; // ¸ó½ºÅÍ HP¹Ù ÀÚµ¿ ¼û±è ÀÛ¾÷À» À§ÇÑ ÅäÅ«
+    private Monster currentTarget; // í˜„ì¬ ì¶”ì  ì¤‘ì¸ íƒ€ê²Ÿ ëª¬ìŠ¤í„°
+    private CancellationTokenSource monsterHPBarCts; // ëª¬ìŠ¤í„° HPë°” ìë™ ìˆ¨ê¹€ ì‘ì—…ì„ ìœ„í•œ í† í°
     private void Start()
     {
-        // ½ÃÀÛÇÒ ¶§ ¸ğµç ¸ó½ºÅÍ HP¹Ù´Â ¼û°ÜµÒ
+        // ì‹œì‘í•  ë•Œ ëª¨ë“  ëª¬ìŠ¤í„° HPë°”ëŠ” ìˆ¨ê²¨ë‘ 
         monsterHPBar?.gameObject.SetActive(false);
         bossHPBar?.gameObject.SetActive(false);
 
-        skillShopUI?.gameObject.SetActive(false); // ½ºÅ³¼¥ Ã¢ ºñÈ°¼ºÈ­
-        minimapUI.gameObject.SetActive(false); // ¹Ì´Ï¸Ê ºñÈ°¼ºÈ­
+        skillShopUI?.gameObject.SetActive(false); // ìŠ¤í‚¬ìƒµ ì°½ ë¹„í™œì„±í™”
+        minimapUI.gameObject.SetActive(false); // ë¯¸ë‹ˆë§µ ë¹„í™œì„±í™”
     }
 
     private void Update()
     {
-        // 'K' Å°¸¦ ´©¸£¸é ½ºÅ³¼¥ Ã¢À» Åä±Û
+        // 'K' í‚¤ë¥¼ ëˆ„ë¥´ë©´ ìŠ¤í‚¬ìƒµ ì°½ì„ í† ê¸€
         if (Input.GetKeyDown(KeyCode.K))
         {
             if (skillShopUI != null)
@@ -56,10 +55,10 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    // ¸ó½ºÅÍ°¡ µ¥¹ÌÁö¸¦ ÀÔ¾úÀ» ¶§ È£ÃâµÉ ÇÔ¼ö
+    // ëª¬ìŠ¤í„°ê°€ ë°ë¯¸ì§€ë¥¼ ì…ì—ˆì„ ë•Œ í˜¸ì¶œë  í•¨ìˆ˜
     public void OnMonsterDamaged(Monster monster)
     {
-        // º¸½ºÀÎÁö ÀÏ¹İ ¸ó½ºÅÍÀÎÁö È®ÀÎÇÏ¿© ºĞ±â Ã³¸®
+        // ë³´ìŠ¤ì¸ì§€ ì¼ë°˜ ëª¬ìŠ¤í„°ì¸ì§€ í™•ì¸í•˜ì—¬ ë¶„ê¸° ì²˜ë¦¬
         if (monster.GetMonsterData().isBoss)
         {
             HandleBossDamaged(monster);
@@ -72,16 +71,16 @@ public class UIManager : Singleton<UIManager>
     #region Boss
     private void HandleBossDamaged(Monster boss)
     {
-        // 1. ÀÏ¹İ ¸ó½ºÅÍ HP¹Ù°¡ ÄÑÁ® ÀÖ´Ù¸é Áï½Ã ¼û±è
+        // 1. ì¼ë°˜ ëª¬ìŠ¤í„° HPë°”ê°€ ì¼œì ¸ ìˆë‹¤ë©´ ì¦‰ì‹œ ìˆ¨ê¹€
         HideMonsterHPBar();
 
-        // 2. ÇöÀç Å¸°ÙÀÌ ¾Æ´Ï°Å³ª, º¸½º HP¹Ù°¡ ²¨Á®ÀÖ´Ù¸é »õ·Î Ç¥½Ã
+        // 2. í˜„ì¬ íƒ€ê²Ÿì´ ì•„ë‹ˆê±°ë‚˜, ë³´ìŠ¤ HPë°”ê°€ êº¼ì ¸ìˆë‹¤ë©´ ìƒˆë¡œ í‘œì‹œ
         if (currentTarget != boss || !bossHPBar.gameObject.activeSelf)
         {
             ShowBossHPBar(boss);
         }
 
-        // 3. HP ¾÷µ¥ÀÌÆ®
+        // 3. HP ì—…ë°ì´íŠ¸
         UpdateBossHP();
     }
     private void ShowBossHPBar(Monster boss)
@@ -104,7 +103,7 @@ public class UIManager : Singleton<UIManager>
         );
     }
 
-    // º¸½º ¸ó½ºÅÍ HP¹Ù¸¦ ¼û±è
+    // ë³´ìŠ¤ ëª¬ìŠ¤í„° HPë°”ë¥¼ ìˆ¨ê¹€
     public void HideBossHPBar()
     {
         if (bossHPBar == null || !bossHPBar.gameObject.activeSelf) return;
@@ -116,19 +115,19 @@ public class UIManager : Singleton<UIManager>
     #endregion Boss 
 
     #region Regular Monster
-    // --- ÀÏ¹İ ¸ó½ºÅÍ HP ¹Ù Ã³¸® ---
+    // --- ì¼ë°˜ ëª¬ìŠ¤í„° HP ë°” ì²˜ë¦¬ ---
     private void HandleMonsterDamaged(Monster monster)
     {
-        // º¸½º HP¹Ù°¡ È°¼ºÈ­µÇ¾î ÀÖ´Ù¸é, ÀÏ¹İ ¸ó½ºÅÍ HP¹Ù¸¦ Ç¥½ÃÇÏÁö ¾ÊÀ½
+        // ë³´ìŠ¤ HPë°”ê°€ í™œì„±í™”ë˜ì–´ ìˆë‹¤ë©´, ì¼ë°˜ ëª¬ìŠ¤í„° HPë°”ë¥¼ í‘œì‹œí•˜ì§€ ì•ŠìŒ
         if (bossHPBar.gameObject.activeSelf) return;
 
-        // Å¸°ÙÀÌ ¹Ù²î¾ú°Å³ª HP¹Ù°¡ ²¨Á®ÀÖ´Ù¸é »õ·Î Ç¥½Ã
+        // íƒ€ê²Ÿì´ ë°”ë€Œì—ˆê±°ë‚˜ HPë°”ê°€ êº¼ì ¸ìˆë‹¤ë©´ ìƒˆë¡œ í‘œì‹œ
         if (currentTarget != monster || !monsterHPBar.gameObject.activeSelf)
         {
             ShowMonsterHPBar(monster);
         }
 
-        // HP ¾÷µ¥ÀÌÆ® ¹× ÀÚµ¿ ¼û±è Å¸ÀÌ¸Ó ¸®¼Â
+        // HP ì—…ë°ì´íŠ¸ ë° ìë™ ìˆ¨ê¹€ íƒ€ì´ë¨¸ ë¦¬ì…‹
         UpdateMonsterHP();
         RestartHideTimer();
     }
@@ -138,13 +137,13 @@ public class UIManager : Singleton<UIManager>
 
         currentTarget = monster;
 
-        // ¸ó½ºÅÍ µ¥ÀÌÅÍ¿¡¼­ ÃÊ»óÈ­ °¡Á®¿Í¼­ ¼³Á¤
+        // ëª¬ìŠ¤í„° ë°ì´í„°ì—ì„œ ì´ˆìƒí™” ê°€ì ¸ì™€ì„œ ì„¤ì •
         monsterHPBar.SetFace(monster.GetMonsterData().FaceSprite);
 
         monsterHPBar.gameObject.SetActive(true);
         monsterHPBar.Show(currentTarget);
     }
-    // ÇöÀç Å¸°Ù ¸ó½ºÅÍÀÇ HP¸¦ ¾÷µ¥ÀÌÆ®
+    // í˜„ì¬ íƒ€ê²Ÿ ëª¬ìŠ¤í„°ì˜ HPë¥¼ ì—…ë°ì´íŠ¸
     public void UpdateMonsterHP()
     {
         if (monsterHPBar == null || currentTarget == null || !monsterHPBar.gameObject.activeSelf) return;
@@ -158,7 +157,7 @@ public class UIManager : Singleton<UIManager>
         );
     }
 
-    // ¸ó½ºÅÍ HP¹Ù¸¦ ¼û±è
+    // ëª¬ìŠ¤í„° HPë°”ë¥¼ ìˆ¨ê¹€
     public void HideMonsterHPBar()
     {
         if (monsterHPBar == null || !monsterHPBar.gameObject.activeSelf) return;
@@ -168,28 +167,28 @@ public class UIManager : Singleton<UIManager>
         currentTarget = null;
     }
 
-    // ÀÚµ¿ ¼û±è Å¸ÀÌ¸Ó¸¦ ¸®¼ÂÇÏ°í »õ·Î ½ÃÀÛ
+    // ìë™ ìˆ¨ê¹€ íƒ€ì´ë¨¸ë¥¼ ë¦¬ì…‹í•˜ê³  ìƒˆë¡œ ì‹œì‘
     private void RestartHideTimer()
     {
-        monsterHPBarCts?.Cancel(); // ÀÌÀü Å¸ÀÌ¸Ó°¡ ÀÖ´Ù¸é Ãë¼Ò
+        monsterHPBarCts?.Cancel(); // ì´ì „ íƒ€ì´ë¨¸ê°€ ìˆë‹¤ë©´ ì·¨ì†Œ
         monsterHPBarCts?.Dispose();
         var destroyToken = this.GetCancellationTokenOnDestroy();
         monsterHPBarCts = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
         AutoHideAsync(monsterHPBarCts.Token).Forget();
     }
 
-    // ÀÏÁ¤ ½Ã°£ ÈÄ HP¹Ù¸¦ ÀÚµ¿À¸·Î ¼û±â´Â ºñµ¿±â ÇÔ¼ö
+    // ì¼ì • ì‹œê°„ í›„ HPë°”ë¥¼ ìë™ìœ¼ë¡œ ìˆ¨ê¸°ëŠ” ë¹„ë™ê¸° í•¨ìˆ˜
     private async UniTask AutoHideAsync(CancellationToken token)
     {
         try
         {
-            // ¸ó½ºÅÍ HP¹Ù°¡ È­¸é¿¡ Ç¥½ÃµÉ ½Ã°£
+            // ëª¬ìŠ¤í„° HPë°”ê°€ í™”ë©´ì— í‘œì‹œë  ì‹œê°„
             await UniTask.Delay((int)(5f * 1000), cancellationToken: token);
             HideMonsterHPBar();
         }
         catch (OperationCanceledException)
         {
-            // Å¸ÀÌ¸Ó°¡ ¸®¼ÂµÇ¸é ¿©±â·Î µé¾î¿È. Á¤»óÀûÀÎ µ¿ÀÛÀÌ¹Ç·Î ¾Æ¹«°Íµµ ¾È ÇÔ.
+            // íƒ€ì´ë¨¸ê°€ ë¦¬ì…‹ë˜ë©´ ì—¬ê¸°ë¡œ ë“¤ì–´ì˜´. ì •ìƒì ì¸ ë™ì‘ì´ë¯€ë¡œ ì•„ë¬´ê²ƒë„ ì•ˆ í•¨.
         }
     }
     #endregion Regular Monster
@@ -197,7 +196,7 @@ public class UIManager : Singleton<UIManager>
 
 
     #region Player
-    // HP °ÔÀÌÁö ¾÷µ¥ÀÌÆ®
+    // HP ê²Œì´ì§€ ì—…ë°ì´íŠ¸
     public void UpdateHP(float maxHP, float currentHP)
     {
         if (hpGauge != null)
@@ -206,7 +205,7 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    // MP °ÔÀÌÁö ¾÷µ¥ÀÌÆ®
+    // MP ê²Œì´ì§€ ì—…ë°ì´íŠ¸
     public void UpdateMP(float maxMP, float currentMP)
     {
         if (mpGauge != null)
@@ -214,27 +213,35 @@ public class UIManager : Singleton<UIManager>
             mpGauge.fillAmount = currentMP / maxMP;
         }
     }
+
+    public void UpdateEXP(float requiredEXP, float currentEXP)
+    {   
+        if (expGauge != null)
+        {
+            expGauge.fillAmount = currentEXP / requiredEXP;
+        }
+    }
     #endregion Player
 
     #region Minimap
-    // ¹Ì´Ï¸Ê »ı¼º ¿äÃ»À» ¹Ş´Â ÇÔ¼ö
+    // ë¯¸ë‹ˆë§µ ìƒì„± ìš”ì²­ì„ ë°›ëŠ” í•¨ìˆ˜
     public void GenerateMinimap(Dungeon dungeonData)
     {
         if (minimapUI != null)
         {
-            minimapUI.gameObject.SetActive(true); // ¹Ì´Ï¸Ê È°¼ºÈ­
+            minimapUI.gameObject.SetActive(true); // ë¯¸ë‹ˆë§µ í™œì„±í™”
             minimapUI.GenerateMap(dungeonData);
         }
     }
 
-    // ÇÃ·¹ÀÌ¾î À§Ä¡ ¾÷µ¥ÀÌÆ® ¿äÃ»À» ¹Ş´Â ÇÔ¼ö
+    // í”Œë ˆì´ì–´ ìœ„ì¹˜ ì—…ë°ì´íŠ¸ ìš”ì²­ì„ ë°›ëŠ” í•¨ìˆ˜
     public void UpdateMinimapPlayerPosition(int roomIndex)
     {
         if (minimapUI != null && minimapUI.gameObject.activeSelf)
             minimapUI.UpdatePlayerPosition(roomIndex);
     }
 
-    // ´øÀü ÅğÀå ½Ã ¹Ì´Ï¸ÊÀ» ¼û±â´Â ÇÔ¼ö
+    // ë˜ì „ í‡´ì¥ ì‹œ ë¯¸ë‹ˆë§µì„ ìˆ¨ê¸°ëŠ” í•¨ìˆ˜
     public void HideMinimap()
     {
         if (minimapUI != null)
@@ -248,8 +255,14 @@ public class UIManager : Singleton<UIManager>
             this.mapName.text = name;
     }
 
+    #region Result Panel
     public void ShowResultPanel(DungeonResultData resultData)
     {
-        resultPanel.Show(resultData);
+        resultPanel.gameObject.SetActive(true);
+        resultPanel.SetResultData(resultData);
     }
+    public void HideResultPanel() {
+        resultPanel.gameObject.SetActive(false);
+    }
+    #endregion Result Panel
 }

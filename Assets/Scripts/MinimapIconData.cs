@@ -7,17 +7,17 @@ public class MinimapIconData : ScriptableObject
     public Sprite PlayerIcon;
     public Sprite BossIcon;
 
-    // < ±æ ¸ğ¾ç ¾ÆÀÌÄÜµé > (¸ğµç Á¶ÇÕÀ» ¿©±â¿¡ ÇÒ´ç)
-    // ÀÎµ¦½º °ª = ¹æ ¿¬°á Á¤º¸
+    // < ê¸¸ ëª¨ì–‘ ì•„ì´ì½˜ë“¤ > (ëª¨ë“  ì¡°í•©ì„ ì—¬ê¸°ì— í• ë‹¹)
+    // ì¸ë±ìŠ¤ ê°’ = ë°© ì—°ê²° ì •ë³´
     // Top / Bottom / Left / Right
     // ex) index == 11
-    // 11Àº ÀÌÁø¼ö·Î 1011.
-    // 1011 ÀÌ¸é Top°ú Left, Right¿¡ ¹æÀÌ ¿¬°áµÇ¾î ÀÖ´Ù´Â ¶æ.
-    // ±×¿¡ ¸Â´Â ½ºÇÁ¶óÀÌÆ® ¼³Á¤
-    public List<Sprite> Inactive; // ÇÑ¹ø ¹æ¹®ÇßÀ¸³ª ExitÇÏ¸é¼­ ºñÈ°¼ºÈ­µÈ ¹æ
-    public List<Sprite> Active; // Áö±İ ÇÃ·¹ÀÌ¾î°¡ À§Ä¡ÇÑ ¹æ
+    // 11ì€ ì´ì§„ìˆ˜ë¡œ 1011.
+    // 1011 ì´ë©´ Topê³¼ Left, Rightì— ë°©ì´ ì—°ê²°ë˜ì–´ ìˆë‹¤ëŠ” ëœ».
+    // ê·¸ì— ë§ëŠ” ìŠ¤í”„ë¼ì´íŠ¸ ì„¤ì •
+    public List<Sprite> Inactive; // í•œë²ˆ ë°©ë¬¸í–ˆìœ¼ë‚˜ Exití•˜ë©´ì„œ ë¹„í™œì„±í™”ëœ ë°©
+    public List<Sprite> Active; // ì§€ê¸ˆ í”Œë ˆì´ì–´ê°€ ìœ„ì¹˜í•œ ë°©
 
-    // ¿¬°á Á¤º¸¸¦ ¹ÙÅÁÀ¸·Î ¿Ã¹Ù¸¥ ±æ ½ºÇÁ¶óÀÌÆ®¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    // ì—°ê²° ì •ë³´ë¥¼ ë°”íƒ•ìœ¼ë¡œ ì˜¬ë°”ë¥¸ ê¸¸ ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     public Sprite GetPathSprite(bool isActive, Room.HasExit hasExit)
     {
         return isActive ? Active[(int)hasExit] : Inactive[(int)hasExit];

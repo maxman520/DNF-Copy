@@ -10,12 +10,12 @@ public class BehaviourController
     private readonly SkillManager skillManager;
     Vector3 startPos;
 
-    // °¡»ó ¹°¸® º¯¼ö
+    // ê°€ìƒ ë¬¼ë¦¬ ë³€ìˆ˜
     private const float ORIGINAL_GRAVITY = 12f;
-    private const float JUMP_FORCE = 8f;     // Á¡ÇÁ ½Ã À§·Î °¡ÇÏ´Â ÃÊ±â 'Èû'(¼Óµµ)
+    private const float JUMP_FORCE = 8f;     // ì í”„ ì‹œ ìœ„ë¡œ ê°€í•˜ëŠ” ì´ˆê¸° 'í˜'(ì†ë„)
     private const float JUMP_MOVEMENT_PENALTY = 0.5f;
-    private float verticalVelocity; // ¼öÁ÷ 'Èû'ÀÇ °á°ú·Î ³ªÅ¸³ª´Â ÇöÀç ¼Óµµ
-    private float gravity = ORIGINAL_GRAVITY; // °¡»ó Áß·Â°ª
+    private float verticalVelocity; // ìˆ˜ì§ 'í˜'ì˜ ê²°ê³¼ë¡œ ë‚˜íƒ€ë‚˜ëŠ” í˜„ì¬ ì†ë„
+    private float gravity = ORIGINAL_GRAVITY; // ê°€ìƒ ì¤‘ë ¥ê°’
 
     public BehaviourController(Player player, InputHandler inputHandler, AnimController animController, SkillManager skillManager)
     {
@@ -26,7 +26,7 @@ public class BehaviourController
         startPos = player.VisualsTransform.localPosition;
     }
 
-    // Ä³¸¯ÅÍ ¹æÇâ Á¶Àı
+    // ìºë¦­í„° ë°©í–¥ ì¡°ì ˆ
     public void Flip()
     {
         if (!player.CanMove || player.HasState(PlayerAnimState.Attack)) return;
@@ -38,7 +38,7 @@ public class BehaviourController
         }
     }
 
-    // Ä³¸¯ÅÍ ÀÌµ¿
+    // ìºë¦­í„° ì´ë™
     public void ApplyMovement()
     {
         if (!player.CanMove)
@@ -49,9 +49,9 @@ public class BehaviourController
 
         Vector2 velocity = inputHandler.MoveInput.normalized * currentSpeed;
 
-        velocity.y *= 0.7f; // yÃàÀº xÃàº¸´Ù ´À¸®°Ô ¿òÁ÷ÀÌµµ·Ï
+        velocity.y *= 0.7f; // yì¶•ì€ xì¶•ë³´ë‹¤ ëŠë¦¬ê²Œ ì›€ì§ì´ë„ë¡
 
-        // Á¡ÇÁÁßÀÌ¶ó¸é yÃà ¼Óµµ¿¡ ÆĞ³ÎÆ¼ ºÎ°ú
+        // ì í”„ì¤‘ì´ë¼ë©´ yì¶• ì†ë„ì— íŒ¨ë„í‹° ë¶€ê³¼
         if (player.HasState(PlayerAnimState.Jump))
         {
             velocity.y *= JUMP_MOVEMENT_PENALTY;
@@ -61,7 +61,7 @@ public class BehaviourController
     }
 
 
-    // ´Ş¸®±â ½ÃÀÛ
+    // ë‹¬ë¦¬ê¸° ì‹œì‘
     public bool PerformRun(InputAction.CallbackContext context)
     {
         if (!player.HasState(PlayerAnimState.Jump) && player.CanMove)
@@ -69,29 +69,29 @@ public class BehaviourController
 
         return player.IsRunning;
     }
-    // Á¡ÇÁ
+    // ì í”„
     public bool PerformJump(InputAction.CallbackContext context)
     {
-        // ¶¥¿¡ ÀÖÁö¾ÊÀ¸¸é Á¡ÇÁ X
+        // ë•…ì— ìˆì§€ì•Šìœ¼ë©´ ì í”„ X
         if (!player.CanMove || !player.IsGrounded)
             return false;
 
-        // ¼öÁ÷ ¼Óµµ¿¡ Á¡ÇÁ 'Èû'À» Áï½Ã Àû¿ë
+        // ìˆ˜ì§ ì†ë„ì— ì í”„ 'í˜'ì„ ì¦‰ì‹œ ì ìš©
         verticalVelocity = JUMP_FORCE;
 
-        // »óÅÂ¸¦ '°øÁß¿¡ ¶á' »óÅÂ·Î º¯°æ
+        // ìƒíƒœë¥¼ 'ê³µì¤‘ì— ëœ¬' ìƒíƒœë¡œ ë³€ê²½
         player.IsGrounded = false;
         animController.PlayJump();
 
         return true;
     }
     #region Attack
-    // °ø°İ
+    // ê³µê²©
     public bool PerformAttack(InputAction.CallbackContext context)
     {
         if (!player.CanAttack) return false;
 
-        // < Á¡ÇÁ °ø°İ >
+        // < ì í”„ ê³µê²© >
         if (player.HasState(PlayerAnimState.Jump) && !player.HasState(PlayerAnimState.Attack))
         {
             PerformJumpAttack();
@@ -99,24 +99,24 @@ public class BehaviourController
         }
 
 
-        // < Áö»ó °ø°İ >
-        // °ø°İÀ» ÀÌ¾î°¥ ¼ö ÀÖ´Â Å¸ÀÌ¹ÖÀÌ¶ó¸é
+        // < ì§€ìƒ ê³µê²© >
+        // ê³µê²©ì„ ì´ì–´ê°ˆ ìˆ˜ ìˆëŠ” íƒ€ì´ë°ì´ë¼ë©´
         if (player.CanContinueAttack)
         {
             player.AttackCounter++;
             PerformComboAttack();
             return true;
         }
-        // Ã¹ °ø°İÀÎ °æ¿ì
+        // ì²« ê³µê²©ì¸ ê²½ìš°
         else if (!player.HasState(PlayerAnimState.Attack))
         {
             player.Rb.linearVelocity = Vector2.zero;
-            // ´Ş¸®´Â Áß °ø°İ
+            // ë‹¬ë¦¬ëŠ” ì¤‘ ê³µê²©
             if (player.IsRunning && Mathf.Abs(inputHandler.MoveInput.x) > 0.1f)
             {
                 PerformRunAttack();
             }
-            // ÀÌ¿Ü °È´Â Áß, Idle »óÅÂ µî
+            // ì´ì™¸ ê±·ëŠ” ì¤‘, Idle ìƒíƒœ ë“±
             else
             {
                 player.IsRunning = false;
@@ -129,48 +129,48 @@ public class BehaviourController
         return false;
     }
 
-    // ÇÃ·¹ÀÌ¾îÀÇ 1, 2, 3 ÄŞº¸ °ø°İ
+    // í”Œë ˆì´ì–´ì˜ 1, 2, 3 ì½¤ë³´ ê³µê²©
     public void PerformComboAttack()
     {
         float direction = player.transform.localScale.x;
         // player.Rb.AddForceX(direction * 0.05f, ForceMode2D.Impulse);
         player.Rb.linearVelocity = new Vector3(direction * 0.05f, 0 , 0);
 
-        player.CanContinueAttack = false; // ´ÙÀ½ °ø°İÀ» À§ÇØ ÀÏ´Ü ´İ¾ÆµÒ
+        player.CanContinueAttack = false; // ë‹¤ìŒ ê³µê²©ì„ ìœ„í•´ ì¼ë‹¨ ë‹«ì•„ë‘ 
         animController.PlayAttack(player.AttackCounter);
     }
 
     public void PerformRunAttack()
     {
-        Debug.Log("´Ş¸®±â °ø°İ");
-        return; // ÀÓ½Ã·Î ÀÛ¼º
+        Debug.Log("ë‹¬ë¦¬ê¸° ê³µê²©");
+        return; // ì„ì‹œë¡œ ì‘ì„±
         animController.PlayAttack(player.AttackCounter);
     }
 
     public void PerformJumpAttack()
     {
-        // ÀÌ¹Ì ÀÌ¹ø Á¡ÇÁ¿¡¼­ °ø°İÀ» Çß´Ù¸é ¹«½Ã
+        // ì´ë¯¸ ì´ë²ˆ ì í”„ì—ì„œ ê³µê²©ì„ í–ˆë‹¤ë©´ ë¬´ì‹œ
         if (player.HasState(PlayerAnimState.Jump)
             && player.HasState(PlayerAnimState.Attack)) return;
 
-        // Á¡ÇÁ °ø°İ ½ÇÇà
+        // ì í”„ ê³µê²© ì‹¤í–‰
         animController.PlayAttack(player.AttackCounter);
     }
 
-    // ÄŞº¸¸¦ ÀÌ¾î°¥ ¼ö ÀÖ´Â "Å¸ÀÌ¹Ö" ÀÏ ¶§ ¾Ö´Ï¸ŞÀÌ¼Ç¿¡¼­ È£Ãâ
+    // ì½¤ë³´ë¥¼ ì´ì–´ê°ˆ ìˆ˜ ìˆëŠ” "íƒ€ì´ë°" ì¼ ë•Œ ì• ë‹ˆë©”ì´ì…˜ì—ì„œ í˜¸ì¶œ
     public void OnComboWindowOpen()
     {
-        // 3Å¸°¡ ¾Æ´Ï¸é ´ÙÀ½ ÄŞº¸ ÀÔ·ÂÀ» ¹ŞÀ» ÁØºñ¸¦ ÇÔ
+        // 3íƒ€ê°€ ì•„ë‹ˆë©´ ë‹¤ìŒ ì½¤ë³´ ì…ë ¥ì„ ë°›ì„ ì¤€ë¹„ë¥¼ í•¨
         if (player.AttackCounter < 3)
         {
             player.CanContinueAttack = true;
         }
     }
 
-    // ÄŞº¸¸¦ ÀÌ¾î°¥ ¼ö ÀÖ´Â "Å¸ÀÌ¹Ö" ÀÌ ³¡³µÀ» ¶§ ¾Ö´Ï¸ŞÀÌ¼Ç¿¡¼­ È£Ãâ
+    // ì½¤ë³´ë¥¼ ì´ì–´ê°ˆ ìˆ˜ ìˆëŠ” "íƒ€ì´ë°" ì´ ëë‚¬ì„ ë•Œ ì• ë‹ˆë©”ì´ì…˜ì—ì„œ í˜¸ì¶œ
     public void OnComboWindowClose()
     {
-        // ÄŞº¸°¡ ÀÌ¾îÁöÁö ¾Ê°í ³¡³µÀ» °æ¿ì¿¡ ´ëÇÑ ÃÖÁ¾ Ã³¸®
+        // ì½¤ë³´ê°€ ì´ì–´ì§€ì§€ ì•Šê³  ëë‚¬ì„ ê²½ìš°ì— ëŒ€í•œ ìµœì¢… ì²˜ë¦¬
         ResetAttackState();
     }
     public void ResetAttackState()
@@ -179,48 +179,48 @@ public class BehaviourController
         player.CanContinueAttack = false;
     }
     #endregion Attack
-    // Player·ÎºÎÅÍ ÇÇ°İ Ã³¸®¸¦ À§ÀÓ¹Ş´Â ÇÔ¼ö
+    // Playerë¡œë¶€í„° í”¼ê²© ì²˜ë¦¬ë¥¼ ìœ„ì„ë°›ëŠ” í•¨ìˆ˜
     public void HandleHurt(AttackDetails attackDetails, Vector3 attackPosition)
     {
-        // ¹æÇâ °áÁ¤
+        // ë°©í–¥ ê²°ì •
         float direction = (player.transform.position.x > attackPosition.x) ? 1 : -1;
 
-        if (player.IsGrounded) // ¶¥¿¡ ÀÖÀ» ¶§
+        if (player.IsGrounded) // ë•…ì— ìˆì„ ë•Œ
         {
-            if (attackDetails.launchForce > 0) // ¶ç¿ì´Â °ø°İ
+            if (attackDetails.launchForce > 0) // ë„ìš°ëŠ” ê³µê²©
             {
-                // ¼öÆò ³Ë¹é
-                player.Rb.linearVelocity = Vector2.zero; // ±âÁ¸ ¼Óµµ ÃÊ±âÈ­
+                // ìˆ˜í‰ ë„‰ë°±
+                player.Rb.linearVelocity = Vector2.zero; // ê¸°ì¡´ ì†ë„ ì´ˆê¸°í™”
                 player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
-                // °øÁß¿¡ ¶ß´Â Èû Àû¿ë
+                // ê³µì¤‘ì— ëœ¨ëŠ” í˜ ì ìš©
                 verticalVelocity = attackDetails.launchForce;
                 player.IsGrounded = false;
-                animController.PlayAirborne(); // ¶Ç´Â AnimController¸¦ ÅëÇØ ¾Ö´Ï¸ŞÀÌ¼Ç Á÷Á¢ Á¦¾î
+                animController.PlayAirborne(); // ë˜ëŠ” AnimControllerë¥¼ í†µí•´ ì• ë‹ˆë©”ì´ì…˜ ì§ì ‘ ì œì–´
             }
-            else // ÀÏ¹İ °ø°İ
+            else // ì¼ë°˜ ê³µê²©
             {
-                // ÂªÀº ¼öÆò ³Ë¹é
-                player.Rb.linearVelocity = Vector2.zero; // ±âÁ¸ ¼Óµµ ÃÊ±âÈ­
+                // ì§§ì€ ìˆ˜í‰ ë„‰ë°±
+                player.Rb.linearVelocity = Vector2.zero; // ê¸°ì¡´ ì†ë„ ì´ˆê¸°í™”
                 player.transform.position += new Vector3(direction * attackDetails.knockbackForce * 0.1f, 0);
                 // player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
-                animController.PlayHurt(Random.Range(1, 3)); // hurt ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+                animController.PlayHurt(Random.Range(1, 3)); // hurt ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
             }
         }
-        else // °øÁß¿¡ ÀÖÀ» ¶§
+        else // ê³µì¤‘ì— ìˆì„ ë•Œ
         {
-            // ¼öÆò ³Ë¹é
+            // ìˆ˜í‰ ë„‰ë°±
             player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
-            animController.PlayAirborne(); // hurt ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+            animController.PlayAirborne(); // hurt ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
 
-            // °øÁß ÄŞº¸ º¸Á¤. ÇÃ·¹ÀÌ¾î´Â ÇÊ¿ä¾øÀ½
+            // ê³µì¤‘ ì½¤ë³´ ë³´ì •. í”Œë ˆì´ì–´ëŠ” í•„ìš”ì—†ìŒ
             // if (attackDetails.launchForce > 0) airHitCounter++;
 
-            // °øÁß ÇÇ°İ ¹İÀÀ ·ÎÁ÷ Àû¿ë. ÇÃ·¹ÀÌ¾î´Â ÇÊ¿ä¾øÀ½
+            // ê³µì¤‘ í”¼ê²© ë°˜ì‘ ë¡œì§ ì ìš©. í”Œë ˆì´ì–´ëŠ” í•„ìš”ì—†ìŒ
             // float heightDecayFactor = Mathf.Max(0, 1f - (airHitCounter * 0.2f));
             // float finalLaunchForce = attackDetails.launchForce * heightDecayFactor;
-            // float airHitReactionForce = 4f; // °øÁß¿¡¼­ ¸Â¾ÒÀ» ¶§ »ìÂ¦ Æ¢¾î¿À¸£´Â ±âº» Èû
+            // float airHitReactionForce = 4f; // ê³µì¤‘ì—ì„œ ë§ì•˜ì„ ë•Œ ì‚´ì§ íŠ€ì–´ì˜¤ë¥´ëŠ” ê¸°ë³¸ í˜
 
             verticalVelocity = 4f;
         }
@@ -228,38 +228,38 @@ public class BehaviourController
 
     #region Jump
 
-    // Update¿¡¼­ ¸Å¹ø Ã¼Å©ÇÏ¸ç Áß·Â Àû¿ë
+    // Updateì—ì„œ ë§¤ë²ˆ ì²´í¬í•˜ë©° ì¤‘ë ¥ ì ìš©
     public void HandleGravity()
     {
-        // 1. °øÁß¿¡ ¶° ÀÖ´Ù¸é
+        // 1. ê³µì¤‘ì— ë–  ìˆë‹¤ë©´
         if (!player.IsGrounded)
         {
-            // 2. Áß·ÂÀ» °è¼Ó Àû¿ë
+            // 2. ì¤‘ë ¥ì„ ê³„ì† ì ìš©
             verticalVelocity += (- gravity) * Time.deltaTime;
 
-            // 3. °è»êµÈ ¼Óµµ·Î VisualsÀÇ local YÁÂÇ¥¸¦ º¯°æ
+            // 3. ê³„ì‚°ëœ ì†ë„ë¡œ Visualsì˜ local Yì¢Œí‘œë¥¼ ë³€ê²½
             player.VisualsTransform.localPosition += new Vector3(0, verticalVelocity * Time.deltaTime, 0);
 
-            // 4. ÂøÁöÇß´ÂÁö È®ÀÎ
+            // 4. ì°©ì§€í–ˆëŠ”ì§€ í™•ì¸
             CheckForLanding();
         }
 
-        // 5. ÇöÀç ¼öÁ÷ ¼Óµµ¸¦ ¾Ö´Ï¸ŞÀÌÅÍ¿¡ Àü´Ş
+        // 5. í˜„ì¬ ìˆ˜ì§ ì†ë„ë¥¼ ì• ë‹ˆë©”ì´í„°ì— ì „ë‹¬
         animController.UpdateJumpAnimation(verticalVelocity);
     }
 
-    // ÂøÁö ÆÇº° ·ÎÁ÷
+    // ì°©ì§€ íŒë³„ ë¡œì§
     private void CheckForLanding()
     {
-        // VisualsÀÇ Y ÁÂÇ¥°¡ ¹Ù´Ú(0)º¸´Ù ¾Æ·¡·Î ³»·Á°¬´Ù¸é ÂøÁö·Î °£ÁÖ
+        // Visualsì˜ Y ì¢Œí‘œê°€ ë°”ë‹¥(0)ë³´ë‹¤ ì•„ë˜ë¡œ ë‚´ë ¤ê°”ë‹¤ë©´ ì°©ì§€ë¡œ ê°„ì£¼
         if (player.VisualsTransform.localPosition.y <= startPos.y)
         {
-            // À§Ä¡¿Í ¼Óµµ, Áß·Â ÃÊ±âÈ­
+            // ìœ„ì¹˜ì™€ ì†ë„, ì¤‘ë ¥ ì´ˆê¸°í™”
             player.VisualsTransform.localPosition = startPos;
             verticalVelocity = 0f;
             gravity = ORIGINAL_GRAVITY;
 
-            // »óÅÂ ÃÊ±âÈ­
+            // ìƒíƒœ ì´ˆê¸°í™”
             player.Rb.linearVelocity = Vector3.zero;
             player.IsGrounded = true;
             player.IsRunning = false;
@@ -270,47 +270,47 @@ public class BehaviourController
 
 
     #region Skill
-    // ½ºÅ³À» ½ÇÇàÇÏ´Â »õ·Î¿î ÇÔ¼ö
+    // ìŠ¤í‚¬ì„ ì‹¤í–‰í•˜ëŠ” ìƒˆë¡œìš´ í•¨ìˆ˜
     public bool PerformSkill(InputAction.CallbackContext context, int slotIndex)
     {
-        // °ø°İ °¡´É Ã¼Å©
+        // ê³µê²© ê°€ëŠ¥ ì²´í¬
         if (!player.CanAttack || player.HasState(PlayerAnimState.Attack))
             return false;
 
-        // ½ºÅ³ »ç¿ëÀÌ °¡´ÉÇÑÁö Ã¼Å©
+        // ìŠ¤í‚¬ ì‚¬ìš©ì´ ê°€ëŠ¥í•œì§€ ì²´í¬
         if (skillManager.IsSkillReady(slotIndex, out SkillData skillToExecute))
         {
-            Debug.Log($"'{skillToExecute.skillName}' ½ºÅ³ ½ÃÀü");
+            Debug.Log($"'{skillToExecute.skillName}' ìŠ¤í‚¬ ì‹œì „");
 
             player.Rb.linearVelocity = Vector3.zero;
             player.Anim.Play(skillToExecute.animName);
 
-            // ¸¶³ª ¼Ò¸ğ
+            // ë§ˆë‚˜ ì†Œëª¨
             // player.ConsumeMana(skillToExecute.manaCost);
 
-            // ½ºÅ³ ÄğÅ¸ÀÓÀ» ½ÃÀÛ
+            // ìŠ¤í‚¬ ì¿¨íƒ€ì„ì„ ì‹œì‘
             skillManager.StartCooldown(slotIndex);
 
             return true;
         }
 
-       // ½ºÅ³ »ç¿ëÀÌ ºÒ°¡´ÉÇÔÀ» ¾Ö´Ï¸ŞÀÌ¼ÇÀ¸·Î ÇÃ·¹ÀÌ¾î¿¡°Ô ÀÎ½Ä½ÃÅ´
+       // ìŠ¤í‚¬ ì‚¬ìš©ì´ ë¶ˆê°€ëŠ¥í•¨ì„ ì• ë‹ˆë©”ì´ì…˜ìœ¼ë¡œ í”Œë ˆì´ì–´ì—ê²Œ ì¸ì‹ì‹œí‚´
         CooldownShake().Forget();
 
-        // ½ºÅ³ »ç¿ëÀÌ ºÒ°¡´ÉÇÏ¹Ç·Î false
+        // ìŠ¤í‚¬ ì‚¬ìš©ì´ ë¶ˆê°€ëŠ¥í•˜ë¯€ë¡œ false
         return false;
     }
 
-    // ½ºÅ³ÀÌ ÄğÅ¸ÀÓÀÏ½Ã ºÎµéºÎµé ¶°´Â ¾Ö´Ï¸ŞÀÌ¼Ç
+    // ìŠ¤í‚¬ì´ ì¿¨íƒ€ì„ì¼ì‹œ ë¶€ë“¤ë¶€ë“¤ ë– ëŠ” ì• ë‹ˆë©”ì´ì…˜
     private async UniTask CooldownShake()
     {
-        float shakeDuration = 0.05f; // ÀüÃ¼ ¶³¸² ½Ã°£
-        float shakeAmount = 0.04f;   // ¶³¸²ÀÇ °­µµ (¿òÁ÷ÀÌ´Â °Å¸®)
+        float shakeDuration = 0.05f; // ì „ì²´ ë–¨ë¦¼ ì‹œê°„
+        float shakeAmount = 0.04f;   // ë–¨ë¦¼ì˜ ê°•ë„ (ì›€ì§ì´ëŠ” ê±°ë¦¬)
         float elapsedTime = 0f;
 
         while (elapsedTime < shakeDuration)
         {
-            // ·£´ıÇÑ ¹æÇâÀ¸·Î »ìÂ¦ ÀÌµ¿
+            // ëœë¤í•œ ë°©í–¥ìœ¼ë¡œ ì‚´ì§ ì´ë™
             float x = Random.Range(-1f, 1f) * shakeAmount;
 
             player.VisualsTransform.localPosition = startPos + new Vector3(x, 0, 0);
@@ -319,7 +319,7 @@ public class BehaviourController
             await UniTask.Yield();
         }
 
-        // ¶³¸²ÀÌ ³¡³ª¸é ¿ø·¡ À§Ä¡·Î º¹¿ø
+        // ë–¨ë¦¼ì´ ëë‚˜ë©´ ì›ë˜ ìœ„ì¹˜ë¡œ ë³µì›
         player.VisualsTransform.localPosition = startPos;
     }
     #endregion Skill

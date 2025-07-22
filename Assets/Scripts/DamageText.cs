@@ -4,109 +4,109 @@ using System.Collections.Generic;
 
 public class DamageText : MonoBehaviour
 {
-    [Header("ÂüÁ¶")]
-    [SerializeField] private DamageFontData fontData; // »ç¿ëÇÒ ÆùÆ® µ¥ÀÌÅÍ
-    [SerializeField] private List<SpriteRenderer> numberRenderers; // ¼ıÀÚ ÀÚ¸´¼ö ·»´õ·¯µé
+    [Header("ì°¸ì¡°")]
+    [SerializeField] private DamageFontData fontData; // ì‚¬ìš©í•  í°íŠ¸ ë°ì´í„°
+    [SerializeField] private List<SpriteRenderer> numberRenderers; // ìˆ«ì ìë¦¿ìˆ˜ ë Œë”ëŸ¬ë“¤
 
-    [Header("¾Ö´Ï¸ŞÀÌ¼Ç ¼³Á¤")]
-    [SerializeField] private float moveDistance = 0.5f; // À§·Î ¶°¿À¸¦ °Å¸®
-    [SerializeField] private float duration = 0.8f;     // ÀüÃ¼ Áö¼Ó ½Ã°£
-    [SerializeField] private float fadeOutDelay = 0.5f; // »ç¶óÁö±â ½ÃÀÛÇÏ´Â ½Ã°£
+    [Header("ì• ë‹ˆë©”ì´ì…˜ ì„¤ì •")]
+    [SerializeField] private float moveDistance = 0.5f; // ìœ„ë¡œ ë– ì˜¤ë¥¼ ê±°ë¦¬
+    [SerializeField] private float duration = 0.8f;     // ì „ì²´ ì§€ì† ì‹œê°„
+    [SerializeField] private float fadeOutDelay = 0.5f; // ì‚¬ë¼ì§€ê¸° ì‹œì‘í•˜ëŠ” ì‹œê°„
 
-    [Header("Å©±â ¾Ö´Ï¸ŞÀÌ¼Ç ¼³Á¤")]
-    [SerializeField] private Vector3 startScale = new Vector3(10f, 10f, 1f); // ½ÃÀÛ ½Ã Å©±â ¹èÀ²
-    [SerializeField] private float scaleInDuration = 0.15f; // ¿ø·¡ Å©±â·Î µ¹¾Æ¿À´Â µ¥ °É¸®´Â ½Ã°£
+    [Header("í¬ê¸° ì• ë‹ˆë©”ì´ì…˜ ì„¤ì •")]
+    [SerializeField] private Vector3 startScale = new Vector3(10f, 10f, 1f); // ì‹œì‘ ì‹œ í¬ê¸° ë°°ìœ¨
+    [SerializeField] private float scaleInDuration = 0.15f; // ì›ë˜ í¬ê¸°ë¡œ ëŒì•„ì˜¤ëŠ” ë° ê±¸ë¦¬ëŠ” ì‹œê°„
 
-    [Header("µ¥¹ÌÁö ÅØ½ºÆ® ÀÌ¸§ (EffectManager¿¡ µî·ÏµÈ ÀÌ¸§°ú µ¿ÀÏÇØ¾ß ÇÔ)")]
+    [Header("ë°ë¯¸ì§€ í…ìŠ¤íŠ¸ ì´ë¦„ (EffectManagerì— ë“±ë¡ëœ ì´ë¦„ê³¼ ë™ì¼í•´ì•¼ í•¨)")]
     [SerializeField] private string effectName;
 
-    // µ¥¹ÌÁö °ªÀ» ¹Ş¾Æ¿Í¼­ ½ºÇÁ¶óÀÌÆ®·Î º¯È¯ÇÏ¿© Ç¥½Ã
+    // ë°ë¯¸ì§€ ê°’ì„ ë°›ì•„ì™€ì„œ ìŠ¤í”„ë¼ì´íŠ¸ë¡œ ë³€í™˜í•˜ì—¬ í‘œì‹œ
     public void SetDamageAndPlay(int damage)
     {
         string damageString = damage.ToString();
 
-        // ¸ğµç ¼ıÀÚ ·»´õ·¯¸¦ ÀÏ´Ü ºñÈ°¼ºÈ­ÇÏ°í ¾ËÆÄ°ª ÃÊ±âÈ­
+        // ëª¨ë“  ìˆ«ì ë Œë”ëŸ¬ë¥¼ ì¼ë‹¨ ë¹„í™œì„±í™”í•˜ê³  ì•ŒíŒŒê°’ ì´ˆê¸°í™”
         foreach (var renderer in numberRenderers)
         {
             renderer.gameObject.SetActive(false);
             Color color = renderer.color;
-            color.a = 1f; // ¾ËÆÄ°ª ¸®¼Â
+            color.a = 1f; // ì•ŒíŒŒê°’ ë¦¬ì…‹
             renderer.color = color;
         }
 
-        // µ¥¹ÌÁö ¹®ÀÚ¿­ÀÇ °¢ ¼ıÀÚ¿¡ ÇØ´çÇÏ´Â ½ºÇÁ¶óÀÌÆ®¸¦ ¼³Á¤ÇÏ°í È°¼ºÈ­
+        // ë°ë¯¸ì§€ ë¬¸ìì—´ì˜ ê° ìˆ«ìì— í•´ë‹¹í•˜ëŠ” ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ì„¤ì •í•˜ê³  í™œì„±í™”
         for (int i = 0; i < damageString.Length; i++)
         {
-            if (i >= numberRenderers.Count) break; // ÁØºñµÈ ÀÚ¸´¼ö¸¦ ³ÑÀ¸¸é Áß´Ü
+            if (i >= numberRenderers.Count) break; // ì¤€ë¹„ëœ ìë¦¿ìˆ˜ë¥¼ ë„˜ìœ¼ë©´ ì¤‘ë‹¨
 
             int number = int.Parse(damageString[i].ToString());
             numberRenderers[i].sprite = fontData.numberSprites[number];
             numberRenderers[i].gameObject.SetActive(true);
         }
 
-        // ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÀÛ
+        // ì• ë‹ˆë©”ì´ì…˜ ì‹œì‘
         Animate().Forget();
     }
 
-    // ¸ŞÀÎ ¾Ö´Ï¸ŞÀÌ¼Ç ÇÔ¼ö: µÎ °³ÀÇ ½ÃÄö½º¸¦ ¼øÂ÷ÀûÀ¸·Î È£Ãâ
+    // ë©”ì¸ ì• ë‹ˆë©”ì´ì…˜ í•¨ìˆ˜: ë‘ ê°œì˜ ì‹œí€€ìŠ¤ë¥¼ ìˆœì°¨ì ìœ¼ë¡œ í˜¸ì¶œ
     private async UniTask Animate()
     {
 
-        // ½ÃÄö½º 1: Å©±â Á¶Àı ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà ¹× ¿Ï·á ´ë±â
+        // ì‹œí€€ìŠ¤ 1: í¬ê¸° ì¡°ì ˆ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰ ë° ì™„ë£Œ ëŒ€ê¸°
         await ScaleInAnimation();
 
-        // ½ÃÄö½º 2: ÀÌµ¿ ¹× ¼Ò¸ê ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà ¹× ¿Ï·á ´ë±â
+        // ì‹œí€€ìŠ¤ 2: ì´ë™ ë° ì†Œë©¸ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰ ë° ì™„ë£Œ ëŒ€ê¸°
         await MoveAndFadeAnimation();
 
-        // ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³ª¸é Ç®¿¡ ¹İ³³
+        // ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚˜ë©´ í’€ì— ë°˜ë‚©
         if (EffectManager.Instance != null)
         {
             EffectManager.Instance.ReturnEffectToPool(effectName, this.gameObject);
         }
         else
         {
-            // ¸Å´ÏÀú°¡ ¾øÀ¸¸é ±×³É ÆÄ±«
+            // ë§¤ë‹ˆì €ê°€ ì—†ìœ¼ë©´ ê·¸ëƒ¥ íŒŒê´´
             Destroy(gameObject);
         }
     }
 
-    // ½ÃÄö½º 1: Å« Å©±â¿¡¼­ ¿ø·¡ Å©±â(1,1,1)·Î ÁÙ¾îµå´Â ¾Ö´Ï¸ŞÀÌ¼Ç
+    // ì‹œí€€ìŠ¤ 1: í° í¬ê¸°ì—ì„œ ì›ë˜ í¬ê¸°(1,1,1)ë¡œ ì¤„ì–´ë“œëŠ” ì• ë‹ˆë©”ì´ì…˜
     private async UniTask ScaleInAnimation()
     {
         float elapsedTime = 0f;
-        Vector3 originalScale = Vector3.one; // ¸ñÇ¥ Å©±â (1, 1, 1)
+        Vector3 originalScale = Vector3.one; // ëª©í‘œ í¬ê¸° (1, 1, 1)
 
         while (elapsedTime < scaleInDuration)
         {
-            // ÁøÇà·ü (0 -> 1)
+            // ì§„í–‰ë¥  (0 -> 1)
             float progress = elapsedTime / scaleInDuration;
 
-            // Ease-Out È¿°ú¸¦ À§ÇØ ÁøÇà·üÀ» º¸Á¤ (Ã³À½¿£ ºü¸£°í ³ªÁß¿¡ ´À¸®°Ô)
-            // 1 - (1-x)^n °ø½Ä »ç¿ë
-            // float easedProgress = 1 - Mathf.Pow(1 - progress, 3); // 3Àº °­µµ Á¶Àı
+            // Ease-Out íš¨ê³¼ë¥¼ ìœ„í•´ ì§„í–‰ë¥ ì„ ë³´ì • (ì²˜ìŒì—” ë¹ ë¥´ê³  ë‚˜ì¤‘ì— ëŠë¦¬ê²Œ)
+            // 1 - (1-x)^n ê³µì‹ ì‚¬ìš©
+            // float easedProgress = 1 - Mathf.Pow(1 - progress, 3); // 3ì€ ê°•ë„ ì¡°ì ˆ
 
-            // Å©±â¸¦ ½ÃÀÛ Å©±â¿¡¼­ ¸ñÇ¥ Å©±â·Î º¸°£
+            // í¬ê¸°ë¥¼ ì‹œì‘ í¬ê¸°ì—ì„œ ëª©í‘œ í¬ê¸°ë¡œ ë³´ê°„
             transform.localScale = Vector3.Lerp(startScale, originalScale, progress);
 
             elapsedTime += Time.deltaTime;
             await UniTask.Yield(this.GetCancellationTokenOnDestroy());
         }
 
-        // ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³ª¸é Å©±â¸¦ Á¤È®È÷ ¿ø·¡´ë·Î ¼³Á¤
+        // ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚˜ë©´ í¬ê¸°ë¥¼ ì •í™•íˆ ì›ë˜ëŒ€ë¡œ ì„¤ì •
         transform.localScale = originalScale;
     }
 
-    // ½ÃÄö½º 2: À§·Î ¶°¿À¸£¸ç »ç¶óÁö´Â ¾Ö´Ï¸ŞÀÌ¼Ç (±âÁ¸ ·ÎÁ÷)
+    // ì‹œí€€ìŠ¤ 2: ìœ„ë¡œ ë– ì˜¤ë¥´ë©° ì‚¬ë¼ì§€ëŠ” ì• ë‹ˆë©”ì´ì…˜ (ê¸°ì¡´ ë¡œì§)
     private async UniTask MoveAndFadeAnimation()
     {
         Vector3 startPos = transform.position;
         Vector3 endPos = startPos + Vector3.up * moveDistance;
         float elapsedTime = 0f;
 
-        // À§·Î ¶°¿À¸£´Â ¿òÁ÷ÀÓ
+        // ìœ„ë¡œ ë– ì˜¤ë¥´ëŠ” ì›€ì§ì„
         while (elapsedTime < duration)
         {
-            float easedProgress = Mathf.Pow(elapsedTime / duration, 2.5f); // Ã³À½¿£ ´À¸®°Ô ¶°¿À¸£´Ù Á¡Á¡ »¡¸® ¶°¿À¸£µµ·Ï
+            float easedProgress = Mathf.Pow(elapsedTime / duration, 2.5f); // ì²˜ìŒì—” ëŠë¦¬ê²Œ ë– ì˜¤ë¥´ë‹¤ ì ì  ë¹¨ë¦¬ ë– ì˜¤ë¥´ë„ë¡
 
             transform.position = Vector3.Lerp(startPos, endPos, easedProgress);
 
@@ -121,7 +121,7 @@ public class DamageText : MonoBehaviour
         }
     }
 
-    // ¸ğµç ¼ıÀÚ ½ºÇÁ¶óÀÌÆ®ÀÇ ¾ËÆÄ(Åõ¸íµµ) °ªÀ» Á¶Àı
+    // ëª¨ë“  ìˆ«ì ìŠ¤í”„ë¼ì´íŠ¸ì˜ ì•ŒíŒŒ(íˆ¬ëª…ë„) ê°’ì„ ì¡°ì ˆ
     private void SetAlpha(float alpha)
     {
         foreach (var renderer in numberRenderers)

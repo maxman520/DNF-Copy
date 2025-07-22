@@ -5,14 +5,14 @@ using UnityEngine.SceneManagement;
 
 public enum GameState
 {
-    // --- °ÔÀÓ ÇÃ·Î¿ì »óÅÂ ---
-    // MainMenu,           // ¸ŞÀÎ ¸Ş´º È­¸é (°ÔÀÓ ½ÃÀÛ È­¸é)
-    CharacterSelect,    // Ä³¸¯ÅÍ ¼±ÅÃÃ¢
-    Loading,            // ·Îµù Áß
+    // --- ê²Œì„ í”Œë¡œìš° ìƒíƒœ ---
+    // MainMenu,           // ë©”ì¸ ë©”ë‰´ í™”ë©´ (ê²Œì„ ì‹œì‘ í™”ë©´)
+    CharacterSelect,    // ìºë¦­í„° ì„ íƒì°½
+    Loading,            // ë¡œë”© ì¤‘
 
-    // --- ÀÎ°ÔÀÓ »óÅÂ (In-Game) ---
-    Town,               // ¸¶À»
-    Dungeon,            // ´øÀü
+    // --- ì¸ê²Œì„ ìƒíƒœ (In-Game) ---
+    Town,               // ë§ˆì„
+    Dungeon,            // ë˜ì „
 }
 
 public class GameManager : Singleton<GameManager>
@@ -20,27 +20,28 @@ public class GameManager : Singleton<GameManager>
     public GameState CurrentState { get; private set; } = GameState.Town;
 
     private Player player;
-    public float CurrentHealth { get; private set; }
-    public float CurrentMana { get; private set; }
 
     private void Start()
     {
-        // °ÔÀÓ ½ÃÀÛ ½Ã ½ºÅÈ ÃÊ±âÈ­
+        // ê²Œì„ ì‹œì‘ ì‹œ ìŠ¤íƒ¯ ì´ˆê¸°í™”
         InitializePlayerState();
     }
     public void InitializePlayerState()
     {
-        CurrentHealth = Player.Instance.MaxHP;
-        CurrentMana = Player.Instance.MaxMP;
+        // UI ë§¤ë‹ˆì €ì—ê²Œ ì´ˆê¸° UI ì—…ë°ì´íŠ¸ ìš”ì²­
+        UIManager.Instance.UpdateHP(Player.Instance.MaxHP, Player.Instance.CurrentHP);
+        UIManager.Instance.UpdateMP(Player.Instance.MaxMP, Player.Instance.CurrentMP);
+        UIManager.Instance.UpdateEXP(Player.Instance.RequiredEXP, Player.Instance.CurrentEXP);
+    }
 
-        // UI ¸Å´ÏÀú¿¡°Ô ÃÊ±â UI ¾÷µ¥ÀÌÆ® ¿äÃ»
-        UIManager.Instance.UpdateHP(Player.Instance.MaxHP, CurrentHealth);
-        UIManager.Instance.UpdateMP(Player.Instance.MaxMP, CurrentMana);
+    public void AddExp(int expAmount)
+    {
+        Player.Instance.AddExp(expAmount);
     }
 
     private void OnEnable()
     {
-        // ¾ÀÀÌ ·ÎµåµÉ ¶§¸¶´Ù SceneLoaded ÇÔ¼ö¸¦ È£ÃâÇÏµµ·Ï ÀÌº¥Æ®¿¡ µî·Ï
+        // ì”¬ì´ ë¡œë“œë  ë•Œë§ˆë‹¤ SceneLoaded í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ë„ë¡ ì´ë²¤íŠ¸ì— ë“±ë¡
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -49,36 +50,38 @@ public class GameManager : Singleton<GameManager>
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    public void LoadScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+            return;
+
+        Debug.Log($"{sceneName} ì”¬ ë¡œë“œë¥¼ ì‹œì‘í•©ë‹ˆë‹¤...");
+        CurrentState = GameState.Loading;
+        // UIManager.Instance.ShowLoadingScreen();
+
+        SceneManager.LoadScene(sceneName);
+    }
+
+    // ì”¬ì´ ë¡œë“œëœ 'í›„'ì— í˜¸ì¶œë˜ëŠ” ì •ë¦¬ í•¨ìˆ˜
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        player = Player.Instance;
+        Debug.Log($"'{scene.name}' ì”¬ ë¡œë“œ ì™„ë£Œ.");
 
-        if (player == null) {
-            Debug.LogError("ÇÃ·¹ÀÌ¾î°¡ NULLÀÔ´Ï´Ù");
-            return;
-        }
+        // ë¡œë”© UI ë„ê¸°
+        // UIManager.Instance.HideLoadingScreen();
 
         switch(scene.name)
         {
             case "Dungeon1_Scene":
             // case Dungeon2, Dungeon3, ...
-
-                Debug.Log("°ÔÀÓ »óÅÂ: Dungeon");
                 CurrentState = GameState.Dungeon;
-
-                player.OnEnterDungeon();
-
+                Player.Instance?.OnEnterDungeon();
                 break;
 
             case "Town_Scene":
-                Debug.Log("°ÔÀÓ »óÅÂ: Town");
+            // case Town2, Town3, ...
                 CurrentState = GameState.Town;
-
-                player.OnExitDungeon();
-
-                // ¸¶À»·Î ÀÌµ¿½Ã Ã¼·Â, ¸¶³ª È¸º¹
-                CurrentHealth = player.MaxHP;
-                CurrentMana = player.MaxMP;
+                Player.Instance?.OnEnterTown();
                 break;
         }
 
@@ -86,10 +89,10 @@ public class GameManager : Singleton<GameManager>
 
     private bool isSlowing = false;
 
-    // ½½·Î¿ì ¸ğ¼ÇÀ» ¿äÃ»ÇÏ´Â ¸ŞÀÎ ÇÔ¼ö
+    // ìŠ¬ë¡œìš° ëª¨ì…˜ì„ ìš”ì²­í•˜ëŠ” ë©”ì¸ í•¨ìˆ˜
     public UniTask DoSlowMotion(float duration, float slowFactor)
     {
-        // ÀÌ¹Ì ´Ù¸¥ ½½·Î¿ì ¸ğ¼ÇÀÌ ÁøÇà ÁßÀÌ¸é ¹«½Ã
+        // ì´ë¯¸ ë‹¤ë¥¸ ìŠ¬ë¡œìš° ëª¨ì…˜ì´ ì§„í–‰ ì¤‘ì´ë©´ ë¬´ì‹œ
         if (isSlowing) return UniTask.CompletedTask;
 
 
@@ -100,19 +103,19 @@ public class GameManager : Singleton<GameManager>
         isSlowing = true;
         try
         {
-            // 1. ½Ã°£À» ´À¸®°Ô ¸¸µê
+            // 1. ì‹œê°„ì„ ëŠë¦¬ê²Œ ë§Œë“¦
             Time.timeScale = slowFactor;
-            Debug.Log($"½½·Î¿ì ¸ğ¼Ç ½ÃÀÛ. TimeScale: {slowFactor}");
+            Debug.Log($"ìŠ¬ë¡œìš° ëª¨ì…˜ ì‹œì‘. TimeScale: {slowFactor}");
 
-            // durationÀ» ÃÊ ´ÜÀ§·Î Á÷Á¢ »ç¿ë (´õ °£´ÜÇÔ)
+            // durationì„ ì´ˆ ë‹¨ìœ„ë¡œ ì§ì ‘ ì‚¬ìš© (ë” ê°„ë‹¨í•¨)
             await UniTask.Delay(TimeSpan.FromSeconds(duration), ignoreTimeScale: true);
         }
         finally
         {
-            // ÀÛ¾÷ÀÌ ¼º°øÀûÀ¸·Î ³¡³ªµç, Áß°£¿¡ Ãë¼ÒµÇµç Ç×»ó ½Ã°£À» º¹¿ø
+            // ì‘ì—…ì´ ì„±ê³µì ìœ¼ë¡œ ëë‚˜ë“ , ì¤‘ê°„ì— ì·¨ì†Œë˜ë“  í•­ìƒ ì‹œê°„ì„ ë³µì›
             Time.timeScale = 1f;
             isSlowing = false;
-            Debug.Log("½½·Î¿ì ¸ğ¼Ç Á¾·á. TimeScale: 1.0");
+            Debug.Log("ìŠ¬ë¡œìš° ëª¨ì…˜ ì¢…ë£Œ. TimeScale: 1.0");
         }
     }
 }

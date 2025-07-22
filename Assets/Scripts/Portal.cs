@@ -5,71 +5,71 @@ public class Portal : MonoBehaviour
 {
     public enum PortalType
     {
-        SameScene,      // °°Àº ¾À ³»¿¡¼­ ÀÌµ¿
-        DifferentScene  // ´Ù¸¥ ¾ÀÀ¸·Î ÀÌµ¿
+        SameScene,      // ê°™ì€ ì”¬ ë‚´ì—ì„œ ì´ë™
+        DifferentScene  // ë‹¤ë¥¸ ì”¬ìœ¼ë¡œ ì´ë™
     }
 
-    [Header("Æ÷Å» Å¸ÀÔ")]
-    [Tooltip("Æ÷Å»ÀÇ ÀÌµ¿ ¹æ½Ä - °°Àº ¾À ³»¿¡¼­ ÀÌµ¿ / ´Ù¸¥ ¾ÀÀ¸·Î ÀÌµ¿")]
+    [Header("í¬íƒˆ íƒ€ì…")]
+    [Tooltip("í¬íƒˆì˜ ì´ë™ ë°©ì‹ - ê°™ì€ ì”¬ ë‚´ì—ì„œ ì´ë™ / ë‹¤ë¥¸ ì”¬ìœ¼ë¡œ ì´ë™")]
     [SerializeField] private PortalType portalType = PortalType.SameScene;
 
-    [Header("ÂüÁ¶")]
-    [SerializeField] private GameObject visualInactive; // ºñÈ°¼º »óÅÂ ¿ÜÇü
-    [SerializeField] private GameObject visualActive;   // È°¼º »óÅÂ ¿ÜÇü
+    [Header("ì°¸ì¡°")]
+    [SerializeField] private GameObject visualInactive; // ë¹„í™œì„± ìƒíƒœ ì™¸í˜•
+    [SerializeField] private GameObject visualActive;   // í™œì„± ìƒíƒœ ì™¸í˜•
 
-    [Header("SameScene Å¸ÀÔ ¼³Á¤")]
-    [Tooltip("°°Àº ¾À ³»¿¡¼­ ÀÌµ¿ÇÒ ¶§ »ç¿ë")]
+    [Header("SameScene íƒ€ì… ì„¤ì •")]
+    [Tooltip("ê°™ì€ ì”¬ ë‚´ì—ì„œ ì´ë™í•  ë•Œ ì‚¬ìš©")]
     [SerializeField] private int targetRoomIndex;
     [SerializeField] private Portal targetPortal;
 
-    [Header("DifferentScene Å¸ÀÔ ¼³Á¤")]
-    [Tooltip("´Ù¸¥ ¾ÀÀ¸·Î ÀÌµ¿ÇÒ ¶§ »ç¿ë")]
+    [Header("DifferentScene íƒ€ì… ì„¤ì •")]
+    [Tooltip("ë‹¤ë¥¸ ì”¬ìœ¼ë¡œ ì´ë™í•  ë•Œ ì‚¬ìš©")]
     [SerializeField] private string destinationSceneName;
 
-    // ÄÄÆ÷³ÍÆ® ÂüÁ¶
+    // ì»´í¬ë„ŒíŠ¸ ì°¸ì¡°
     private Collider2D portalCollider;
 
     private void Awake()
     {
         portalCollider = GetComponent<Collider2D>();
-        // ½ÃÀÛ ½Ã¿¡´Â ºñÈ°¼ºÈ­ »óÅÂ·Î ½ÃÀÛ
+        // ì‹œì‘ ì‹œì—ëŠ” ë¹„í™œì„±í™” ìƒíƒœë¡œ ì‹œì‘
         Deactivate();
     }
 
-    // Æ÷Å» È°¼ºÈ­
+    // í¬íƒˆ í™œì„±í™”
     public void Activate()
     {
         visualInactive?.SetActive(false);
         visualActive?.SetActive(true);
 
-        portalCollider.enabled = true; // Ãæµ¹ °¨Áöµµ È°¼ºÈ­
-        Debug.Log($"Æ÷Å»({this.name})ÀÌ È°¼ºÈ­µÊ");
+        portalCollider.enabled = true; // ì¶©ëŒ ê°ì§€ë„ í™œì„±í™”
+        Debug.Log($"í¬íƒˆ({this.name})ì´ í™œì„±í™”ë¨");
     }
 
-    // Æ÷Å» ºñÈ°¼ºÈ­
+    // í¬íƒˆ ë¹„í™œì„±í™”
     public void Deactivate()
     {
         visualInactive?.SetActive(true);
         visualActive?.SetActive(false);
 
-        portalCollider.enabled = false; // Ãæµ¹ °¨Áöµµ ºñÈ°¼ºÈ­
-        Debug.Log($"Æ÷Å»({this.name})ÀÌ ºñÈ°¼ºÈ­µÊ");
+        portalCollider.enabled = false; // ì¶©ëŒ ê°ì§€ë„ ë¹„í™œì„±í™”
+        Debug.Log($"í¬íƒˆ({this.name})ì´ ë¹„í™œì„±í™”ë¨");
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // ÇÃ·¹ÀÌ¾î°¡ ¾Æ´Ï¸é ¹«½Ã
+        // í”Œë ˆì´ì–´ê°€ ì•„ë‹ˆë©´ ë¬´ì‹œ
         if (!other.CompareTag("PlayerGround")) return;
 
-        Debug.Log("ÇÃ·¹ÀÌ¾î°¡ Æ÷Å»¿¡ ÁøÀÔ");
+        Debug.Log("í”Œë ˆì´ì–´ê°€ í¬íƒˆì— ì§„ì…");
 
-        // ¼³Á¤µÈ Æ÷Å» Å¸ÀÔ¿¡ µû¶ó ´Ù¸¥ Çàµ¿ ¼öÇà
+        // ì„¤ì •ëœ í¬íƒˆ íƒ€ì…ì— ë”°ë¼ ë‹¤ë¥¸ í–‰ë™ ìˆ˜í–‰
         switch (portalType)
         {
             case PortalType.SameScene:
                 if (DungeonManager.Instance != null)
                 {
-                    Debug.Log($"{targetRoomIndex}¹ø ¹æÀ¸·Î ÀÌµ¿");
+                    Debug.Log($"{targetRoomIndex}ë²ˆ ë°©ìœ¼ë¡œ ì´ë™");
                     DungeonManager.Instance.EnterRoom(targetRoomIndex, targetPortal);
                 }
                 break;
@@ -77,12 +77,12 @@ public class Portal : MonoBehaviour
             case PortalType.DifferentScene:
                 if (!string.IsNullOrEmpty(destinationSceneName))
                 {
-                    Debug.Log($"{destinationSceneName} ¾ÀÀ¸·Î ÀÌµ¿");
-                    SceneManager.LoadScene(destinationSceneName);
+                    Debug.Log($"{destinationSceneName} ì”¬ìœ¼ë¡œ ì´ë™");
+                    GameManager.Instance.LoadScene(destinationSceneName);
                 }
                 else
                 {
-                    Debug.LogError($"'{this.name}' Æ÷Å»¿¡ destinationSceneNameÀÌ ¼³Á¤µÇÁö ¾Ê¾ÒÀ½");
+                    Debug.LogError($"'{this.name}' í¬íƒˆì— destinationSceneNameì´ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŒ");
                 }
                 break;
         }

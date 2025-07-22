@@ -5,31 +5,31 @@ using UnityEngine.UI;
 public class MinimapUI : MonoBehaviour
 {
     [SerializeField] private GameObject roomIconPrefab;
-    [SerializeField] private Transform gridParent; // Grid Layout GroupÀÌ ÀÖ´Â Transform
+    [SerializeField] private Transform gridParent; // Grid Layout Groupì´ ìˆëŠ” Transform
 
     private GridLayoutGroup gridLayout;
     
-    // 2Â÷¿ø µñ¼Å³Ê¸®·Î ¹æ ¾ÆÀÌÄÜµéÀ» °ü¸®
+    // 2ì°¨ì› ë”•ì…”ë„ˆë¦¬ë¡œ ë°© ì•„ì´ì½˜ë“¤ì„ ê´€ë¦¬
     private Dictionary<Vector2Int, MinimapRoomIconController> roomIcons = new Dictionary<Vector2Int, MinimapRoomIconController>();
     private Dungeon currentDungeon;
-    private int currentRoomIndex = -1; // ÇöÀç ¹æ ÀÎµ¦½º¸¦ ÃßÀû
+    private int currentRoomIndex = -1; // í˜„ì¬ ë°© ì¸ë±ìŠ¤ë¥¼ ì¶”ì 
 
     private void Awake()
     {
         gridLayout = GetComponent<GridLayoutGroup>();
     }
 
-    // ´øÀüÀÌ ½ÃÀÛµÉ ¶§ DungeonManager°¡ È£Ãâ
+    // ë˜ì „ì´ ì‹œì‘ë  ë•Œ DungeonManagerê°€ í˜¸ì¶œ
     public void GenerateMap(Dungeon dungeon)
     {
         if (dungeon == null) return;
         this.currentDungeon = dungeon;
         ClearMap();
 
-        // Constraint Count¸¦ ÇöÀç ´øÀüÀÇ °¡·Î Å©±â(mapSize.x)·Î ¼³Á¤
+        // Constraint Countë¥¼ í˜„ì¬ ë˜ì „ì˜ ê°€ë¡œ í¬ê¸°(mapSize.x)ë¡œ ì„¤ì •
         gridLayout.constraintCount = dungeon.MapSize.x;
 
-        // 1. ¸Ê Å©±â¿¡ ¸ÂÃç ºó °İÀÚÆÇ(¾ÆÀÌÄÜ)À» »ı¼º
+        // 1. ë§µ í¬ê¸°ì— ë§ì¶° ë¹ˆ ê²©ìíŒ(ì•„ì´ì½˜)ì„ ìƒì„±
         for (int y = 0; y < dungeon.MapSize.y; y++)
         {
             for (int x = 0; x < dungeon.MapSize.x; x++)
@@ -38,33 +38,33 @@ public class MinimapUI : MonoBehaviour
                 MinimapRoomIconController controller = iconObj.GetComponent<MinimapRoomIconController>();
                 Vector2Int coords = new Vector2Int(x, y);
 
-                // »ı¼ºµÈ ¾ÆÀÌÄÜÀ» ÁÂÇ¥¸¦ Å°·Î ÇÏ¿© µñ¼Å³Ê¸®¿¡ ÀúÀå
+                // ìƒì„±ëœ ì•„ì´ì½˜ì„ ì¢Œí‘œë¥¼ í‚¤ë¡œ í•˜ì—¬ ë”•ì…”ë„ˆë¦¬ì— ì €ì¥
                 roomIcons[coords] = controller;
 
-                // ÀÏ´Ü ¸ğµç Ä­À» ¼û±è »óÅÂ·Î
+                // ì¼ë‹¨ ëª¨ë“  ì¹¸ì„ ìˆ¨ê¹€ ìƒíƒœë¡œ
                 controller.SetState(MinimapRoomState.Hidden);
             }
         }
 
-        // 2. ½ÇÁ¦ Á¸ÀçÇÏ´Â ¹æµéÀÇ Á¤º¸¸¦ ÁÂÇ¥¿¡ ¸Â´Â ¾ÆÀÌÄÜ¿¡ ÇÒ´ç
+        // 2. ì‹¤ì œ ì¡´ì¬í•˜ëŠ” ë°©ë“¤ì˜ ì •ë³´ë¥¼ ì¢Œí‘œì— ë§ëŠ” ì•„ì´ì½˜ì— í• ë‹¹
         foreach (Room room in dungeon.Rooms)
         {
             if (roomIcons.ContainsKey(room.coordinates))
             {
                 MinimapRoomIconController icon = roomIcons[room.coordinates];
                 icon.AssignRoom(room);
-                // ¾ÆÁ÷ ¹æ¹® ÀüÀÌ¹Ç·Î Empty »óÅÂ·Î ¼³Á¤ (º¸½º¹æÀº ¾Ë¾Æ¼­ º¸½º ¾ÆÀÌÄÜÀ¸·Î Ç¥½Ã)
+                // ì•„ì§ ë°©ë¬¸ ì „ì´ë¯€ë¡œ Empty ìƒíƒœë¡œ ì„¤ì • (ë³´ìŠ¤ë°©ì€ ì•Œì•„ì„œ ë³´ìŠ¤ ì•„ì´ì½˜ìœ¼ë¡œ í‘œì‹œ)
                 icon.SetState(MinimapRoomState.Empty);
             }
         }
     }
 
-    // ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡°¡ ¹Ù²ğ ¶§ DungeonManager°¡ È£Ãâ
+    // í”Œë ˆì´ì–´ì˜ ìœ„ì¹˜ê°€ ë°”ë€” ë•Œ DungeonManagerê°€ í˜¸ì¶œ
     public void UpdatePlayerPosition(int newRoomIndex)
     {
         if (currentDungeon == null || newRoomIndex < 0 || newRoomIndex >= currentDungeon.Rooms.Count) return;
 
-        // 1. ÀÌÀü¿¡ ÀÖ´ø ¹æÀ» Discovered »óÅÂ·Î º¯°æ
+        // 1. ì´ì „ì— ìˆë˜ ë°©ì„ Discovered ìƒíƒœë¡œ ë³€ê²½
         if (currentRoomIndex != -1)
         {
             Room oldRoom = currentDungeon.Rooms[currentRoomIndex];
@@ -74,14 +74,14 @@ public class MinimapUI : MonoBehaviour
             }
         }
 
-        // 2. »õ·Î µé¾î¿Â ¹æÀ» Current »óÅÂ·Î º¯°æ
+        // 2. ìƒˆë¡œ ë“¤ì–´ì˜¨ ë°©ì„ Current ìƒíƒœë¡œ ë³€ê²½
         Room newRoom = currentDungeon.Rooms[newRoomIndex];
         if (roomIcons.ContainsKey(newRoom.coordinates))
         {
             roomIcons[newRoom.coordinates].SetState(MinimapRoomState.Current);
         }
 
-        // 3. ÇöÀç ¹æ ÀÎµ¦½º °»½Å
+        // 3. í˜„ì¬ ë°© ì¸ë±ìŠ¤ ê°±ì‹ 
         currentRoomIndex = newRoomIndex;
     }
 

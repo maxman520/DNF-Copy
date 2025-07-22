@@ -1,23 +1,23 @@
 using UnityEngine;
-using System.Collections.Generic; // ¿©·¯ ´ë»óÀ» ±â¾ïÇÏ±â À§ÇØ ÇÊ¿ä
+using System.Collections.Generic; // ì—¬ëŸ¬ ëŒ€ìƒì„ ê¸°ì–µí•˜ê¸° ìœ„í•´ í•„ìš”
 
 public class PlayerHitbox : MonoBehaviour
 {
     public AttackDetails attackDetails;
 
-    // ÀÌ °ø°İÀÇ yÃà ÆÇÁ¤ ±âÁØÀÌ µÉ ÁÂÇ¥. ÃÊ±â°ªÀ» float.MinValue·Î ¼³Á¤ÇÏ¿©, ÃÊ±âÈ­ ¿©ºÎ¸¦ ¸íÈ®ÇÏ°Ô ÆÇ´Ü
+    // ì´ ê³µê²©ì˜ yì¶• íŒì • ê¸°ì¤€ì´ ë  ì¢Œí‘œ. ì´ˆê¸°ê°’ì„ float.MinValueë¡œ ì„¤ì •í•˜ì—¬, ì´ˆê¸°í™” ì—¬ë¶€ë¥¼ ëª…í™•í•˜ê²Œ íŒë‹¨
     private float originY = float.MinValue;
     private Player player;
 
-    // ÇÑ ¹øÀÇ °ø°İ ¸ğ¼Ç¿¡¼­ µ¿ÀÏÇÑ ÀûÀ» ¿©·¯ ¹ø ¶§¸®Áö ¾Êµµ·Ï ±â¾ïÇÏ´Â ¸®½ºÆ®
+    // í•œ ë²ˆì˜ ê³µê²© ëª¨ì…˜ì—ì„œ ë™ì¼í•œ ì ì„ ì—¬ëŸ¬ ë²ˆ ë•Œë¦¬ì§€ ì•Šë„ë¡ ê¸°ì–µí•˜ëŠ” ë¦¬ìŠ¤íŠ¸
     private List<Collider2D> alreadyHit = new List<Collider2D>();
 
-    // È÷Æ®¹Ú½º¸¦ ÃÊ±âÈ­
+    // íˆíŠ¸ë°•ìŠ¤ë¥¼ ì´ˆê¸°í™”
     public void Initialize(AttackDetails details, float originY)
     {
         this.attackDetails = details;
         this.originY = originY;
-        this.alreadyHit.Clear();// »õ·Î¿î °ø°İÀÌ ½ÃÀÛµÉ ¶§¸¶´Ù, ÀÌÀü¿¡ ¶§·È´ø Àû ¸ñ·ÏÀ» ÃÊ±âÈ­
+        this.alreadyHit.Clear();// ìƒˆë¡œìš´ ê³µê²©ì´ ì‹œì‘ë  ë•Œë§ˆë‹¤, ì´ì „ì— ë•Œë ¸ë˜ ì  ëª©ë¡ì„ ì´ˆê¸°í™”
     }
 
     private void Awake()
@@ -26,7 +26,7 @@ public class PlayerHitbox : MonoBehaviour
     }
     private void OnEnable()
     {
-        // Àç»ç¿ëµÉ °æ¿ì¸¦ ´ëºñÇØ ÃÊ±âÈ­
+        // ì¬ì‚¬ìš©ë  ê²½ìš°ë¥¼ ëŒ€ë¹„í•´ ì´ˆê¸°í™”
         alreadyHit.Clear();
     }
 
@@ -37,30 +37,30 @@ public class PlayerHitbox : MonoBehaviour
             Monster monster = other.GetComponentInParent<Monster>();
             if (monster == null) return;
 
-            // originY°¡ ÃÊ±â°ª(MinValue) ±×´ë·Î¶ó¸é, È÷Æ®¹Ú½º ÀÚ½ÅÀÇ Y À§Ä¡¸¦ ±âÁØÀ¸·Î »ç¿ë.
+            // originYê°€ ì´ˆê¸°ê°’(MinValue) ê·¸ëŒ€ë¡œë¼ë©´, íˆíŠ¸ë°•ìŠ¤ ìì‹ ì˜ Y ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì‚¬ìš©.
             this.originY = (originY == float.MinValue) ? this.transform.position.y : this.originY;
 
-            // ÇÃ·¹ÀÌ¾î °ø°İÀÇ YÃà ¹üÀ§ Ã¼Å©
+            // í”Œë ˆì´ì–´ ê³µê²©ì˜ Yì¶• ë²”ìœ„ ì²´í¬
             if (Mathf.Abs(this.originY - monster.transform.position.y) > attackDetails.yOffset)
                 return;
 
-            // ÀÌ¹ø °ø°İ¿¡¼­ ÀÌ¹Ì ¶§¸° ÀûÀÌ¸é ¹«½Ã
+            // ì´ë²ˆ ê³µê²©ì—ì„œ ì´ë¯¸ ë•Œë¦° ì ì´ë©´ ë¬´ì‹œ
             if (alreadyHit.Contains(other))
                 return;
 
-            // ¶§¸° ÀûÀ¸·Î ±â·Ï
+            // ë•Œë¦° ì ìœ¼ë¡œ ê¸°ë¡
             alreadyHit.Add(other);
 
 
             if (monster != null)
             {
-                // °ø°İ Á¤º¸ÀÇ µ¥¹ÌÁö ¹èÀ²¿¡ ÇÃ·¹ÀÌ¾îÀÇ ±âº» °ø°İ·ÂÀ» °öÇØ¼­ Àü´Ş
+                // ê³µê²© ì •ë³´ì˜ ë°ë¯¸ì§€ ë°°ìœ¨ì— í”Œë ˆì´ì–´ì˜ ê¸°ë³¸ ê³µê²©ë ¥ì„ ê³±í•´ì„œ ì „ë‹¬
                 AttackDetails finalAttackDetails = attackDetails;
                 finalAttackDetails.damageRate *= player.Atk;
 
 
-                monster.OnDamaged(finalAttackDetails, transform.position); // È÷Æ®¹Ú½ºÀÇ À§Ä¡ °ªµµ Àü´Ş
-                Debug.Log($"{monster.name}¿¡°Ô µ¥¹ÌÁö¸¦ °¡ÇÔ!");
+                monster.OnDamaged(finalAttackDetails, transform.position); // íˆíŠ¸ë°•ìŠ¤ì˜ ìœ„ì¹˜ ê°’ë„ ì „ë‹¬
+                Debug.Log($"{monster.name}ì—ê²Œ ë°ë¯¸ì§€ë¥¼ ê°€í•¨!");
             }
         }
     }

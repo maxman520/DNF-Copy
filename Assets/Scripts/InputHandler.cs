@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System; // Action ÀÌº¥Æ®¸¦ À§ÇØ Ãß°¡
+using System; // Action ì´ë²¤íŠ¸ë¥¼ ìœ„í•´ ì¶”ê°€
 using System.Collections.Generic;
 
 public class InputHandler : System.IDisposable
@@ -9,17 +9,17 @@ public class InputHandler : System.IDisposable
     private readonly InputBuffer inputBuffer;
     private bool isDisposed = false;
 
-    // ÀÔ·Â »óÅÂ ÇÁ·ÎÆÛÆ¼
+    // ì…ë ¥ ìƒíƒœ í”„ë¡œí¼í‹°
     public Vector2 MoveInput;
 
     public InputHandler()
     {
         inputActions = new PlayerInputActions();
         inputActions.Player.Enable();
-        inputBuffer = new InputBuffer(0.3f); // 0.3ÃÊ µ¿¾È ÀÔ·ÂÀ» ±â¾ïÇÏµµ·Ï ¹öÆÛ »ı¼º
+        inputBuffer = new InputBuffer(0.3f); // 0.3ì´ˆ ë™ì•ˆ ì…ë ¥ì„ ê¸°ì–µí•˜ë„ë¡ ë²„í¼ ìƒì„±
 
 
-        // ÀÔ·Â ¾×¼Ç ÀÌº¥Æ®°¡ ¹ß»ıÇÏ¸é, ±×¿¡ ¸Â´Â Ä¿¸Çµå¸¦ »ı¼ºÇØ ÀÔ·Â ¹öÆÛ¿¡ Áı¾î³ÖÀ½
+        // ì…ë ¥ ì•¡ì…˜ ì´ë²¤íŠ¸ê°€ ë°œìƒí•˜ë©´, ê·¸ì— ë§ëŠ” ì»¤ë§¨ë“œë¥¼ ìƒì„±í•´ ì…ë ¥ ë²„í¼ì— ì§‘ì–´ë„£ìŒ
         inputActions.Player.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
         inputActions.Player.Move.canceled += ctx => { 
             MoveInput = Vector2.zero;
@@ -44,26 +44,26 @@ public class InputHandler : System.IDisposable
         inputActions.Player.SkillSlot_14.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 13));
 
     }
-    // ¹öÆÛÀÇ ¸Ç À§ Ä¿¸Çµå 'È®ÀÎ'
+    // ë²„í¼ì˜ ë§¨ ìœ„ ì»¤ë§¨ë“œ 'í™•ì¸'
     public ICommand PeekCommand()
     {
         return inputBuffer.PeekCommand();
     }
 
-    // ¹öÆÛÀÇ ¸Ç À§ Ä¿¸Çµå Á¦°Å
+    // ë²„í¼ì˜ ë§¨ ìœ„ ì»¤ë§¨ë“œ ì œê±°
     public void RemoveCommand()
     {
         inputBuffer.RemoveCommand();
     }
-    // ¹öÆÛ ³»¿ëÀ» ¿äÃ»
+    // ë²„í¼ ë‚´ìš©ì„ ìš”ì²­
     public List<string> GetBufferedCommandNames()
     {
         return inputBuffer.GetBufferedCommandNames();
     }
-    // ´øÀü »óÅÂÀÏ ¶§¸¸ Ä¿¸Çµå¸¦ ¹öÆÛ¿¡ Ãß°¡
+    // ë˜ì „ ìƒíƒœì¼ ë•Œë§Œ ì»¤ë§¨ë“œë¥¼ ë²„í¼ì— ì¶”ê°€
     private void AddCommandIfInDungeon(ICommand command)
     {
-        // GameManager°¡ Á¸ÀçÇÏ°í, ÇöÀç »óÅÂ°¡ DungeonÀÏ ¶§¸¸ ½ÇÇà
+        // GameManagerê°€ ì¡´ì¬í•˜ê³ , í˜„ì¬ ìƒíƒœê°€ Dungeonì¼ ë•Œë§Œ ì‹¤í–‰
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Dungeon)
         {
             inputBuffer.AddCommand(command);
@@ -71,7 +71,7 @@ public class InputHandler : System.IDisposable
     }
 
 
-    // Player°¡ ÆÄ±«µÉ ¶§ È£ÃâµÉ Á¤¸® ¸Ş¼­µå
+    // Playerê°€ íŒŒê´´ë  ë•Œ í˜¸ì¶œë  ì •ë¦¬ ë©”ì„œë“œ
     public void Dispose()
     {
         if (isDisposed) return;

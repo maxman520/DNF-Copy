@@ -6,46 +6,46 @@ using System;
 
 public class Goblin : Monster
 {
-    [Header("ÀÌµ¿ »óÅÂ")]
+    [Header("ì´ë™ ìƒíƒœ")]
     public bool IsGrounded = true;
     public bool IsWalking = false;
 
-    [Header("¹°¸® º¯¼ö")]
+    [Header("ë¬¼ë¦¬ ë³€ìˆ˜")]
     private const float ORIGINAL_GRAVITY = 10f;
-    public float verticalVelocity; // ¼öÁ÷ 'Èû'ÀÇ °á°ú·Î ³ªÅ¸³ª´Â ÇöÀç ¼Óµµ
-    private float gravity = ORIGINAL_GRAVITY; // °¡»ó Áß·Â°ª
+    public float verticalVelocity; // ìˆ˜ì§ 'í˜'ì˜ ê²°ê³¼ë¡œ ë‚˜íƒ€ë‚˜ëŠ” í˜„ì¬ ì†ë„
+    private float gravity = ORIGINAL_GRAVITY; // ê°€ìƒ ì¤‘ë ¥ê°’
     private int airHitCounter = 0;
 
-    [Header("°ø°İ ÆÇÁ¤")]
+    [Header("ê³µê²© íŒì •")]
     [SerializeField] private GameObject attackHitboxObject;
     private MonsterHitbox attackHitbox;
 
-    [Header("AI »óÅÂ")]
-    protected bool isActing = false; // ÇöÀç ¾î¶² Çàµ¿(Idle, Move µî)À» ÇÏ°í ÀÖ´ÂÁö ¿©ºÎ
-    protected bool isAware = false; // ÇÃ·¹ÀÌ¾î¸¦ ÀÎ½ÄÇß´Â°¡
+    [Header("AI ìƒíƒœ")]
+    protected bool isActing = false; // í˜„ì¬ ì–´ë–¤ í–‰ë™(Idle, Move ë“±)ì„ í•˜ê³  ìˆëŠ”ì§€ ì—¬ë¶€
+    protected bool isAware = false; // í”Œë ˆì´ì–´ë¥¼ ì¸ì‹í–ˆëŠ”ê°€
 
     [Header("AI Configuration")]
-    [Tooltip("¼øÂû ½Ã, ÃÊ±â À§Ä¡¸¦ Áß½ÉÀ¸·Î ÇÑ È°µ¿ ¹İ°æ")]
+    [Tooltip("ìˆœì°° ì‹œ, ì´ˆê¸° ìœ„ì¹˜ë¥¼ ì¤‘ì‹¬ìœ¼ë¡œ í•œ í™œë™ ë°˜ê²½")]
     [SerializeField] private Vector2 patrolAreaSize;
-    [Tooltip("ÀüÅõ ½Ã, ÀÌµ¿ °¡´ÉÇÑ °¡Àå ¿ŞÂÊ ¾Æ·¡ °æ°è")]
+    [Tooltip("ì „íˆ¬ ì‹œ, ì´ë™ ê°€ëŠ¥í•œ ê°€ì¥ ì™¼ìª½ ì•„ë˜ ê²½ê³„")]
     [SerializeField] private Transform combatMinBoundary;
-    [Tooltip("ÀüÅõ ½Ã, ÀÌµ¿ °¡´ÉÇÑ °¡Àå ¿À¸¥ÂÊ À§ °æ°è")]
+    [Tooltip("ì „íˆ¬ ì‹œ, ì´ë™ ê°€ëŠ¥í•œ ê°€ì¥ ì˜¤ë¥¸ìª½ ìœ„ ê²½ê³„")]
     [SerializeField] private Transform combatMaxBoundary;
-    private Vector3 initialPosition; // ¸ó½ºÅÍÀÇ ÃÊ±â À§Ä¡
+    private Vector3 initialPosition; // ëª¬ìŠ¤í„°ì˜ ì´ˆê¸° ìœ„ì¹˜
 
-    [Header("»ç¸Á ¿¬Ãâ")]
-    [SerializeField] private GameObject[] fragPrefabs; // ½ÃÃ¼ ÆÄÆí
-    private bool isDead = false; // HP°¡ 0ÀÌÇÏ·Î ¶³¾îÁ³´Â°¡ (»ç¸Á ·ÎÁ÷ Áßº¹ ½ÇÇà ¹æÁö¿ë)
+    [Header("ì‚¬ë§ ì—°ì¶œ")]
+    [SerializeField] private GameObject[] fragPrefabs; // ì‹œì²´ íŒŒí¸
+    private bool isDead = false; // HPê°€ 0ì´í•˜ë¡œ ë–¨ì–´ì¡ŒëŠ”ê°€ (ì‚¬ë§ ë¡œì§ ì¤‘ë³µ ì‹¤í–‰ ë°©ì§€ìš©)
 
 
-    private CancellationTokenSource aiLoopCts; // ºñµ¿±â ÀÛ¾÷ °ü¸®. ¿ÜºÎ¿¡¼­´Â CancellationToken¸¸ »ç¿ë
-    private CancellationTokenSource moveCts; // ÀÌµ¿ ÀÛ¾÷ Àü¿ë ÅäÅ« - ÀÌµ¿ Áß´ÜÀ» À§ÇØ
+    private CancellationTokenSource aiLoopCts; // ë¹„ë™ê¸° ì‘ì—… ê´€ë¦¬. ì™¸ë¶€ì—ì„œëŠ” CancellationTokenë§Œ ì‚¬ìš©
+    private CancellationTokenSource moveCts; // ì´ë™ ì‘ì—… ì „ìš© í† í° - ì´ë™ ì¤‘ë‹¨ì„ ìœ„í•´
 
     #region Unity Lifecycle
     protected override void Awake()
     {
         base.Awake();
-        // È÷Æ®¹Ú½º ½ºÅ©¸³Æ® ÂüÁ¶
+        // íˆíŠ¸ë°•ìŠ¤ ìŠ¤í¬ë¦½íŠ¸ ì°¸ì¡°
         if (attackHitboxObject != null)
         {
             attackHitbox = attackHitboxObject.GetComponent<MonsterHitbox>();
@@ -54,16 +54,16 @@ public class Goblin : Monster
     protected override void Start()
     {
         base.Start();
-        initialPosition = transform.position; // ÃÊ±â À§Ä¡ ÀúÀå
+        initialPosition = transform.position; // ì´ˆê¸° ìœ„ì¹˜ ì €ì¥
 
-        // AI ·çÇÁ ½ÃÀÛ
+        // AI ë£¨í”„ ì‹œì‘
         StartAILoop();
     }
     private void Update()
     {
         HandleGravity();
 
-        // ¾Ö´Ï¸ŞÀÌ¼Ç ¾÷µ¥ÀÌÆ®
+        // ì• ë‹ˆë©”ì´ì…˜ ì—…ë°ì´íŠ¸
 
         anim.SetBool("isGrounded", IsGrounded);
         anim.SetBool("isWalking", IsWalking);
@@ -85,14 +85,14 @@ public class Goblin : Monster
     #region AI System
     private void StartAILoop()
     {
-        // ÀÌÀü CancellationTokenSource°¡ ÀÖ´Ù¸é return
+        // ì´ì „ CancellationTokenSourceê°€ ìˆë‹¤ë©´ return
         if (aiLoopCts != null) return;
 
-        // ¿ÀºêÁ§Æ® ÆÄ±« ½Ã Ãë¼ÒµÇ´Â ÅäÅ«°ú ¿¬°áµÈ »õ·Î¿î CancellationTokenSource »ı¼º
+        // ì˜¤ë¸Œì íŠ¸ íŒŒê´´ ì‹œ ì·¨ì†Œë˜ëŠ” í† í°ê³¼ ì—°ê²°ëœ ìƒˆë¡œìš´ CancellationTokenSource ìƒì„±
         var destroyToken = this.GetCancellationTokenOnDestroy();
         aiLoopCts = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
 
-        // AI ·çÇÁ ½ÃÀÛ
+        // AI ë£¨í”„ ì‹œì‘
         AI_Loop(aiLoopCts.Token).Forget();
     }
     private void StopAILoop()
@@ -107,7 +107,7 @@ public class Goblin : Monster
         moveCts?.Dispose();
         moveCts = null;
 
-        // ¹°¸®Àû ÀÌµ¿ Áï½Ã Áß´Ü
+        // ë¬¼ë¦¬ì  ì´ë™ ì¦‰ì‹œ ì¤‘ë‹¨
         rb.linearVelocity = Vector2.zero;
         IsWalking = false;
     }
@@ -116,44 +116,44 @@ public class Goblin : Monster
     {
         while (token.IsCancellationRequested == false)
         {
-            // ÇÃ·¹ÀÌ¾î ÀÎ½Ä »óÅÂ¿¡ µû¶ó ´Ù¸¥ Çàµ¿ ÆĞÅÏ ½ÇÇà
+            // í”Œë ˆì´ì–´ ì¸ì‹ ìƒíƒœì— ë”°ë¼ ë‹¤ë¥¸ í–‰ë™ íŒ¨í„´ ì‹¤í–‰
             if (isAware)
                 await Pattern_Aware(token);
             else
                 await Pattern_UnAware(token);
 
-            // ¸Å ÇÁ·¹ÀÓ ½ÇÇàµÇÁö ¾Ê°í, ¾à°£ÀÇ µô·¹ÀÌ¸¦ ÁÖ¾î ¼º´É ºÎÇÏ¸¦ ÁÙÀÓ
+            // ë§¤ í”„ë ˆì„ ì‹¤í–‰ë˜ì§€ ì•Šê³ , ì•½ê°„ì˜ ë”œë ˆì´ë¥¼ ì£¼ì–´ ì„±ëŠ¥ ë¶€í•˜ë¥¼ ì¤„ì„
             await UniTask.Delay(100, cancellationToken: token);
         }
     }
 
-    // --- °¨Áö Àü: ¼øÂû ÆĞÅÏ ---
+    // --- ê°ì§€ ì „: ìˆœì°° íŒ¨í„´ ---
     private async UniTask Pattern_UnAware(CancellationToken token)
     {
-        if (isActing) return; // ÀÌ¹Ì ´Ù¸¥ Çàµ¿ ÁßÀÌ¸é ½ÇÇàÇÏÁö ¾ÊÀ½
+        if (isActing) return; // ì´ë¯¸ ë‹¤ë¥¸ í–‰ë™ ì¤‘ì´ë©´ ì‹¤í–‰í•˜ì§€ ì•ŠìŒ
 
 
-        // ÇÃ·¹ÀÌ¾î °¨Áö
+        // í”Œë ˆì´ì–´ ê°ì§€
         if (IsPlayerInRecognitionRange())
         {
-            isAware = true; // ÀüÅõ »óÅÂ·Î ÀüÈ¯
-            Debug.Log("ÇÃ·¹ÀÌ¾î °¨Áö! ÀüÅõ ÅÂ¼¼·Î ÀüÈ¯");
+            isAware = true; // ì „íˆ¬ ìƒíƒœë¡œ ì „í™˜
+            Debug.Log("í”Œë ˆì´ì–´ ê°ì§€! ì „íˆ¬ íƒœì„¸ë¡œ ì „í™˜");
             return;
         }
 
         isActing = true;
         IsWalking = false;
 
-        // 50% È®·ü·Î ´ë±â. ¾Æ´Ï¸é ÀÌµ¿
+        // 50% í™•ë¥ ë¡œ ëŒ€ê¸°. ì•„ë‹ˆë©´ ì´ë™
         if (Random.value < 0.5f)
         {
-            // ·£´ı ½Ã°£(1~2ÃÊ) µ¿¾È ´ë±â
+            // ëœë¤ ì‹œê°„(1~2ì´ˆ) ë™ì•ˆ ëŒ€ê¸°
             float idleTime = Random.Range(1f, 2f);
             await UniTask.Delay(System.TimeSpan.FromSeconds(idleTime), cancellationToken: token);
         }
         else
         {
-            // ¼øÂû ¿µ¿ª ³» ·£´ı ¸ñÀûÁö ¼³Á¤
+            // ìˆœì°° ì˜ì—­ ë‚´ ëœë¤ ëª©ì ì§€ ì„¤ì •
             Vector2 patrolAreaCenter = initialPosition;
             Vector2 randomOffset = new Vector2(
                 Random.Range(-patrolAreaSize.x / 2, patrolAreaSize.x / 2),
@@ -161,14 +161,14 @@ public class Goblin : Monster
             );
             Vector2 destination = patrolAreaCenter + randomOffset;
 
-            // »ı¼ºµÈ ¼øÂû ¸ñÀûÁö¸¦ ÀüÅõ °æ°è ¾ÈÀ¸·Î º¸Á¤
+            // ìƒì„±ëœ ìˆœì°° ëª©ì ì§€ë¥¼ ì „íˆ¬ ê²½ê³„ ì•ˆìœ¼ë¡œ ë³´ì •
             if (combatMinBoundary != null && combatMaxBoundary != null)
             {
                 destination.x = Mathf.Clamp(destination.x, combatMinBoundary.position.x, combatMaxBoundary.position.x);
                 destination.y = Mathf.Clamp(destination.y, combatMinBoundary.position.y, combatMaxBoundary.position.y);
             }
 
-            // ¼øÂû ¹üÀ§ ³»ÀÇ ·£´ıÇÑ ¸ñÇ¥ ÁöÁ¡À¸·Î ÀÌµ¿
+            // ìˆœì°° ë²”ìœ„ ë‚´ì˜ ëœë¤í•œ ëª©í‘œ ì§€ì ìœ¼ë¡œ ì´ë™
             await MoveTo(destination, token);
         }
 
@@ -176,11 +176,11 @@ public class Goblin : Monster
     }
 
 
-    // --- °¨Áö ÈÄ: ÀüÅõ ÆĞÅÏ ---
+    // --- ê°ì§€ í›„: ì „íˆ¬ íŒ¨í„´ ---
     private async UniTask Pattern_Aware(CancellationToken token)
     {
-        if (isActing) return; // ÀÌ¹Ì ´Ù¸¥ Çàµ¿ÁßÀÌ¸é ½ÇÇàÇÏÁö ¾ÊÀ½
-        // ÇÃ·¹ÀÌ¾î°¡ °ø°İ ¹üÀ§ ¾È¿¡ ÀÖÀ¸¸é 70% È®·ü·Î °ø°İ
+        if (isActing) return; // ì´ë¯¸ ë‹¤ë¥¸ í–‰ë™ì¤‘ì´ë©´ ì‹¤í–‰í•˜ì§€ ì•ŠìŒ
+        // í”Œë ˆì´ì–´ê°€ ê³µê²© ë²”ìœ„ ì•ˆì— ìˆìœ¼ë©´ 70% í™•ë¥ ë¡œ ê³µê²©
         if (IsPlayerInAttackRange(monsterData.attackDetails[0]) && Random.value > 0.3f)
         {
             isActing = true;
@@ -188,33 +188,33 @@ public class Goblin : Monster
             rb.linearVelocity = Vector2.zero;
             FlipTowardsPlayer();
 
-            Attack(); // °ø°İ ½ÇÇà
+            Attack(); // ê³µê²© ì‹¤í–‰
 
-            // °ø°İ ÈÄ µô·¹ÀÌ¸¦ Áà ´Ù¸¥ Çàµ¿ ¹æÁö + ³»ºÎ ÄğÅ¸ÀÓ ¿ªÇÒ
+            // ê³µê²© í›„ ë”œë ˆì´ë¥¼ ì¤˜ ë‹¤ë¥¸ í–‰ë™ ë°©ì§€ + ë‚´ë¶€ ì¿¨íƒ€ì„ ì—­í• 
             await UniTask.Delay(3000, cancellationToken: token);
         }
-        else // °ø°İ ¹üÀ§ ¹Û¿¡ ÀÖÀ¸¸é °æ°è Çàµ¿
+        else // ê³µê²© ë²”ìœ„ ë°–ì— ìˆìœ¼ë©´ ê²½ê³„ í–‰ë™
         {
             isActing = true;
             IsWalking = false;
 
-            // 3°¡Áö Çàµ¿ Áß ÇÏ³ª¸¦ ·£´ıÇÏ°Ô ¼±ÅÃ
+            // 3ê°€ì§€ í–‰ë™ ì¤‘ í•˜ë‚˜ë¥¼ ëœë¤í•˜ê²Œ ì„ íƒ
             Vector3 destination;
             int action = Random.Range(0, 3);
             switch (action)
             {
-                case 0: // Àá½Ã ´ë±â
+                case 0: // ì ì‹œ ëŒ€ê¸°
                     float idleTime = Random.Range(1f, 2f);
                     await UniTask.Delay(System.TimeSpan.FromSeconds(idleTime), cancellationToken: token);
                     break;
-                case 1: // ÇÃ·¹ÀÌ¾î¿¡°Ô Á¢±Ù
-                case 2: // ÇÃ·¹ÀÌ¾î¿¡°Ô¼­ ÈÄÅğ
-                    // Á¢±ÙÀÌ¸é +, ÈÄÅğ¸é - ¹æÇâ
+                case 1: // í”Œë ˆì´ì–´ì—ê²Œ ì ‘ê·¼
+                case 2: // í”Œë ˆì´ì–´ì—ê²Œì„œ í›„í‡´
+                    // ì ‘ê·¼ì´ë©´ +, í›„í‡´ë©´ - ë°©í–¥
                     float directionFactor = (action == 1) ? 1f : -1f;
                     Vector3 direction = (playerTransform.position - transform.position).normalized * directionFactor;
                     destination = transform.position + direction * Random.Range(1f, 3f);
 
-                    // ¸ñÇ¥ ÁöÁ¡À» combatMinBoundary/combatMaxBoundary ³»·Î º¸Á¤
+                    // ëª©í‘œ ì§€ì ì„ combatMinBoundary/combatMaxBoundary ë‚´ë¡œ ë³´ì •
                     if (combatMinBoundary != null && combatMaxBoundary != null)
                     {
                         destination.x = Mathf.Clamp(destination.x, combatMinBoundary.position.x, combatMaxBoundary.position.x);
@@ -227,13 +227,13 @@ public class Goblin : Monster
         isActing = false;
     }
 
-    // ¸ñÇ¥ ÁöÁ¡±îÁö ÀÌµ¿ÇÏ´Â UniTask ÇÔ¼ö
+    // ëª©í‘œ ì§€ì ê¹Œì§€ ì´ë™í•˜ëŠ” UniTask í•¨ìˆ˜
     private async UniTask MoveTo(Vector3 destination, CancellationToken parentToken)
     {
-        // ÀÌÀü ÀÌµ¿ ÀÛ¾÷ÀÌ ÀÖ´Ù¸é Áß´Ü
+        // ì´ì „ ì´ë™ ì‘ì—…ì´ ìˆë‹¤ë©´ ì¤‘ë‹¨
         StopMovement();
 
-        // »õ·Î¿î ÀÌµ¿ ÅäÅ« »ı¼º (ºÎ¸ğ ÅäÅ«°ú ¿¬°á)
+        // ìƒˆë¡œìš´ ì´ë™ í† í° ìƒì„± (ë¶€ëª¨ í† í°ê³¼ ì—°ê²°)
         moveCts = CancellationTokenSource.CreateLinkedTokenSource(parentToken);
         var moveToken = moveCts.Token;
 
@@ -255,7 +255,7 @@ public class Goblin : Monster
         }
         catch (OperationCanceledException)
         {
-            // ¿¹¿Ü Ã³¸®
+            // ì˜ˆì™¸ ì²˜ë¦¬
         }
         finally
         {
@@ -266,10 +266,10 @@ public class Goblin : Monster
     #endregion AI System
 
     #region State Behaviour
-    // ´ë±â ¾Ö´Ï¸ŞÀÌ¼ÇÀ¸·Î ÁøÀÔ ½Ã È£Ãâ
+    // ëŒ€ê¸° ì• ë‹ˆë©”ì´ì…˜ìœ¼ë¡œ ì§„ì… ì‹œ í˜¸ì¶œ
     public override void OnIdleStateEnter()
     {
-        // AI ·çÇÁ Àç½ÃÀÛ ÇÔ¼ö È£Ãâ
+        // AI ë£¨í”„ ì¬ì‹œì‘ í•¨ìˆ˜ í˜¸ì¶œ
         StartAILoop();
     }
 
@@ -278,23 +278,23 @@ public class Goblin : Monster
         StopMovement();
     }
 
-    // °ø°İ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // ê³µê²© ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public override void OnAttackStateExit()
     {
         isActing = false;
     }
 
-    // ÇÇ°İ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // í”¼ê²© ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public override void OnHurtStateExit() {
-        // ÇÇ°İÀÌ ³¡³ª¸é ÀüÅõ »óÅÂ·Î º¹±ÍÇÏ°í AI ·çÇÁ Àç½ÃÀÛ
-        isAware = true; // ÇÇ°İ´çÇßÀ¸´Ï ÇÃ·¹ÀÌ¾î´Â °¨ÁöµÈ »óÅÂ
+        // í”¼ê²©ì´ ëë‚˜ë©´ ì „íˆ¬ ìƒíƒœë¡œ ë³µê·€í•˜ê³  AI ë£¨í”„ ì¬ì‹œì‘
+        isAware = true; // í”¼ê²©ë‹¹í–ˆìœ¼ë‹ˆ í”Œë ˆì´ì–´ëŠ” ê°ì§€ëœ ìƒíƒœ
         isActing = false;
     }
 
-    // ±â»ó ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³µÀ» ¶§ È£Ãâ
+    // ê¸°ìƒ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œ
     public override void OnGetUpStateExit()
     {
-        // ÇÇ°İÀÌ ³¡³ª¸é ÀüÅõ »óÅÂ·Î º¹±ÍÇÏ°í AI ·çÇÁ Àç½ÃÀÛ
+        // í”¼ê²©ì´ ëë‚˜ë©´ ì „íˆ¬ ìƒíƒœë¡œ ë³µê·€í•˜ê³  AI ë£¨í”„ ì¬ì‹œì‘
         isAware = true;
         isActing = false;
     }
@@ -310,13 +310,13 @@ public class Goblin : Monster
     {
         if (playerTransform == null) return false;
 
-        // XÃà °Å¸® °è»ê
+        // Xì¶• ê±°ë¦¬ ê³„ì‚°
         float distanceX = Mathf.Abs(playerTransform.position.x - transform.position.x);
 
-        // YÃà °Å¸® °è»ê (VisualsÀÇ Y À§Ä¡¸¦ ±âÁØÀ¸·Î)
+        // Yì¶• ê±°ë¦¬ ê³„ì‚° (Visualsì˜ Y ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ)
         float distanceY = Mathf.Abs((playerTransform.position.y) - (transform.position.y));
 
-        // XÃà °Å¸®°¡ °ø°İ ¹üÀ§ ³»¿¡ ÀÖ°í, YÃà °Å¸®µµ °ø°İ ¹üÀ§(yOffset) ³»¿¡ ÀÖ´ÂÁö È®ÀÎ
+        // Xì¶• ê±°ë¦¬ê°€ ê³µê²© ë²”ìœ„ ë‚´ì— ìˆê³ , Yì¶• ê±°ë¦¬ë„ ê³µê²© ë²”ìœ„(yOffset) ë‚´ì— ìˆëŠ”ì§€ í™•ì¸
         return distanceX <= attackRange && distanceY <= currentAttackDetails.yOffset;
     }
 
@@ -339,39 +339,39 @@ public class Goblin : Monster
 
     public override void OnDamaged(AttackDetails attackDetails, Vector2 attackPosition)
     {
-        // ÀÔÀ» µ¥¹ÌÁö °è»ê
+        // ì…ì„ ë°ë¯¸ì§€ ê³„ì‚°
         float damage = CalculateDamage(attackDetails);
 
-        // µ¥¹ÌÁö ÅØ½ºÆ® Ãâ·Â
+        // ë°ë¯¸ì§€ í…ìŠ¤íŠ¸ ì¶œë ¥
         EffectManager.Instance.PlayEffect("DefaultDamageText", hurtboxTransform.position, Quaternion.identity, damage);
 
-        // ÇÇ°İ ¹İÀÀ
+        // í”¼ê²© ë°˜ì‘
         Hurt(attackDetails, attackPosition);
 
-        // ÀÌ¹Ì Á×¾ú´Ù¸é µ¥¹ÌÁö Àû¿ëX. return
+        // ì´ë¯¸ ì£½ì—ˆë‹¤ë©´ ë°ë¯¸ì§€ ì ìš©X. return
         if (isDead) return;
 
-        // µ¥¹ÌÁö Àû¿ë
+        // ë°ë¯¸ì§€ ì ìš©
         previousHP = currentHP;
         currentHP -= damage;
-        Debug.Log($"{monsterData.MonsterName}ÀÌ(°¡) {damage}ÀÇ µ¥¹ÌÁö¸¦ ÀÔÀ½. ÇöÀç Ã¼·Â: {currentHP}");
+        Debug.Log($"{monsterData.MonsterName}ì´(ê°€) {damage}ì˜ ë°ë¯¸ì§€ë¥¼ ì…ìŒ. í˜„ì¬ ì²´ë ¥: {currentHP}");
 
         if (currentHP <= 0)
         {
-            isDead = true; // Á×À½ ÀıÂ÷ ½ÃÀÛ ÇÃ·¡±×
+            isDead = true; // ì£½ìŒ ì ˆì°¨ ì‹œì‘ í”Œë˜ê·¸
             WaitUntilGroundedAndDie(this.GetCancellationTokenOnDestroy()).Forget();
         }
 
-        // UIManager¿¡ ÀÚ½ÅÀ» Å¸°ÙÀ¸·Î ¾Ë¸²
+        // UIManagerì— ìì‹ ì„ íƒ€ê²Ÿìœ¼ë¡œ ì•Œë¦¼
         UIManager.Instance.OnMonsterDamaged(this);
         //UIManager.Instance.UpdateMonsterHP();
 
     }
 
-    // ÂøÁö¸¦ ±â´Ù·È´Ù°¡ Die()¸¦ È£ÃâÇÏ´Â ºñµ¿±â ÇÔ¼ö
+    // ì°©ì§€ë¥¼ ê¸°ë‹¤ë ¸ë‹¤ê°€ Die()ë¥¼ í˜¸ì¶œí•˜ëŠ” ë¹„ë™ê¸° í•¨ìˆ˜
     private async UniTask WaitUntilGroundedAndDie(CancellationToken token)
     {
-        // IsGrounded°¡ true°¡ µÉ ¶§±îÁö ¸Å ÇÁ·¹ÀÓ È®ÀÎÇÏ¸ç ´ë±â
+        // IsGroundedê°€ trueê°€ ë  ë•Œê¹Œì§€ ë§¤ í”„ë ˆì„ í™•ì¸í•˜ë©° ëŒ€ê¸°
         await UniTask.WaitUntil(() => IsGrounded, cancellationToken: token);
 
         Die();
@@ -379,40 +379,40 @@ public class Goblin : Monster
 
     protected override void Hurt(AttackDetails attackDetails, Vector2 attackPosition)
     {
-        StopAILoop(); // ¸ğµç ºñµ¿±â ÀÛ¾÷ Áï½Ã Áß´Ü
+        StopAILoop(); // ëª¨ë“  ë¹„ë™ê¸° ì‘ì—… ì¦‰ì‹œ ì¤‘ë‹¨
         isActing = false;
         IsWalking = false;
        
-        rb.linearVelocity = Vector2.zero; // ³Ë¹é Àü¿¡ ¼Óµµ ÃÊ±âÈ­
+        rb.linearVelocity = Vector2.zero; // ë„‰ë°± ì „ì— ì†ë„ ì´ˆê¸°í™”
 
-        // ÀÌÆåÆ® Àç»ı ¿äÃ»
+        // ì´í™íŠ¸ ì¬ìƒ ìš”ì²­
 
-        // hurtbox ÁöÁ¡¿¡ ÀÌÆåÆ®¸¦ »ı¼º
+        // hurtbox ì§€ì ì— ì´í™íŠ¸ë¥¼ ìƒì„±
         Vector3 hurtPoint = hurtboxTransform.position;
 
-        // ÃâÇ÷ ÀÌÆåÆ®ÀÇ ¹æÇâÀ» Á¶ÀıÇÏ±â À§ÇÑ º¯¼ö. attackPosition(ÇÃ·¹ÀÌ¾î È÷Æ®¹Ú½ºÀÇ ÁÂÇ¥)¿Í ¸ó½ºÅÍÀÇ ÁÂÇ¥¸¦ ºñ±³
-        // ÀÌÆåÆ®ÀÇ ¹æÇâÀº ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹æÇâÀ» µû¸£°Å³ª, ±âº» ¹æÇâÀ¸·Î ¼³Á¤
+        // ì¶œí˜ˆ ì´í™íŠ¸ì˜ ë°©í–¥ì„ ì¡°ì ˆí•˜ê¸° ìœ„í•œ ë³€ìˆ˜. attackPosition(í”Œë ˆì´ì–´ íˆíŠ¸ë°•ìŠ¤ì˜ ì¢Œí‘œ)ì™€ ëª¬ìŠ¤í„°ì˜ ì¢Œí‘œë¥¼ ë¹„êµ
+        // ì´í™íŠ¸ì˜ ë°©í–¥ì€ í”Œë ˆì´ì–´ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ì„ ë”°ë¥´ê±°ë‚˜, ê¸°ë³¸ ë°©í–¥ìœ¼ë¡œ ì„¤ì •
         Quaternion effectRotation = (transform.position.x > attackPosition.x) ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
 
-        // attackDetails¿¡ ÀÌÆåÆ® ÀÌ¸§ÀÌ ÀÖ´Ù¸é ±×°É »ç¿ë, ¾ø´Ù¸é ±âº» ÀÌÆåÆ® »ç¿ë
+        // attackDetailsì— ì´í™íŠ¸ ì´ë¦„ì´ ìˆë‹¤ë©´ ê·¸ê±¸ ì‚¬ìš©, ì—†ë‹¤ë©´ ê¸°ë³¸ ì´í™íŠ¸ ì‚¬ìš©
         // string effectToPlay = string.IsNullOrEmpty(attackDetails.effectName) ? "NormalHit_Slash" : attackDetails.effectName;
         string effectToPlay = "SlashSmall" + Random.Range(1, 4);
         EffectManager.Instance.PlayEffect(effectToPlay, hurtPoint, Quaternion.identity);
         EffectManager.Instance.PlayEffect("BloodLarge", hurtPoint, effectRotation);
 
 
-        // ³Ë¹é Àû¿ë ¹æÇâ °áÁ¤. attackPositionÀº ÇÃ·¹ÀÌ¾î È÷Æ®¹Ú½ºÀÇ À§Ä¡
+        // ë„‰ë°± ì ìš© ë°©í–¥ ê²°ì •. attackPositionì€ í”Œë ˆì´ì–´ íˆíŠ¸ë°•ìŠ¤ì˜ ìœ„ì¹˜
         float direction = (transform.position.x > attackPosition.x) ? 1 : -1;
 
-        if (IsGrounded) // ¶¥¿¡ ÀÖÀ» ¶§
+        if (IsGrounded) // ë•…ì— ìˆì„ ë•Œ
         {
             
             if (attackDetails.launchForce > 0)
             {
-                // ¼öÆò ³Ë¹é
+                // ìˆ˜í‰ ë„‰ë°±
                 rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
-                // °øÁß¿¡ ¶ß´Â Èû Àû¿ë
+                // ê³µì¤‘ì— ëœ¨ëŠ” í˜ ì ìš©
                 verticalVelocity = attackDetails.launchForce;
 
                 IsGrounded = false;
@@ -420,15 +420,15 @@ public class Goblin : Monster
             }
             else
             {   
-                // ¼öÆò ³Ë¹é
+                // ìˆ˜í‰ ë„‰ë°±
                 transform.position += new Vector3(direction * attackDetails.knockbackForce * 0.1f, 0);
 
                 anim.SetTrigger("hurt");
             }
         }
-        else // °øÁß¿¡ ÀÖÀ» ¶§
+        else // ê³µì¤‘ì— ìˆì„ ë•Œ
         {   
-            // ¼öÆò ³Ë¹é
+            // ìˆ˜í‰ ë„‰ë°±
             rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
             if (attackDetails.launchForce > 0) airHitCounter++;
@@ -439,13 +439,17 @@ public class Goblin : Monster
 
     protected override void Die()
     {
-        StopAILoop(); // ¸ğµç ºñµ¿±â ÀÛ¾÷ Áß´Ü
+        StopAILoop(); // ëª¨ë“  ë¹„ë™ê¸° ì‘ì—… ì¤‘ë‹¨
         isActing = false;
-        UIManager.Instance.HideMonsterHPBar(); // HP¹Ù¸¦ ¼û±âµµ·Ï ¿äÃ»
+        UIManager.Instance.HideMonsterHPBar(); // HPë°”ë¥¼ ìˆ¨ê¸°ë„ë¡ ìš”ì²­
 
-        Debug.Log($"{monsterData.MonsterName}ÀÌ(°¡) Á×¾ú½À´Ï´Ù.");
+        Debug.Log($"{monsterData.MonsterName}ì´(ê°€) ì£½ì—ˆìŠµë‹ˆë‹¤.");
 
-        // ¹°¸®Àû ¿òÁ÷ÀÓ°ú Ãæµ¹À» ÁßÁö
+        // í”Œë ˆì´ì–´ì—ê²Œ ê²½í—˜ì¹˜ ì§€ê¸‰
+        GameManager.Instance.AddExp(monsterData.EXP);
+        DungeonManager.Instance.AddHuntExp(monsterData.EXP);
+
+        // ë¬¼ë¦¬ì  ì›€ì§ì„ê³¼ ì¶©ëŒì„ ì¤‘ì§€
         rb.linearVelocity = Vector2.zero;
         GetComponentInChildren<Collider2D>().enabled = false;
 
@@ -454,27 +458,27 @@ public class Goblin : Monster
 
     private async UniTask DeathSequenceAsync(CancellationToken token)
     {
-        // 1. ÇÏ¾é°Ô º¯ÇÏ°í Á¡Á¡ Åõ¸íÇÏ°Ô
+        // 1. í•˜ì–—ê²Œ ë³€í•˜ê³  ì ì  íˆ¬ëª…í•˜ê²Œ
         var mat = sr.material;
         mat.SetFloat("_Blend", 1f);
-        float duration = 0.3f; // Åõ¸íÇÏ°Ô º¯ÇÏ´Â µ¥ °É¸®´Â ½Ã°£
+        float duration = 0.3f; // íˆ¬ëª…í•˜ê²Œ ë³€í•˜ëŠ” ë° ê±¸ë¦¬ëŠ” ì‹œê°„
         float elapsedTime = 0f;
 
-        // ¸ÓÆ¼¸®¾óÀÇ ÇÁ·ÎÆÛÆ¼ °ªÀ» ¾Ö´Ï¸ŞÀÌ¼Ç
+        // ë¨¸í‹°ë¦¬ì–¼ì˜ í”„ë¡œí¼í‹° ê°’ì„ ì• ë‹ˆë©”ì´ì…˜
         while (elapsedTime < duration)
         {
-            // º¸°£ °è¼ö °è»ê (0¿¡¼­ 1·Î Áõ°¡)
+            // ë³´ê°„ ê³„ìˆ˜ ê³„ì‚° (0ì—ì„œ 1ë¡œ ì¦ê°€)
             float alpha = Mathf.Lerp(1f, 0f, elapsedTime / duration);
 
-            // ·»´õ·¯°¡ »ç¿ëÇÏ´Â ¸ÓÆ¼¸®¾óÀÇ "_Alpha" ÇÁ·ÎÆÛÆ¼ °ªÀ» º¯°æ
+            // ë Œë”ëŸ¬ê°€ ì‚¬ìš©í•˜ëŠ” ë¨¸í‹°ë¦¬ì–¼ì˜ "_Alpha" í”„ë¡œí¼í‹° ê°’ì„ ë³€ê²½
             mat.SetFloat("_Alpha", alpha);
 
             elapsedTime += Time.deltaTime;
             await UniTask.Yield(token);
         }
 
-        // 2. ¼Ò¸ê ¹× ÆÄÆí »ı¼º
-        // ¸ó½ºÅÍ À§Ä¡¿¡ ÀÌÆåÆ®¸¦ »ı¼º
+        // 2. ì†Œë©¸ ë° íŒŒí¸ ìƒì„±
+        // ëª¬ìŠ¤í„° ìœ„ì¹˜ì— ì´í™íŠ¸ë¥¼ ìƒì„±
         Vector3 hurtPoint = hurtboxTransform.position;
         EffectManager.Instance.PlayEffect("MonsterDieYoung", hurtPoint, Quaternion.identity);
         
@@ -482,68 +486,68 @@ public class Goblin : Monster
 
         if (fragPrefabs != null && fragPrefabs.Length > 0)
         {
-            // ÆÄÆí »ı¼º À§Ä¡: ¸ó½ºÅÍÀÇ ¿ùµå ÁÂÇ¥
+            // íŒŒí¸ ìƒì„± ìœ„ì¹˜: ëª¬ìŠ¤í„°ì˜ ì›”ë“œ ì¢Œí‘œ
             Vector3 spawnPosition = transform.position;
 
             foreach (GameObject fragPrefab in fragPrefabs)
             {
-                // ÆÄÆí »ı¼º
+                // íŒŒí¸ ìƒì„±
                 GameObject fragment = Instantiate(fragPrefab, spawnPosition, Quaternion.identity);
                 MonsterFragment fragmentObj = fragment.GetComponent<MonsterFragment>();
 
                 if (fragmentObj != null)
                 {
-                    // °¢ ÆÄÆí¿¡ °¡ÇÒ Èû °è»ê
+                    // ê° íŒŒí¸ì— ê°€í•  í˜ ê³„ì‚°
                     Vector2 horizontalForce = new Vector2(Random.Range(-1f, 1f), Random.Range(-0.3f, 0.3f)).normalized * Random.Range(3f, 7f);
                     float verticalForce = Random.Range(5f, 7f);
 
-                    // ÆÄÆí¿¡ Èû Àû¿ë
+                    // íŒŒí¸ì— í˜ ì ìš©
                     fragmentObj.Initialize(horizontalForce, verticalForce);
                 }
             }
         }
-        // 3. ÃÖÁ¾ ¿ÀºêÁ§Æ® ÆÄ±«
+        // 3. ìµœì¢… ì˜¤ë¸Œì íŠ¸ íŒŒê´´
         await UniTask.Delay(System.TimeSpan.FromSeconds(1.0), cancellationToken: token);
         Destroy(gameObject);
     }
 
     protected void Attack()
     {
-        // Ã¹ ¹øÂ° °ø°İ Á¤º¸¸¦ °¡Á®¿È
+        // ì²« ë²ˆì§¸ ê³µê²© ì •ë³´ë¥¼ ê°€ì ¸ì˜´
         currentAttackDetails = monsterData.attackDetails[0];
 
-        // ÃÖÁ¾ µ¥¹ÌÁö¸¦ °è»êÇÏ¿© AttackDetails¿¡ Ã¤¿ö³ÖÀ½
+        // ìµœì¢… ë°ë¯¸ì§€ë¥¼ ê³„ì‚°í•˜ì—¬ AttackDetailsì— ì±„ì›Œë„£ìŒ
         currentAttackDetails.damageRate *= this.atk;
 
-        // È÷Æ®¹Ú½º¿¡ ¿Ï¼ºµÈ °ø°İ Á¤º¸¸¦ Àü´ŞÇÏ¿© ÃÊ±âÈ­
+        // íˆíŠ¸ë°•ìŠ¤ì— ì™„ì„±ëœ ê³µê²© ì •ë³´ë¥¼ ì „ë‹¬í•˜ì—¬ ì´ˆê¸°í™”
         if (attackHitbox != null)
         {
             attackHitbox.Initialize(currentAttackDetails);
         }
 
         anim.SetTrigger("attack");
-        Debug.Log("°íºí¸°ÀÇ °ø°İ!");
+        Debug.Log("ê³ ë¸”ë¦°ì˜ ê³µê²©!");
     }
     public void HandleGravity()
     {
-        // 1. °øÁß¿¡ ¶° ÀÖ´Ù¸é
+        // 1. ê³µì¤‘ì— ë–  ìˆë‹¤ë©´
         if (!IsGrounded)
         {
-            // 2. Áß·ÂÀ» °è¼Ó Àû¿ë
+            // 2. ì¤‘ë ¥ì„ ê³„ì† ì ìš©
             verticalVelocity += (-gravity) * Time.deltaTime;
 
-            // 3. °è»êµÈ ¼Óµµ·Î VisualsÀÇ local YÁÂÇ¥¸¦ º¯°æ
+            // 3. ê³„ì‚°ëœ ì†ë„ë¡œ Visualsì˜ local Yì¢Œí‘œë¥¼ ë³€ê²½
             visualsTransform.localPosition += new Vector3(0, verticalVelocity * Time.deltaTime, 0);
 
-            // 4. ÂøÁöÇß´ÂÁö È®ÀÎ
+            // 4. ì°©ì§€í–ˆëŠ”ì§€ í™•ì¸
             CheckForLanding();
         }
     }
 
-    // ÂøÁö ÆÇº° ·ÎÁ÷
+    // ì°©ì§€ íŒë³„ ë¡œì§
     private void CheckForLanding()
     {
-        // VisualsÀÇ Y ÁÂÇ¥°¡ ½ÃÀÛ YÁÂÇ¥º¸´Ù ¾Æ·¡·Î ³»·Á°¬´Ù¸é ÂøÁö·Î °£ÁÖ
+        // Visualsì˜ Y ì¢Œí‘œê°€ ì‹œì‘ Yì¢Œí‘œë³´ë‹¤ ì•„ë˜ë¡œ ë‚´ë ¤ê°”ë‹¤ë©´ ì°©ì§€ë¡œ ê°„ì£¼
         if (visualsTransform.localPosition.y <= startPos.y)
         {
             if (verticalVelocity < -1.5f)
@@ -551,12 +555,12 @@ public class Goblin : Monster
                 verticalVelocity *= -0.5f;
                 return;
             }
-            // »óÅÂ ÃÊ±âÈ­
+            // ìƒíƒœ ì´ˆê¸°í™”
             IsGrounded = true;
             airHitCounter = 0;
 
 
-            // À§Ä¡¿Í ¼Óµµ, Áß·Â ÃÊ±âÈ­
+            // ìœ„ì¹˜ì™€ ì†ë„, ì¤‘ë ¥ ì´ˆê¸°í™”
             rb.linearVelocity = Vector2.zero;
             visualsTransform.localPosition = startPos;
             verticalVelocity = 0f;
@@ -565,18 +569,18 @@ public class Goblin : Monster
     }
     protected override void OnDrawGizmosSelected()
     {
-        base.OnDrawGizmosSelected(); // ±âº» °ø°İ ¹üÀ§ ±âÁî¸ğ ±×¸®±â
+        base.OnDrawGizmosSelected(); // ê¸°ë³¸ ê³µê²© ë²”ìœ„ ê¸°ì¦ˆëª¨ ê·¸ë¦¬ê¸°
 
-        Gizmos.color = Color.yellow; // ÀÎ½Ä ¹üÀ§´Â ³ë¶õ»ö
+        Gizmos.color = Color.yellow; // ì¸ì‹ ë²”ìœ„ëŠ” ë…¸ë€ìƒ‰
         Gizmos.DrawWireSphere(transform.position, recognitionRange);
 
-        // 1. ¼øÂû ¿µ¿ª ±×¸®±â (³ì»ö)
+        // 1. ìˆœì°° ì˜ì—­ ê·¸ë¦¬ê¸° (ë…¹ìƒ‰)
         Gizmos.color = Color.green;
-        // ½ÇÇà ÁßÀÌ ¾Æ´Ò ¶§¸¸ ÃÊ±â À§Ä¡¸¦ »ç¿ë, ½ÇÇà ÁßÀÏ ¶© ½ÇÁ¦ ÃÊ±â À§Ä¡¸¦ »ç¿ë
+        // ì‹¤í–‰ ì¤‘ì´ ì•„ë‹ ë•Œë§Œ ì´ˆê¸° ìœ„ì¹˜ë¥¼ ì‚¬ìš©, ì‹¤í–‰ ì¤‘ì¼ ë• ì‹¤ì œ ì´ˆê¸° ìœ„ì¹˜ë¥¼ ì‚¬ìš©
         Vector3 patrolCenter = initialPosition;
         Gizmos.DrawWireCube(patrolCenter, patrolAreaSize);
 
-        // 2. ÀüÅõ ¿µ¿ª ±×¸®±â (ÆÄ¶õ»ö)
+        // 2. ì „íˆ¬ ì˜ì—­ ê·¸ë¦¬ê¸° (íŒŒë€ìƒ‰)
         if (combatMinBoundary != null && combatMaxBoundary != null)
         {
             Gizmos.color = Color.blue;

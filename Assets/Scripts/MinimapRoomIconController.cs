@@ -6,12 +6,12 @@ public enum MinimapRoomState { Hidden, Empty, Discovered, Current }
 public class MinimapRoomIconController : MonoBehaviour
 {
     [SerializeField] private Image iconImage;
-    [SerializeField] private MinimapIconData iconData; // MinimapIconData ÂüÁ¶
+    [SerializeField] private MinimapIconData iconData; // MinimapIconData ì°¸ì¡°
 
     public MinimapRoomState CurrentState { get; private set; }
-    private Room assignedRoom; // ÀÌ ¾ÆÀÌÄÜÀÌ ¾î¶² ¹æÀ» ³ªÅ¸³»´ÂÁö
+    private Room assignedRoom; // ì´ ì•„ì´ì½˜ì´ ì–´ë–¤ ë°©ì„ ë‚˜íƒ€ë‚´ëŠ”ì§€
 
-    // ÀÌ ¾ÆÀÌÄÜ¿¡ ÇØ´çÇÏ´Â ¹æ Á¤º¸¸¦ ¼³Á¤
+    // ì´ ì•„ì´ì½˜ì— í•´ë‹¹í•˜ëŠ” ë°© ì •ë³´ë¥¼ ì„¤ì •
     public void AssignRoom(Room room)
     {
         this.assignedRoom = room;
@@ -23,7 +23,7 @@ public class MinimapRoomIconController : MonoBehaviour
         UpdateIcon();
     }
 
-    // ÇöÀç »óÅÂ¿¡ ¸ÂÃç ¾ÆÀÌÄÜ ÀÌ¹ÌÁö¸¦ ¾÷µ¥ÀÌÆ®
+    // í˜„ì¬ ìƒíƒœì— ë§ì¶° ì•„ì´ì½˜ ì´ë¯¸ì§€ë¥¼ ì—…ë°ì´íŠ¸
     private void UpdateIcon()
     {
         if (assignedRoom == null || iconData == null)
@@ -40,17 +40,17 @@ public class MinimapRoomIconController : MonoBehaviour
                 iconImage.enabled = false;
                 break;
             case MinimapRoomState.Empty:
-                // º¸½º¹æÀº º¸½º ¾ÆÀÌÄÜ, ³ª¸ÓÁö´Â ¹Ì¹ß°ß ¾ÆÀÌÄÜ
+                // ë³´ìŠ¤ë°©ì€ ë³´ìŠ¤ ì•„ì´ì½˜, ë‚˜ë¨¸ì§€ëŠ” ë¯¸ë°œê²¬ ì•„ì´ì½˜
                 iconImage.sprite = (assignedRoom.roomType == Room.RoomType.Boss) ? iconData.BossIcon : iconData.GetPathSprite(true, 0);
                 break;
             case MinimapRoomState.Current:
-                // ÇöÀç ¹æÀº Active ±æ ¸ğ¾ç ¾ÆÀÌÄÜÀ¸·Î º¯°æ
-                // GetPathSprite¿¡ true¿Í ¹æÀÇ hasExit Á¤º¸¸¦ Àü´Ş
+                // í˜„ì¬ ë°©ì€ Active ê¸¸ ëª¨ì–‘ ì•„ì´ì½˜ìœ¼ë¡œ ë³€ê²½
+                // GetPathSpriteì— trueì™€ ë°©ì˜ hasExit ì •ë³´ë¥¼ ì „ë‹¬
                 iconImage.sprite = iconData.GetPathSprite(true, assignedRoom.hasExit);
                 break;
             case MinimapRoomState.Discovered:
-                // ³ª¸ÓÁö ¹æÀº Inactive ±æ ¸ğ¾ç ¾ÆÀÌÄÜÀ¸·Î º¯°æ
-                // GetPathSprite¿¡ false¿Í ¹æÀÇ hasExit Á¤º¸¸¦ Àü´Ş
+                // ë‚˜ë¨¸ì§€ ë°©ì€ Inactive ê¸¸ ëª¨ì–‘ ì•„ì´ì½˜ìœ¼ë¡œ ë³€ê²½
+                // GetPathSpriteì— falseì™€ ë°©ì˜ hasExit ì •ë³´ë¥¼ ì „ë‹¬
                 iconImage.sprite = iconData.GetPathSprite(false, assignedRoom.hasExit);
                 break;
         }

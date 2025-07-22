@@ -6,14 +6,14 @@ public class SkillManager : MonoBehaviour
 {
     private const int SKILL_SLOT_COUNT = 14;
 
-    // ÇöÀç ½½·Ô¿¡ ÇÒ´çµÈ ½ºÅ³ µ¥ÀÌÅÍµé
+    // í˜„ì¬ ìŠ¬ë¡¯ì— í• ë‹¹ëœ ìŠ¤í‚¬ ë°ì´í„°ë“¤
     public SkillData[] AssignedSkills { get; private set; } = new SkillData[SKILL_SLOT_COUNT];
 
 
-    // ½ºÅ³ ½½·ÔÀÌ º¯°æµÇ¾úÀ½À» ¾Ë¸®´Â ÀÌº¥Æ®
+    // ìŠ¤í‚¬ ìŠ¬ë¡¯ì´ ë³€ê²½ë˜ì—ˆìŒì„ ì•Œë¦¬ëŠ” ì´ë²¤íŠ¸
     public event Action<int, SkillData> OnSkillSlotChanged;
 
-    // °¢ ½ºÅ³ÀÇ ³²Àº ÄğÅ¸ÀÓ
+    // ê° ìŠ¤í‚¬ì˜ ë‚¨ì€ ì¿¨íƒ€ì„
     private float[] coolTimers = new float[SKILL_SLOT_COUNT];
 
     private Player player;
@@ -25,7 +25,7 @@ public class SkillManager : MonoBehaviour
 
     private void Update()
     {
-        // ¸ğµç ½ºÅ³ ÄğÅ¸ÀÓ °¨¼Ò
+        // ëª¨ë“  ìŠ¤í‚¬ ì¿¨íƒ€ì„ ê°ì†Œ
         for (int i = 0; i < SKILL_SLOT_COUNT; i++)
         {
             if (coolTimers[i] > 0)
@@ -35,12 +35,12 @@ public class SkillManager : MonoBehaviour
         }
     }
 
-    // UI¿¡¼­ ½ºÅ³À» ½½·Ô¿¡ ÇÒ´çÇÒ ¶§ È£Ãâ
+    // UIì—ì„œ ìŠ¤í‚¬ì„ ìŠ¬ë¡¯ì— í• ë‹¹í•  ë•Œ í˜¸ì¶œ
     public void AssignSkill(int slotIndex, SkillData skillData)
     {
         if (slotIndex < 0 || slotIndex >= SKILL_SLOT_COUNT) return;
 
-        // ÀÌ ½ºÅ³ÀÌ ÀÌ¹Ì ´Ù¸¥ ½½·Ô¿¡ ÇÒ´çµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+        // ì´ ìŠ¤í‚¬ì´ ì´ë¯¸ ë‹¤ë¥¸ ìŠ¬ë¡¯ì— í• ë‹¹ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
         int oldSlotIndex = -1;
         for (int i = 0; i < SKILL_SLOT_COUNT; i++)
         {
@@ -51,24 +51,24 @@ public class SkillManager : MonoBehaviour
             }
         }
          
-        float coolTmp = 0;// ¿¹Àü ½½·ÔÀÇ ÄğÅ¸ÀÓ ±â¾ï¿ë º¯¼ö
+        float coolTmp = 0;// ì˜ˆì „ ìŠ¬ë¡¯ì˜ ì¿¨íƒ€ì„ ê¸°ì–µìš© ë³€ìˆ˜
 
-        // ¸¸¾à ÀÌ¹Ì ´Ù¸¥ ½½·Ô¿¡ ÀÖ¾ú´Ù¸é
+        // ë§Œì•½ ì´ë¯¸ ë‹¤ë¥¸ ìŠ¬ë¡¯ì— ìˆì—ˆë‹¤ë©´
         if (oldSlotIndex != -1)
         {
             SkillData skillInNewSlot = AssignedSkills[slotIndex];
             coolTmp = coolTimers[oldSlotIndex];
 
-            // ÇÒ´çÇÏ·Á´Â ½½·Ô¿¡ ½ºÅ³ÀÌ Á¸ÀçÇÏÁö ¾ÊÀ½
+            // í• ë‹¹í•˜ë ¤ëŠ” ìŠ¬ë¡¯ì— ìŠ¤í‚¬ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŒ
             if (skillInNewSlot == null)
             { 
-                // ¿¹Àü ½½·ÔÀ» ºñ¿ò
+                // ì˜ˆì „ ìŠ¬ë¡¯ì„ ë¹„ì›€
                 AssignedSkills[oldSlotIndex] = null;
                 coolTimers[oldSlotIndex] = 0;
             }
-            else // ÇÒ´çÇÏ·Á´Â ½½·Ô¿¡ ½ºÅ³ÀÌ ÀÌ¹Ì Á¸Àç
+            else // í• ë‹¹í•˜ë ¤ëŠ” ìŠ¬ë¡¯ì— ìŠ¤í‚¬ì´ ì´ë¯¸ ì¡´ì¬
             {
-                // ÇÒ´çÇÏ·Á´Â ½½·ÔÀÇ ½ºÅ³°ú ¿¹Àü ½½·ÔÀ» ½º¿Ò
+                // í• ë‹¹í•˜ë ¤ëŠ” ìŠ¬ë¡¯ì˜ ìŠ¤í‚¬ê³¼ ì˜ˆì „ ìŠ¬ë¡¯ì„ ìŠ¤ì™‘
                 AssignedSkills[oldSlotIndex] = skillInNewSlot;
                 coolTimers[oldSlotIndex] = coolTimers[slotIndex];
             }
@@ -76,17 +76,17 @@ public class SkillManager : MonoBehaviour
             OnSkillSlotChanged?.Invoke(oldSlotIndex, skillInNewSlot);
         }
 
-        // »õ·Î¿î ½½·Ô¿¡ ½ºÅ³ ÇÒ´ç
+        // ìƒˆë¡œìš´ ìŠ¬ë¡¯ì— ìŠ¤í‚¬ í• ë‹¹
         AssignedSkills[slotIndex] = skillData;
         coolTimers[slotIndex] = coolTmp;
-        Debug.Log($"{slotIndex}¹ø ½½·Ô¿¡ '{skillData.skillName}' ½ºÅ³ ÇÒ´çµÊ.");
+        Debug.Log($"{slotIndex}ë²ˆ ìŠ¬ë¡¯ì— '{skillData.skillName}' ìŠ¤í‚¬ í• ë‹¹ë¨.");
 
-        // UI ¾÷µ¥ÀÌÆ® ½ÅÈ£ º¸³»±â (ÀÌº¥Æ® È£Ãâ)
+        // UI ì—…ë°ì´íŠ¸ ì‹ í˜¸ ë³´ë‚´ê¸° (ì´ë²¤íŠ¸ í˜¸ì¶œ)
         OnSkillSlotChanged?.Invoke(slotIndex, skillData);
     }
 
 
-    // ½ºÅ³ »ç¿ë °¡´É ¿©ºÎ¸¦ Ã¼Å©ÇÏ´Â ÇÔ¼ö
+    // ìŠ¤í‚¬ ì‚¬ìš© ê°€ëŠ¥ ì—¬ë¶€ë¥¼ ì²´í¬í•˜ëŠ” í•¨ìˆ˜
     public bool IsSkillReady(int slotIndex, out SkillData skill)
     {
         skill = null;
@@ -94,27 +94,27 @@ public class SkillManager : MonoBehaviour
 
         skill = AssignedSkills[slotIndex];
 
-        // < Á¶°Ç Ã¼Å© >
-        // ÇØ´ç ½½·Ô¿¡ ½ºÅ³ ÇÒ´ç Ã¼Å©
+        // < ì¡°ê±´ ì²´í¬ >
+        // í•´ë‹¹ ìŠ¬ë¡¯ì— ìŠ¤í‚¬ í• ë‹¹ ì²´í¬
         if (skill == null)
         {
-            Debug.Log($"{slotIndex}¹ø ½½·Ô¿¡ ÇÒ´çµÈ ½ºÅ³ ÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log($"{slotIndex}ë²ˆ ìŠ¬ë¡¯ì— í• ë‹¹ëœ ìŠ¤í‚¬ ì´ ì—†ìŠµë‹ˆë‹¤.");
             return false;
         }
-        // ÄğÅ¸ÀÓ Ã¼Å©
+        // ì¿¨íƒ€ì„ ì²´í¬
         if (coolTimers[slotIndex] > 0)
         {
-            Debug.Log($"'{skill.skillName}' ÄğÅ¸ÀÓ ({coolTimers[slotIndex]:F1}ÃÊ ³²À½)");
+            Debug.Log($"'{skill.skillName}' ì¿¨íƒ€ì„ ({coolTimers[slotIndex]:F1}ì´ˆ ë‚¨ìŒ)");
             return false;
         }
-        // ¸¶³ª Ã¼Å©
+        // ë§ˆë‚˜ ì²´í¬
         if (player.CurrentMP < skill.manaCost) return false;
 
-        // ¸ğµç Á¶°ÇÀ» Åë°úÇÏ¸é true ¹İÈ¯
+        // ëª¨ë“  ì¡°ê±´ì„ í†µê³¼í•˜ë©´ true ë°˜í™˜
         return true;
     }
 
-    // ½ºÅ³ÀÇ ÄğÅ¸ÀÓÀ» ½ÃÀÛ½ÃÅ°´Â ÇÔ¼ö
+    // ìŠ¤í‚¬ì˜ ì¿¨íƒ€ì„ì„ ì‹œì‘ì‹œí‚¤ëŠ” í•¨ìˆ˜
     public void StartCooldown(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= SKILL_SLOT_COUNT) return;
@@ -126,7 +126,7 @@ public class SkillManager : MonoBehaviour
         }
     }
 
-    // ½ºÅ³ ½½·Ô UI¿¡¼­ ÄğÅ¸ÀÓ Á¤º¸¸¦ °¡Á®°¡±â À§ÇÑ ÇÔ¼ö
+    // ìŠ¤í‚¬ ìŠ¬ë¡¯ UIì—ì„œ ì¿¨íƒ€ì„ ì •ë³´ë¥¼ ê°€ì ¸ê°€ê¸° ìœ„í•œ í•¨ìˆ˜
     public float GetCooldownProgress(int slotIndex)
     {
         if (AssignedSkills[slotIndex] == null || AssignedSkills[slotIndex].coolTime <= 0)

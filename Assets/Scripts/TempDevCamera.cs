@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// °³¹ß ºôµå(¿¡µðÅÍ)°¡ ¾Æ´Ò ¶§´Â ½º½º·Î¸¦ ÆÄ±«ÇÏ°í, ÀÚ½ÅÀ» ºñÈ°¼ºÈ­
+// ê°œë°œ ë¹Œë“œ(ì—ë””í„°)ê°€ ì•„ë‹ ë•ŒëŠ” ìŠ¤ìŠ¤ë¡œë¥¼ íŒŒê´´í•˜ê³ , ìžì‹ ì„ ë¹„í™œì„±í™”
 public class TempDevCamera : MonoBehaviour
 {
     void Awake()

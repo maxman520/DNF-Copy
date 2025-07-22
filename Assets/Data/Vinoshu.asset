@@ -21,6 +21,7 @@ MonoBehaviour:
   Atk: 20
   Def: 10
   MoveSpeed: 2
+  EXP: 1000
   RecognitionRange: 100
   AttackRange: 1.6
   attackDetails:

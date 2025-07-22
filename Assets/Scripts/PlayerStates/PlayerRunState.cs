@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerRunState : PlayerStateBehaviourBase
 {
-    // ÀÌ »óÅÂ·Î ÁøÀÔÇÒ ¶§ È£Ãâ
+    // ì´ ìƒíƒœë¡œ ì§„ì…í•  ë•Œ í˜¸ì¶œ
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);

@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 public class SkillSlotUI : MonoBehaviour, IDropHandler
 {
-    public int slotIndex; // ÀÎ½ºÆåÅÍ¿¡¼­ 0~13±îÁö ¼³Á¤
+    public int slotIndex; // ì¸ìŠ¤í™í„°ì—ì„œ 0~13ê¹Œì§€ ì„¤ì •
 
     [SerializeField] private Image iconImage;
     [SerializeField] private Image cooldownImage;
@@ -13,29 +13,29 @@ public class SkillSlotUI : MonoBehaviour, IDropHandler
 
     private void Start()
     {
-        // ¸Å´ÏÀú¸¦ Ã£¾Æ ¿¬°á
+        // ë§¤ë‹ˆì €ë¥¼ ì°¾ì•„ ì—°ê²°
         skillManager = Player.Instance.GetComponent<SkillManager>();
 
-        // OnSkillSlotChanged ÀÌº¥Æ®¿¡ UpdateSlot ÇÔ¼ö¸¦ ±¸µ¶
+        // OnSkillSlotChanged ì´ë²¤íŠ¸ì— UpdateSlot í•¨ìˆ˜ë¥¼ êµ¬ë…
         if (skillManager != null)
         {
             skillManager.OnSkillSlotChanged += HandleSkillSlotChanged;
         }
 
-        // ÃÊ±â ¾ÆÀÌÄÜ »óÅÂ ¾÷µ¥ÀÌÆ®
+        // ì´ˆê¸° ì•„ì´ì½˜ ìƒíƒœ ì—…ë°ì´íŠ¸
         UpdateSlot(slotIndex, skillManager.AssignedSkills[slotIndex]);
     }
 
     private void Update()
     {
-        // ÄğÅ¸ÀÓ UI ¾÷µ¥ÀÌÆ®
+        // ì¿¨íƒ€ì„ UI ì—…ë°ì´íŠ¸
         if (skillManager != null)
         {
             float progress = skillManager.GetCooldownProgress(slotIndex);
             cooldownImage.fillAmount = progress;
         }
     }
-    // ¿ÀºêÁ§Æ®°¡ ÆÄ±«µÉ ¶§ ÀÌº¥Æ® ±¸µ¶À» ÇØÁ¦
+    // ì˜¤ë¸Œì íŠ¸ê°€ íŒŒê´´ë  ë•Œ ì´ë²¤íŠ¸ êµ¬ë…ì„ í•´ì œ
     private void OnDestroy()
     {
         if (skillManager != null)
@@ -43,7 +43,7 @@ public class SkillSlotUI : MonoBehaviour, IDropHandler
             skillManager.OnSkillSlotChanged -= HandleSkillSlotChanged;
         }
     }
-    // µå·ÓÀ» ¹Ş¾ÒÀ» ¶§ È£Ãâ
+    // ë“œë¡­ì„ ë°›ì•˜ì„ ë•Œ í˜¸ì¶œ
     public void OnDrop(PointerEventData eventData)
     {
         GameObject droppedObject = eventData.pointerDrag;
@@ -51,25 +51,25 @@ public class SkillSlotUI : MonoBehaviour, IDropHandler
 
         if (draggableIcon != null)
         {
-            // SkillManager¿¡ ½ºÅ³ ÇÒ´çÀ» ¿äÃ»
+            // SkillManagerì— ìŠ¤í‚¬ í• ë‹¹ì„ ìš”ì²­
             skillManager.AssignSkill(this.slotIndex, draggableIcon.skillData);
         }
     }
 
-    // OnSkillSlotChanged ÀÌº¥Æ® Ã³¸®
+    // OnSkillSlotChanged ì´ë²¤íŠ¸ ì²˜ë¦¬
     private void HandleSkillSlotChanged(int updatedSlotIndex, SkillData skillData)
     {
-        // º¯°æµÈ ½½·ÔÀÌ ¹Ù·Î ³ª ÀÚ½ÅÀÏ ¶§¸¸, ³» ¾ÆÀÌÄÜÀ» ¾÷µ¥ÀÌÆ®
+        // ë³€ê²½ëœ ìŠ¬ë¡¯ì´ ë°”ë¡œ ë‚˜ ìì‹ ì¼ ë•Œë§Œ, ë‚´ ì•„ì´ì½˜ì„ ì—…ë°ì´íŠ¸
         if (this.slotIndex == updatedSlotIndex)
         {
             UpdateSlot(updatedSlotIndex, skillData);
         }
     }
 
-    // SkillManager°¡ È£ÃâÇÏ¿© ½½·Ô UI¸¦ ¾÷µ¥ÀÌÆ®
+    // SkillManagerê°€ í˜¸ì¶œí•˜ì—¬ ìŠ¬ë¡¯ UIë¥¼ ì—…ë°ì´íŠ¸
     public void UpdateSlot(int index, SkillData skillData)
     {
-        Debug.Log("UpdateSlot È£Ãâ");
+        Debug.Log("UpdateSlot í˜¸ì¶œ");
 
         if (skillData != null)
         {

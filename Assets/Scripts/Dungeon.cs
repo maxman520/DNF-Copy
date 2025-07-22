@@ -3,26 +3,33 @@ using System.Collections.Generic;
 
 public class Dungeon : MonoBehaviour
 {
-    [Header("´øÀü Á¤º¸")]
+    [Header("ë˜ì „ ì •ë³´")]
     [SerializeField] public string DungeonName;
-    [SerializeField] public List<Room> Rooms; // ÀÌ ´øÀüÀ» ±¸¼ºÇÏ´Â ¹æ ¸ñ·Ï
-    [SerializeField] public Vector3 StartPosition; // ´øÀü ½ÃÀÛ ½Ã ÇÃ·¹ÀÌ¾î ½ÃÀÛ À§Ä¡
-    [SerializeField] public Vector2Int MapSize; // ¸ÊÀÇ Å©±â (¿¹: X=3, Y=3)
-    [Tooltip("´ÙÀ½ ´øÀüÀÇ ¾À ÀÌ¸§")]
-    [SerializeField] public string NextDungeonName; // ´ÙÀ½ ´øÀüÀÇ ¾À ÀÌ¸§
-    [Tooltip("ÀÌ ´øÀüÀÌ ³¡³ª°í µ¹¾Æ°¥ ¸¶À»ÀÇ ¾À ÀÌ¸§")]
-    [SerializeField] public string TownToReturn; // ´øÀüÀÌ ³¡³ª°í µ¹¾Æ°¡¾ßÇÒ ¸¶À»ÀÇ ¾À ÀÌ¸§
+    [SerializeField] public int ClearEXP;
+    [Header("ë­í¬ ì‹œìŠ¤í…œ")]
+    [Tooltip("ë­í¬ íŒë³„ ì‹œê°„ ê¸°ì¤€ (ì´ˆ). ê°€ì¥ ë¹ ë¥¸ ì‹œê°„ë¶€í„° ìˆœì„œëŒ€ë¡œ ì •ë ¬")]
+    [SerializeField] public List<float> RankTimeThresholds;
+    [Tooltip("ì‹œê°„ ê¸°ì¤€ì— í•´ë‹¹í•˜ëŠ” ë­í¬ ìŠ¤í”„ë¼ì´íŠ¸. ìœ„ ë¦¬ìŠ¤íŠ¸ì™€ ìˆœì„œ/ê°œìˆ˜ ì¼ì¹˜ í•„ìš”")]
+    [SerializeField] public List<Sprite> RankSprites;
+    [Header("ë˜ì „ êµ¬ì„±")]
+    [SerializeField] public List<Room> Rooms; // ì´ ë˜ì „ì„ êµ¬ì„±í•˜ëŠ” ë°© ëª©ë¡
+    [SerializeField] public Vector3 StartPosition; // ë˜ì „ ì‹œì‘ ì‹œ í”Œë ˆì´ì–´ ì‹œì‘ ìœ„ì¹˜
+    [SerializeField] public Vector2Int MapSize; // ë§µì˜ í¬ê¸° (ì˜ˆ: X=3, Y=3)
+    [Tooltip("ë‹¤ìŒ ë˜ì „ì˜ ì”¬ ì´ë¦„")]
+    [SerializeField] public string NextDungeonName; // ë‹¤ìŒ ë˜ì „ì˜ ì”¬ ì´ë¦„
+    [Tooltip("ì´ ë˜ì „ì´ ëë‚˜ê³  ëŒì•„ê°ˆ ë§ˆì„ì˜ ì”¬ ì´ë¦„")]
+    [SerializeField] public string TownToReturn; // ë˜ì „ì´ ëë‚˜ê³  ëŒì•„ê°€ì•¼í•  ë§ˆì„ì˜ ì”¬ ì´ë¦„
 
     private void Start()
     {
-        // ÀÌ ´øÀü ¾ÀÀÌ ½ÃÀÛµÉ ¶§, DungeonManager¿¡°Ô ÀÚ½ÅÀ» µî·ÏÇÏ°í ½ÃÀÛÀ» ¿äÃ»
+        // ì´ ë˜ì „ ì”¬ì´ ì‹œì‘ë  ë•Œ, DungeonManagerì—ê²Œ ìì‹ ì„ ë“±ë¡í•˜ê³  ì‹œì‘ì„ ìš”ì²­
         if (DungeonManager.Instance != null)
         {
             DungeonManager.Instance.StartDungeon(this);
         }
         else
         {
-            Debug.LogError("DungeonManager°¡ ¾À¿¡ Á¸ÀçÇÏÁö ¾ÊÀ½");
+            Debug.LogError("DungeonManagerê°€ ì”¬ì— ì¡´ì¬í•˜ì§€ ì•ŠìŒ");
         }
     }
 }

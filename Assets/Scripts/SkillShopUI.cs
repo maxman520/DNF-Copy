@@ -1,38 +1,38 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // TextMeshPro »ç¿ë ½Ã
+using TMPro; // TextMeshPro ì‚¬ìš© ì‹œ
 
 public class SkillShopUI : MonoBehaviour
 {
-    [Header("UI ÂüÁ¶")]
+    [Header("UI ì°¸ì¡°")]
     [SerializeField] private GameObject skillShopPanel;
-    [SerializeField] private Transform skillIconParent; // ½ºÅ³ ¾ÆÀÌÄÜµéÀÌ »ı¼ºµÉ ºÎ¸ğ (Content ¿ÀºêÁ§Æ®)
+    [SerializeField] private Transform skillIconParent; // ìŠ¤í‚¬ ì•„ì´ì½˜ë“¤ì´ ìƒì„±ë  ë¶€ëª¨ (Content ì˜¤ë¸Œì íŠ¸)
     [SerializeField] private GameObject skillIconPrefab;
 
-    [Header("¼³¸íÃ¢ ÂüÁ¶")]
+    [Header("ì„¤ëª…ì°½ ì°¸ì¡°")]
     [SerializeField] private TextMeshProUGUI skillNameText;
     [SerializeField] private TextMeshProUGUI skillDescriptionText;
     [SerializeField] private GameObject descriptionPanel;
 
-    [Header("¹è¿ï ¼ö ÀÖ´Â ½ºÅ³ ¸ñ·Ï")]
+    [Header("ë°°ìš¸ ìˆ˜ ìˆëŠ” ìŠ¤í‚¬ ëª©ë¡")]
     [SerializeField] private SkillData[] availableSkills;
 
     void Start()
     {
         InitializeShop();
-        descriptionPanel.SetActive(false); // ½ÃÀÛ½Ã¿£ ½ºÅ³ ¼³¸íÃ¢Àº ²¨µÒ
+        descriptionPanel.SetActive(false); // ì‹œì‘ì‹œì—” ìŠ¤í‚¬ ì„¤ëª…ì°½ì€ êº¼ë‘ 
     }
 
-    // ½ºÅ³¼¥ UI¸¦ Åä±ÛÇÏ´Â ÇÔ¼ö
+    // ìŠ¤í‚¬ìƒµ UIë¥¼ í† ê¸€í•˜ëŠ” í•¨ìˆ˜
     public void ToggleShop()
     {
         gameObject.SetActive(!gameObject.activeSelf);
     }
 
-    // ½ºÅ³¼¥ ÃÊ±âÈ­
+    // ìŠ¤í‚¬ìƒµ ì´ˆê¸°í™”
     private void InitializeShop()
     {
-        // ¹è¿ï ¼ö ÀÖ´Â ¸ğµç ½ºÅ³¿¡ ´ëÇØ ¾ÆÀÌÄÜÀ» »ı¼º
+        // ë°°ìš¸ ìˆ˜ ìˆëŠ” ëª¨ë“  ìŠ¤í‚¬ì— ëŒ€í•´ ì•„ì´ì½˜ì„ ìƒì„±
         foreach (var skill in availableSkills)
         {
             GameObject iconObj = Instantiate(skillIconPrefab, skillIconParent);
@@ -41,7 +41,7 @@ public class SkillShopUI : MonoBehaviour
         }
     }
 
-    // ¼³¸íÃ¢ º¸ÀÌ±â
+    // ì„¤ëª…ì°½ ë³´ì´ê¸°
     public void ShowDescription(SkillData skill)
     {
         if (skill == null) return;
@@ -50,7 +50,7 @@ public class SkillShopUI : MonoBehaviour
         descriptionPanel.SetActive(true);
     }
 
-    // ¼³¸íÃ¢ ¼û±â±â
+    // ì„¤ëª…ì°½ ìˆ¨ê¸°ê¸°
     public void HideDescription()
     {
         descriptionPanel.SetActive(false);

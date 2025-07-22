@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 public class Effect : MonoBehaviour
 {
-    [Header("ÀÌÆåÆ® ÀÌ¸§ (EffectManager¿¡ µî·ÏµÈ ÀÌ¸§°ú µ¿ÀÏÇØ¾ß ÇÔ)")]
+    [Header("ì´í™íŠ¸ ì´ë¦„ (EffectManagerì— ë“±ë¡ëœ ì´ë¦„ê³¼ ë™ì¼í•´ì•¼ í•¨)")]
     [SerializeField] private string effectName;
 
     private Animator animator;
@@ -15,26 +15,26 @@ public class Effect : MonoBehaviour
 
     private void OnEnable()
     {
-        // ¿ÀºêÁ§Æ®°¡ È°¼ºÈ­µÉ ¶§¸¶´Ù ¾Ö´Ï¸ŞÀÌ¼ÇÀ» Ã³À½ºÎÅÍ Àç»ıÇÏ°í,
-        // ³¡³¯ ¶§ Ç®¿¡ ¹İ³³ÇÏ´Â ·ÎÁ÷ ½ÇÇà
+        // ì˜¤ë¸Œì íŠ¸ê°€ í™œì„±í™”ë  ë•Œë§ˆë‹¤ ì• ë‹ˆë©”ì´ì…˜ì„ ì²˜ìŒë¶€í„° ì¬ìƒí•˜ê³ ,
+        // ëë‚  ë•Œ í’€ì— ë°˜ë‚©í•˜ëŠ” ë¡œì§ ì‹¤í–‰
         if (animator == null)
         {
-            Debug.Log(this.effectName + " ÀÌÆåÆ®ÀÇ animatorº¯¼ö°¡ ÃÊ±âÈ­ µÇÁö ¾ÊÀ½!");
+            Debug.Log(this.effectName + " ì´í™íŠ¸ì˜ animatorë³€ìˆ˜ê°€ ì´ˆê¸°í™” ë˜ì§€ ì•ŠìŒ!");
             return;
         }
             
-        // ¾Ö´Ï¸ŞÀÌ¼ÇÀ» 0¹ø ·¹ÀÌ¾îÀÇ Ã³À½(0f)ºÎÅÍ Àç»ı
+        // ì• ë‹ˆë©”ì´ì…˜ì„ 0ë²ˆ ë ˆì´ì–´ì˜ ì²˜ìŒ(0f)ë¶€í„° ì¬ìƒ
         animator.Play(0, -1, 0f);
         ReturnToPoolAfterAnimation().Forget();
     }
 
     private async UniTask ReturnToPoolAfterAnimation()
     {
-        // ÇöÀç Àç»ı ÁßÀÎ ¾Ö´Ï¸ŞÀÌ¼Ç Å¬¸³ÀÇ ±æÀÌ¸¦ °¡Á®¿È
+        // í˜„ì¬ ì¬ìƒ ì¤‘ì¸ ì• ë‹ˆë©”ì´ì…˜ í´ë¦½ì˜ ê¸¸ì´ë¥¼ ê°€ì ¸ì˜´
         AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
         if (clipInfo.Length > 0)
         {
-            // Å¬¸³ ±æÀÌ¸¸Å­ ´ë±â
+            // í´ë¦½ ê¸¸ì´ë§Œí¼ ëŒ€ê¸°
             float animationLength = clipInfo[0].clip.length;
             await UniTask.Delay((int)(animationLength * 1000), cancellationToken: this.GetCancellationTokenOnDestroy());
         }

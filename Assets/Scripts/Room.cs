@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
-    public enum RoomType { Normal, Start, Boss } // ¹æÀÇ Á¾·ù
+    public enum RoomType { Normal, Start, Boss } // ë°©ì˜ ì¢…ë¥˜
 
     [Flags]
-    public enum HasExit // ¹æ ¿¬°á Á¤º¸
+    public enum HasExit // ë°© ì—°ê²° ì •ë³´
     {
         None = 0,
         Right = 1 << 0,
@@ -17,53 +17,53 @@ public class Room : MonoBehaviour
         Top = 1 << 3,
     }
 
-    [Header("¹æ ¼³Á¤")]
+    [Header("ë°© ì„¤ì •")]
     [SerializeField] public RoomType roomType;
     [SerializeField] public HasExit hasExit;
-    [SerializeField] public CinemachineCamera virtualCamera; // ÀÌ ¹æ¿¡¼­ »ç¿ëÇÒ °¡»ó Ä«¸Ş¶ó
-    [SerializeField] private List<Monster> monsters; // ÀÌ ¹æ¿¡ ÀÖ´Â ¸ğµç ¸ó½ºÅÍ ¸®½ºÆ®
-    [SerializeField] private List<Portal> portals; // ÀÌ ¹æÀÇ ¸ğµç Æ÷Å» ¸®½ºÆ®
+    [SerializeField] public CinemachineCamera virtualCamera; // ì´ ë°©ì—ì„œ ì‚¬ìš©í•  ê°€ìƒ ì¹´ë©”ë¼
+    [SerializeField] private List<Monster> monsters; // ì´ ë°©ì— ìˆëŠ” ëª¨ë“  ëª¬ìŠ¤í„° ë¦¬ìŠ¤íŠ¸
+    [SerializeField] private List<Portal> portals; // ì´ ë°©ì˜ ëª¨ë“  í¬íƒˆ ë¦¬ìŠ¤íŠ¸
 
-    [Header("¹Ì´Ï¸Ê ÁÂÇ¥")]
-    public Vector2Int coordinates; // ÀÌ ¹æÀÇ ¹Ì´Ï¸Ê »ó ÁÂÇ¥
+    [Header("ë¯¸ë‹ˆë§µ ì¢Œí‘œ")]
+    public Vector2Int coordinates; // ì´ ë°©ì˜ ë¯¸ë‹ˆë§µ ìƒ ì¢Œí‘œ
 
     private bool isCleared = false;
 
     public void OnEnable()
     {
-        // ¹æÀÌ È°¼ºÈ­ µÇ´Â ¼ø°£ Virtual_CameraÀÇ Follow Å¸°ÙÀ» ÇÃ·¹ÀÌ¾î·Î ¼³Á¤
+        // ë°©ì´ í™œì„±í™” ë˜ëŠ” ìˆœê°„ Virtual_Cameraì˜ Follow íƒ€ê²Ÿì„ í”Œë ˆì´ì–´ë¡œ ì„¤ì •
         virtualCamera.Follow = Player.Instance.transform;
     }
 
-    // ¹æÀÌ È°¼ºÈ­µÉ ¶§ È£Ãâ
+    // ë°©ì´ í™œì„±í™”ë  ë•Œ í˜¸ì¶œ
     public void OnEnterRoom()
     {
-        Debug.Log($"{this.name}¿¡ ÀÔÀå");
+        Debug.Log($"{this.name}ì— ì…ì¥");
 
-        // ÀÌ ¹æÀÇ ¸ğµç °ÍÀ» È°¼ºÈ­
+        // ì´ ë°©ì˜ ëª¨ë“  ê²ƒì„ í™œì„±í™”
         this.gameObject.SetActive(true);
 
-        // ÀÔÀåÇÏ¸é¼­ Ä«¸Ş¶ó ¿ì¼±¼øÀ§¸¦ ³ô¿© Ä«¸Ş¶ó º¯°æ
+        // ì…ì¥í•˜ë©´ì„œ ì¹´ë©”ë¼ ìš°ì„ ìˆœìœ„ë¥¼ ë†’ì—¬ ì¹´ë©”ë¼ ë³€ê²½
         if (virtualCamera != null)
             virtualCamera.Priority = 10;
     }
 
-    // ¹æÀ» ³ª°¥ ¶§ È£Ãâ
+    // ë°©ì„ ë‚˜ê°ˆ ë•Œ í˜¸ì¶œ
     public void OnExitRoom()
     {
-        Debug.Log($"{this.name}¿¡¼­ ÅğÀå");
+        Debug.Log($"{this.name}ì—ì„œ í‡´ì¥");
 
-        // ÀÌ ¹æÀÇ ¸ğµç °ÍÀ» ºñÈ°¼ºÈ­ÇÏ¿© ¿¬»êÀ» ¸ØÃã
+        // ì´ ë°©ì˜ ëª¨ë“  ê²ƒì„ ë¹„í™œì„±í™”í•˜ì—¬ ì—°ì‚°ì„ ë©ˆì¶¤
         this.gameObject.SetActive(false);
 
-        // ´Ù¸¥ Ä«¸Ş¶ó·Î º¯°æÇÏ±â À§ÇØ Ä«¸Ş¶ó ¿ì¼±¼øÀ§ ³·Ãã
+        // ë‹¤ë¥¸ ì¹´ë©”ë¼ë¡œ ë³€ê²½í•˜ê¸° ìœ„í•´ ì¹´ë©”ë¼ ìš°ì„ ìˆœìœ„ ë‚®ì¶¤
         if (virtualCamera != null)
             virtualCamera.Priority = 9;
     }
 
     void Update()
     {
-        // ¹æÀÌ Å¬¸®¾îµÇÁö ¾Ê¾ÒÀ» ¶§¸¸ ¸ó½ºÅÍ »ıÁ¸ ¿©ºÎ Ã¼Å©
+        // ë°©ì´ í´ë¦¬ì–´ë˜ì§€ ì•Šì•˜ì„ ë•Œë§Œ ëª¬ìŠ¤í„° ìƒì¡´ ì—¬ë¶€ ì²´í¬
         if (!isCleared)
         {
             CheckClearCondition();
@@ -72,26 +72,26 @@ public class Room : MonoBehaviour
 
     void CheckClearCondition()
     {
-        // ¸ğµç ¸ó½ºÅÍ°¡ Á×¾ú´ÂÁö È®ÀÎ
+        // ëª¨ë“  ëª¬ìŠ¤í„°ê°€ ì£½ì—ˆëŠ”ì§€ í™•ì¸
         foreach (var monster in monsters)
         {
-            // ¾ÆÁ÷ »ì¾ÆÀÖ´Â ¸ó½ºÅÍ°¡ ÇÑ ¸¶¸®¶óµµ ÀÖÀ¸¸é ÇÔ¼ö Á¾·á
-            if (monster != null && monster.gameObject.activeSelf) // Á×À¸¸é ºñÈ°¼ºÈ­µÇ°Å³ª ÆÄ±«µÈ´Ù´Â °¡Á¤
+            // ì•„ì§ ì‚´ì•„ìˆëŠ” ëª¬ìŠ¤í„°ê°€ í•œ ë§ˆë¦¬ë¼ë„ ìˆìœ¼ë©´ í•¨ìˆ˜ ì¢…ë£Œ
+            if (monster != null && monster.gameObject.activeSelf) // ì£½ìœ¼ë©´ ë¹„í™œì„±í™”ë˜ê±°ë‚˜ íŒŒê´´ëœë‹¤ëŠ” ê°€ì •
             {
                 return;
             }
         }
 
-        // ¸ğµç ¸ó½ºÅÍ°¡ Á×¾úÀ½
+        // ëª¨ë“  ëª¬ìŠ¤í„°ê°€ ì£½ì—ˆìŒ
         isCleared = true;
         OnRoomCleared();
     }
 
     void OnRoomCleared()
     {
-        Debug.Log($"{this.name} Å¬¸®¾î!");
+        Debug.Log($"{this.name} í´ë¦¬ì–´!");
 
-        // ¸ğµç Æ÷Å»À» È°¼ºÈ­
+        // ëª¨ë“  í¬íƒˆì„ í™œì„±í™”
         foreach (var portal in portals)
         {
             if (portal != null)

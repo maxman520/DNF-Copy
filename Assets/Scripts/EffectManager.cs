@@ -12,26 +12,26 @@ public class EffectManager : Singleton<EffectManager>
         public GameObject prefab;
     }
 
-    [Header("ÀÌÆåÆ® ÇÁ¸®ÆÕ ¸ñ·Ï")]
+    [Header("ì´í™íŠ¸ í”„ë¦¬íŒ¹ ëª©ë¡")]
     [SerializeField] private List<Effect> effectPrefabs = new List<Effect>();
 
-    // ¿ÀºêÁ§Æ® Ç®¸µÀ» À§ÇÑ µñ¼Å³Ê¸®
+    // ì˜¤ë¸Œì íŠ¸ í’€ë§ì„ ìœ„í•œ ë”•ì…”ë„ˆë¦¬
     private Dictionary<string, Queue<GameObject>> effectPool = new Dictionary<string, Queue<GameObject>>();
 
-    // ÀÌÆåÆ® ÀÌ¸§°ú ÇÁ¸®ÆÕÀ» ¸ÅÄªÇÏ´Â µñ¼Å³Ê¸® (ºü¸¥ °Ë»ö¿ë)
+    // ì´í™íŠ¸ ì´ë¦„ê³¼ í”„ë¦¬íŒ¹ì„ ë§¤ì¹­í•˜ëŠ” ë”•ì…”ë„ˆë¦¬ (ë¹ ë¥¸ ê²€ìƒ‰ìš©)
     private Dictionary<string, GameObject> effectPrefabDict = new Dictionary<string, GameObject>();
 
-    // È°¼ºÈ­µÈ ¸ğµç ÀÌÆåÆ®¸¦ ÃßÀûÇÏ´Â ¸®½ºÆ®
+    // í™œì„±í™”ëœ ëª¨ë“  ì´í™íŠ¸ë¥¼ ì¶”ì í•˜ëŠ” ë¦¬ìŠ¤íŠ¸
     private Dictionary<string, List<GameObject>> activeEffects = new Dictionary<string, List<GameObject>>();
 
     protected override void Awake()
     {
-        // ½Ì±ÛÅÏ ÆĞÅÏ
+        // ì‹±ê¸€í„´ íŒ¨í„´
         base.Awake();
         InitializePool();
     }
 
-    // ¿ÀºêÁ§Æ® Ç®°ú ÇÁ¸®ÆÕ µñ¼Å³Ê¸® ÃÊ±âÈ­
+    // ì˜¤ë¸Œì íŠ¸ í’€ê³¼ í”„ë¦¬íŒ¹ ë”•ì…”ë„ˆë¦¬ ì´ˆê¸°í™”
     private void InitializePool()
     {
         foreach (var effect in effectPrefabs)
@@ -45,30 +45,30 @@ public class EffectManager : Singleton<EffectManager>
         }
     }
 
-    // ÀÌÆåÆ® Àç»ı ¿äÃ»
+    // ì´í™íŠ¸ ì¬ìƒ ìš”ì²­
     public GameObject PlayEffect(string name, Vector3 position, Quaternion rotation)
     {
         if (!effectPrefabDict.ContainsKey(name))
         {
-            Debug.LogWarning($"EffectManager: '{name}' ÀÌ¶ó´Â ÀÌ¸§ÀÇ ÀÌÆåÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning($"EffectManager: '{name}' ì´ë¼ëŠ” ì´ë¦„ì˜ ì´í™íŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return null;
         }
 
         GameObject effectObject;
 
-        // Ç®¿¡ »ç¿ë °¡´ÉÇÑ ¿ÀºêÁ§Æ®°¡ ÀÖ´ÂÁö È®ÀÎ
+        // í’€ì— ì‚¬ìš© ê°€ëŠ¥í•œ ì˜¤ë¸Œì íŠ¸ê°€ ìˆëŠ”ì§€ í™•ì¸
         if (effectPool.ContainsKey(name) && effectPool[name].Count > 0)
         {
-            effectObject = effectPool[name].Dequeue(); // Ç®¿¡¼­ ²¨³»¿È
+            effectObject = effectPool[name].Dequeue(); // í’€ì—ì„œ êº¼ë‚´ì˜´
 
             effectObject.transform.position = position;
             effectObject.transform.rotation = rotation;
-            effectObject.SetActive(true); // ´Ù½Ã È°¼ºÈ­
+            effectObject.SetActive(true); // ë‹¤ì‹œ í™œì„±í™”
 
         }
         else
         {
-            // Ç®¿¡ ¾øÀ¸¸é »õ·Î »ı¼º
+            // í’€ì— ì—†ìœ¼ë©´ ìƒˆë¡œ ìƒì„±
             effectObject = Instantiate(effectPrefabDict[name], position, rotation);
         }
 
@@ -77,31 +77,31 @@ public class EffectManager : Singleton<EffectManager>
         return effectObject;
     }
 
-    // µ¥¹ÌÁö ÆùÆ® Àç»ı ¿äÃ»
+    // ë°ë¯¸ì§€ í°íŠ¸ ì¬ìƒ ìš”ì²­
     public GameObject PlayEffect(string name, Vector3 position, Quaternion rotation, float damage)
     {
         position = new Vector3(position.x, position.y + 0.5f, position.z);
         if (!effectPrefabDict.ContainsKey(name))
         {
-            Debug.LogWarning($"EffectManager: '{name}' ÀÌ¶ó´Â ÀÌ¸§ÀÇ ÀÌÆåÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning($"EffectManager: '{name}' ì´ë¼ëŠ” ì´ë¦„ì˜ ì´í™íŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return null;
         }
 
         GameObject damageTextObj;
 
-        // Ç®¿¡ »ç¿ë °¡´ÉÇÑ ¿ÀºêÁ§Æ®°¡ ÀÖ´ÂÁö È®ÀÎ
+        // í’€ì— ì‚¬ìš© ê°€ëŠ¥í•œ ì˜¤ë¸Œì íŠ¸ê°€ ìˆëŠ”ì§€ í™•ì¸
         if (effectPool.ContainsKey(name) && effectPool[name].Count > 0)
         {
-            damageTextObj = effectPool[name].Dequeue(); // Ç®¿¡¼­ ²¨³»¿È
+            damageTextObj = effectPool[name].Dequeue(); // í’€ì—ì„œ êº¼ë‚´ì˜´
 
             damageTextObj.transform.position = position;
             damageTextObj.transform.rotation = rotation;
-            damageTextObj.SetActive(true); // ´Ù½Ã È°¼ºÈ­
+            damageTextObj.SetActive(true); // ë‹¤ì‹œ í™œì„±í™”
 
         }
         else
         {
-            // Ç®¿¡ ¾øÀ¸¸é »õ·Î »ı¼º
+            // í’€ì— ì—†ìœ¼ë©´ ìƒˆë¡œ ìƒì„±
             damageTextObj = Instantiate(effectPrefabDict[name], position, rotation);
         }
 
@@ -111,22 +111,22 @@ public class EffectManager : Singleton<EffectManager>
         return damageTextObj;
     }
 
-    // ¸ó½ºÅÍ HP¹Ù Á¡¸ê ÀÌÆåÆ® »ı¼º ¿äÃ»
+    // ëª¬ìŠ¤í„° HPë°” ì ë©¸ ì´í™íŠ¸ ìƒì„± ìš”ì²­
     public GameObject PlayEffect(string name, Transform hpFlashParent)
     {
 
         GameObject flashEffectObj;
 
-        // Ç®¿¡ »ç¿ë °¡´ÉÇÑ ¿ÀºêÁ§Æ®°¡ ÀÖ´ÂÁö È®ÀÎ
+        // í’€ì— ì‚¬ìš© ê°€ëŠ¥í•œ ì˜¤ë¸Œì íŠ¸ê°€ ìˆëŠ”ì§€ í™•ì¸
         if (effectPool.ContainsKey(name) && effectPool[name].Count > 0)
         {
-            flashEffectObj = effectPool[name].Dequeue(); // Ç®¿¡¼­ ²¨³»¿È
-            flashEffectObj.SetActive(true); // ´Ù½Ã È°¼ºÈ­
+            flashEffectObj = effectPool[name].Dequeue(); // í’€ì—ì„œ êº¼ë‚´ì˜´
+            flashEffectObj.SetActive(true); // ë‹¤ì‹œ í™œì„±í™”
 
         }
         else
         {
-            // Ç®¿¡ ¾øÀ¸¸é »õ·Î »ı¼º
+            // í’€ì— ì—†ìœ¼ë©´ ìƒˆë¡œ ìƒì„±
             flashEffectObj = Instantiate(effectPrefabDict[name], hpFlashParent);
         }
 
@@ -136,55 +136,55 @@ public class EffectManager : Singleton<EffectManager>
 
         return flashEffectObj;
     }
-    // »ç¿ëÀÌ ³¡³­ ÀÌÆåÆ®¸¦ Ç®¿¡ ¹İ³³
+    // ì‚¬ìš©ì´ ëë‚œ ì´í™íŠ¸ë¥¼ í’€ì— ë°˜ë‚©
     public void ReturnEffectToPool(string name, GameObject effectObject)
     {
         if (!effectPool.ContainsKey(name))
         {
-            Debug.LogWarning($"EffectManager: '{name}' ÀÌ¶ó´Â ÀÌ¸§ÀÇ Ç®ÀÌ ¾ø½À´Ï´Ù. ¿ÀºêÁ§Æ®¸¦ ÆÄ±«ÇÕ´Ï´Ù.");
+            Debug.LogWarning($"EffectManager: '{name}' ì´ë¼ëŠ” ì´ë¦„ì˜ í’€ì´ ì—†ìŠµë‹ˆë‹¤. ì˜¤ë¸Œì íŠ¸ë¥¼ íŒŒê´´í•©ë‹ˆë‹¤.");
             Destroy(effectObject);
             return;
         }
 
-        effectObject.SetActive(false); // ºñÈ°¼ºÈ­
-        effectPool[name].Enqueue(effectObject); // Ç®¿¡ ´Ù½Ã ³ÖÀ½
+        effectObject.SetActive(false); // ë¹„í™œì„±í™”
+        effectPool[name].Enqueue(effectObject); // í’€ì— ë‹¤ì‹œ ë„£ìŒ
 
-        // È°¼ºÈ­µÈ ¿ÀºêÁ§Æ® ¸®½ºÆ®¿¡¼­ Á¦°Å
+        // í™œì„±í™”ëœ ì˜¤ë¸Œì íŠ¸ ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°
         if (activeEffects.ContainsKey(name))
         {
             activeEffects[name].Remove(effectObject);
         }
     }
 
-    // Æ¯Á¤ ÀÌ¸§ÀÇ ÀÌÆåÆ®°¡ ÇöÀç ¸î °³ È°¼ºÈ­µÇ¾î ÀÖ´ÂÁö ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    // íŠ¹ì • ì´ë¦„ì˜ ì´í™íŠ¸ê°€ í˜„ì¬ ëª‡ ê°œ í™œì„±í™”ë˜ì–´ ìˆëŠ”ì§€ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     public int GetActiveEffectCount(string name)
     {
         if (activeEffects.ContainsKey(name))
         {
-            // ¸®½ºÆ®¿¡ ÀÖ´Â ¿ä¼ÒÀÇ °³¼ö°¡ ¹Ù·Î È°¼ºÈ­µÈ ÀÌÆåÆ®ÀÇ °³¼ö
+            // ë¦¬ìŠ¤íŠ¸ì— ìˆëŠ” ìš”ì†Œì˜ ê°œìˆ˜ê°€ ë°”ë¡œ í™œì„±í™”ëœ ì´í™íŠ¸ì˜ ê°œìˆ˜
             return activeEffects[name].Count;
         }
 
-        // ÇØ´ç ÀÌ¸§ÀÇ Ç®ÀÌ ¾øÀ¸¸é 0À» ¹İÈ¯
+        // í•´ë‹¹ ì´ë¦„ì˜ í’€ì´ ì—†ìœ¼ë©´ 0ì„ ë°˜í™˜
         return 0;
     }
 
-    // Æ¯Á¤ ÀÌ¸§ÀÇ ¸ğµç È°¼º ÀÌÆåÆ®¸¦ Á¤¸®ÇÏ´Â ÇÔ¼ö
+    // íŠ¹ì • ì´ë¦„ì˜ ëª¨ë“  í™œì„± ì´í™íŠ¸ë¥¼ ì •ë¦¬í•˜ëŠ” í•¨ìˆ˜
     public void ClearEffectsByName(string name)
     {
         if (!activeEffects.ContainsKey(name)) return;
 
-        // ¿øº» ¸®½ºÆ®¸¦ ¼øÈ¸ÇÏ¸ç »èÁ¦ÇÏ¸é ¿¡·¯°¡ ³ª¹Ç·Î, º¹»çº»À» ¸¸µé¾î »ç¿ë
+        // ì›ë³¸ ë¦¬ìŠ¤íŠ¸ë¥¼ ìˆœíšŒí•˜ë©° ì‚­ì œí•˜ë©´ ì—ëŸ¬ê°€ ë‚˜ë¯€ë¡œ, ë³µì‚¬ë³¸ì„ ë§Œë“¤ì–´ ì‚¬ìš©
         List<GameObject> effectsToClear = new List<GameObject>(activeEffects[name]);
 
         foreach (var effect in effectsToClear)
         {
-            // Ç®¿¡ ¹İ³³ÇÏ°Å³ª ±×³É ÆÄ±«
+            // í’€ì— ë°˜ë‚©í•˜ê±°ë‚˜ ê·¸ëƒ¥ íŒŒê´´
             ReturnEffectToPool(name, effect);
-            // ¶Ç´Â Destroy(effect);
+            // ë˜ëŠ” Destroy(effect);
         }
 
-        activeEffects[name].Clear(); // ¸®½ºÆ®¸¦ È®½ÇÇÏ°Ô ºñ¿ò
+        activeEffects[name].Clear(); // ë¦¬ìŠ¤íŠ¸ë¥¼ í™•ì‹¤í•˜ê²Œ ë¹„ì›€
     }
 
 }

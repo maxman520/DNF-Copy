@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class MonsterHitbox : MonoBehaviour
 {
-    private Vector3 originPosition; // °ø°İ ÆÇÁ¤ yÃà °è»êÀ» À§ÇÑ ±âÁØ º¤ÅÍ
+    private Vector3 originPosition; // ê³µê²© íŒì • yì¶• ê³„ì‚°ì„ ìœ„í•œ ê¸°ì¤€ ë²¡í„°
     private AttackDetails attackDetails;
 
-    // ÇÑ ¹øÀÇ °ø°İ ¸ğ¼Ç¿¡¼­ ÇÃ·¹ÀÌ¾î¸¦ ¿©·¯ ¹ø ¶§¸®Áö ¾Êµµ·Ï ±â¾ïÇÏ´Â boolº¯¼ö
+    // í•œ ë²ˆì˜ ê³µê²© ëª¨ì…˜ì—ì„œ í”Œë ˆì´ì–´ë¥¼ ì—¬ëŸ¬ ë²ˆ ë•Œë¦¬ì§€ ì•Šë„ë¡ ê¸°ì–µí•˜ëŠ” boolë³€ìˆ˜
     private bool alreadyHit = false;
 
-    // ¿ÜºÎ¿¡¼­ ÀÌ È÷Æ®¹Ú½ºÀÇ °ø°İ Á¤º¸¸¦ ¼³Á¤ÇØÁÖ´Â ÇÔ¼ö
-    // originÀ» »ı·«ÇÒ ½Ã È÷Æ®¹Ú½ºÀÇ PositionÀ» ±âÁØÀ¸·Î yÃà ¹üÀ§¸¦ °è»ê
+    // ì™¸ë¶€ì—ì„œ ì´ íˆíŠ¸ë°•ìŠ¤ì˜ ê³µê²© ì •ë³´ë¥¼ ì„¤ì •í•´ì£¼ëŠ” í•¨ìˆ˜
+    // originì„ ìƒëµí•  ì‹œ íˆíŠ¸ë°•ìŠ¤ì˜ Positionì„ ê¸°ì¤€ìœ¼ë¡œ yì¶• ë²”ìœ„ë¥¼ ê³„ì‚°
     public void Initialize(AttackDetails details, Vector3? origin = null)
     {
         this.attackDetails = details;
         this.originPosition = origin.HasValue ? origin.Value : this.transform.position;
 
-        // È÷Æ®¹Ú½º°¡ È°¼ºÈ­µÉ ¶§¸¶´Ù ÃÊ±âÈ­
+        // íˆíŠ¸ë°•ìŠ¤ê°€ í™œì„±í™”ë  ë•Œë§ˆë‹¤ ì´ˆê¸°í™”
         this.alreadyHit = false;
     }
 
@@ -23,24 +23,24 @@ public class MonsterHitbox : MonoBehaviour
     {
         if (other.CompareTag("PlayerHurtbox"))
         {
-            // °ø°İ Á¤º¸°¡ ¼³Á¤µÇÁö ¾Ê¾Ò´Ù¸é ¾Æ¹«°Íµµ ÇÏÁö ¾ÊÀ½
+            // ê³µê²© ì •ë³´ê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ë‹¤ë©´ ì•„ë¬´ê²ƒë„ í•˜ì§€ ì•ŠìŒ
             if (attackDetails.attackName == null)
             {
-                Debug.Log("°ø°İ Á¤º¸°¡ ¼³Á¤µÇÁö ¾ÊÀ½");
+                Debug.Log("ê³µê²© ì •ë³´ê°€ ì„¤ì •ë˜ì§€ ì•ŠìŒ");
                 return;
             }
             if (alreadyHit) {
-                Debug.Log("ÀÌ¹Ì ¶§·ÈÀ¸¹Ç·Î ¹«½ÃµÊ");
+                Debug.Log("ì´ë¯¸ ë•Œë ¸ìœ¼ë¯€ë¡œ ë¬´ì‹œë¨");
                 return;
-            } // ÀÌ¹Ì ¶§·È´Ù¸é ¹«½Ã
+            } // ì´ë¯¸ ë•Œë ¸ë‹¤ë©´ ë¬´ì‹œ
 
             Player player = Player.Instance;
 
-            // ¸ó½ºÅÍ °ø°İÀÇ YÃà ¹üÀ§ Ã¼Å©
+            // ëª¬ìŠ¤í„° ê³µê²©ì˜ Yì¶• ë²”ìœ„ ì²´í¬
             if (Mathf.Abs(originPosition.y - player.transform.position.y) >= attackDetails.yOffset)
                 return;
 
-            // ¶§¸° °ÍÀ¸·Î ±â·Ï
+            // ë•Œë¦° ê²ƒìœ¼ë¡œ ê¸°ë¡
             alreadyHit = true;
 
             if (player != null)

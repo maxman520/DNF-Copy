@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class PlayerStateBehaviourBase : StateMachineBehaviour
 {
-    [Header("»óÅÂ ¼³Á¤")]
+    [Header("ìƒíƒœ ì„¤ì •")]
     [SerializeField] protected bool Idle = false;
     [SerializeField] protected bool Move = false;
     [SerializeField] protected bool Run = false;
@@ -13,7 +13,7 @@ public abstract class PlayerStateBehaviourBase : StateMachineBehaviour
 
     protected Player player;
 
-    // ÀÌ »óÅÂ·Î ÁøÀÔÇÒ ¶§ È£Ãâ
+    // ì´ ìƒíƒœë¡œ ì§„ì…í•  ë•Œ í˜¸ì¶œ
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         InitializePlayer(animator);
@@ -26,7 +26,7 @@ public abstract class PlayerStateBehaviourBase : StateMachineBehaviour
 
     }
 
-    // ÀÌ »óÅÂ¿¡¼­ ºüÁ®³ª°¥ ¶§ È£Ãâ
+    // ì´ ìƒíƒœì—ì„œ ë¹ ì ¸ë‚˜ê°ˆ ë•Œ í˜¸ì¶œ
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (player == null) return;

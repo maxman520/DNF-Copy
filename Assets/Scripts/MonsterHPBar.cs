@@ -11,33 +11,33 @@ public class MonsterHPBar : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI monsterNameText;
     [SerializeField] private Image faceImage;
-    [SerializeField] private Image hpOverallImage; // ÀüÃ¼ HP ¹Ù
-    [SerializeField] private Image hpFillFrontImage; // ¾ÕÂÊ HP ¹Ù
-    [SerializeField] private Image hpFillBackImage;  // µÚÂÊ HP ¹Ù
-    // [SerializeField] private Image hpFlashImage;   // ÀüÃ¼ HP Á¡¸ê ÀÌ¹ÌÁö
+    [SerializeField] private Image hpOverallImage; // ì „ì²´ HP ë°”
+    [SerializeField] private Image hpFillFrontImage; // ì•ìª½ HP ë°”
+    [SerializeField] private Image hpFillBackImage;  // ë’¤ìª½ HP ë°”
+    // [SerializeField] private Image hpFlashImage;   // ì „ì²´ HP ì ë©¸ ì´ë¯¸ì§€
 
-    [Header("HP ¹Ù »ö»ó (½ºÇÁ¶óÀÌÆ®)")]
+    [Header("HP ë°” ìƒ‰ìƒ (ìŠ¤í”„ë¼ì´íŠ¸)")]
     [SerializeField] private List<Sprite> hpBarSprites;
 
-    [Header("¾Ö´Ï¸ŞÀÌ¼Ç ¼³Á¤")]
+    [Header("ì• ë‹ˆë©”ì´ì…˜ ì„¤ì •")]
     [SerializeField] private GameObject hpFlashPrefab;
     [SerializeField] private Transform hpFlashParent;
-    [SerializeField] private float flashDuration = 0.4f;       // ÀüÃ¼ HP ¾Ö´Ï¸ŞÀÌ¼Ç Á¡¸êÀÌ »ç¶óÁö´Â ½Ã°£
+    [SerializeField] private float flashDuration = 0.4f;       // ì „ì²´ HP ì• ë‹ˆë©”ì´ì…˜ ì ë©¸ì´ ì‚¬ë¼ì§€ëŠ” ì‹œê°„
 
-    [Header("ÀÜ»ó È¿°ú ¼³Á¤")]
-    [SerializeField] private float animDuration = 0.5f; // ÀÜ»óÀÌ µû¶óÀâ´Â µ¥ °É¸®´Â ½Ã°£
+    [Header("ì”ìƒ íš¨ê³¼ ì„¤ì •")]
+    [SerializeField] private float animDuration = 0.5f; // ì”ìƒì´ ë”°ë¼ì¡ëŠ” ë° ê±¸ë¦¬ëŠ” ì‹œê°„
     
     private CanvasGroup canvasGroup;
-    private CancellationTokenSource fillCts; // ³»¿ë¹° ¾Ö´Ï¸ŞÀÌ¼Ç Ãë¼Ò¿ë ÅäÅ«
+    private CancellationTokenSource fillCts; // ë‚´ìš©ë¬¼ ì• ë‹ˆë©”ì´ì…˜ ì·¨ì†Œìš© í† í°
     
-    private Monster currentTarget; // ÇöÀç HP¹ÙÀÇ ÁÖÀÎÀÌ ´©±¸ÀÎÁö
+    private Monster currentTarget; // í˜„ì¬ HPë°”ì˜ ì£¼ì¸ì´ ëˆ„êµ¬ì¸ì§€
 
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
     }
 
-    // ÃÊ»óÈ­ ¼³Á¤
+    // ì´ˆìƒí™” ì„¤ì •
     public void SetFace(Sprite portraitSprite)
     {
         if (faceImage != null && portraitSprite != null)
@@ -47,7 +47,7 @@ public class MonsterHPBar : MonoBehaviour
     }
 
     
-    // HP ¾÷µ¥ÀÌÆ®
+    // HP ì—…ë°ì´íŠ¸
     public void UpdateInfo(string name, float maxHP,  float previousHP, float currentHP,  float hpPerLine)
     {
         if (hpOverallImage == null) return;
@@ -55,56 +55,56 @@ public class MonsterHPBar : MonoBehaviour
         
         monsterNameText.text = name;
 
-        // --- 1. ÀüÃ¼ HP ¹Ù Å©±â ¹× Á¡¸ê Ã³¸® ---
+        // --- 1. ì „ì²´ HP ë°” í¬ê¸° ë° ì ë©¸ ì²˜ë¦¬ ---
         float currentTotalHPRatio = currentHP / maxHP;
         float previousTotalHPRatio = previousHP / maxHP;
 
-        // ÀüÃ¼ HP ¹Ù fillAmount Áï½Ã Á¶Àı
+        // ì „ì²´ HP ë°” fillAmount ì¦‰ì‹œ ì¡°ì ˆ
         hpOverallImage.fillAmount = currentTotalHPRatio;
 
-        // ÀüÃ¼ HP Á¡¸ê ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÀÛ
+        // ì „ì²´ HP ì ë©¸ ì• ë‹ˆë©”ì´ì…˜ ì‹œì‘
         OverallFlashAsync(previousTotalHPRatio).Forget();
 
-        // currentHP°¡ 0ÀÏ ¶§ FloorToInt°¡ -1À» ¹İÈ¯ÇÏ´Â °ÍÀ» ¹æÁö
+        // currentHPê°€ 0ì¼ ë•Œ FloorToIntê°€ -1ì„ ë°˜í™˜í•˜ëŠ” ê²ƒì„ ë°©ì§€
         currentHP = Mathf.Max(0, currentHP - 0.001f);
 
-        // 1. ÇöÀç ¸î ¹øÂ° ÁÙÀÎÁö °è»ê (0ºÎÅÍ ½ÃÀÛ. 0 = »¡°­, 1 = ÁÖÈ², ...)
+        // 1. í˜„ì¬ ëª‡ ë²ˆì§¸ ì¤„ì¸ì§€ ê³„ì‚° (0ë¶€í„° ì‹œì‘. 0 = ë¹¨ê°•, 1 = ì£¼í™©, ...)
         int currentLineIndex = Mathf.FloorToInt(currentHP / hpPerLine);
 
-        // 2. ÇöÀç ÁÙÀÇ ³²Àº HP ºñÀ² °è»ê
+        // 2. í˜„ì¬ ì¤„ì˜ ë‚¨ì€ HP ë¹„ìœ¨ ê³„ì‚°
         float hpInCurrentLine = currentHP % hpPerLine;
         if (hpInCurrentLine == 0)
         {
-            // ³ª¸ÓÁö ¿¬»êÀÌ 0ÀÌ¶ó´Â °ÍÀº ÇØ´ç ÁÙÀÇ Ã¼·ÂÀÌ ²Ë Ã¡´Ù´Â ÀÇ¹Ì
+            // ë‚˜ë¨¸ì§€ ì—°ì‚°ì´ 0ì´ë¼ëŠ” ê²ƒì€ í•´ë‹¹ ì¤„ì˜ ì²´ë ¥ì´ ê½‰ ì°¼ë‹¤ëŠ” ì˜ë¯¸
             hpInCurrentLine = hpPerLine;
         }
         float newFillAmount = hpInCurrentLine / hpPerLine;
 
-        // 3. »ö»ó ¼ø¼­¸¦ °è»ê
+        // 3. ìƒ‰ìƒ ìˆœì„œë¥¼ ê³„ì‚°
         int colorCount = hpBarSprites.Count;
         int frontColorIndex = currentLineIndex % colorCount;
         int backColorIndex = (currentLineIndex - 1) >= 0 ? (currentLineIndex - 1) % colorCount : 0;
 
-        // ÇöÀç Front ¹ÙÀÇ fillAmount¸¦ Flash ¹Ù¿¡ ¸ÕÀú ¼³Á¤
+        // í˜„ì¬ Front ë°”ì˜ fillAmountë¥¼ Flash ë°”ì— ë¨¼ì € ì„¤ì •
         hpFillFrontImage.sprite = hpBarSprites[frontColorIndex];
 
-        // µŞÂÊ ¹Ù ¼³Á¤ (¸¶Áö¸· ÁÙÀÏ ¶§´Â µŞ¹è°æÀÌ º¸¿©¾ß ÇÔ)
-        if (currentLineIndex > 0) // ÇöÀç ÁÙÀÇ ÀÎµ¦½º°¡ 0º¸´Ù Å©´Ù¸é (Áï, ¸¶Áö¸· ÁÙÀÌ ¾Æ´Ï¶ó¸é)
+        // ë’·ìª½ ë°” ì„¤ì • (ë§ˆì§€ë§‰ ì¤„ì¼ ë•ŒëŠ” ë’·ë°°ê²½ì´ ë³´ì—¬ì•¼ í•¨)
+        if (currentLineIndex > 0) // í˜„ì¬ ì¤„ì˜ ì¸ë±ìŠ¤ê°€ 0ë³´ë‹¤ í¬ë‹¤ë©´ (ì¦‰, ë§ˆì§€ë§‰ ì¤„ì´ ì•„ë‹ˆë¼ë©´)
         {
             hpFillBackImage.enabled = true;
-            // ´ÙÀ½ ÁÙ(ÀÎµ¦½º - 1)ÀÇ »ö»óÀ» ¹è°æÀ¸·Î »ç¿ë
+            // ë‹¤ìŒ ì¤„(ì¸ë±ìŠ¤ - 1)ì˜ ìƒ‰ìƒì„ ë°°ê²½ìœ¼ë¡œ ì‚¬ìš©
             hpFillBackImage.sprite = hpBarSprites[backColorIndex];
         }
         else
         {
-            // ¸¶Áö¸· ÁÙ(ÀÎµ¦½º 0)ÀÏ ¶§´Â µŞ ¹Ù¸¦ ºñÈ°¼ºÈ­
+            // ë§ˆì§€ë§‰ ì¤„(ì¸ë±ìŠ¤ 0)ì¼ ë•ŒëŠ” ë’· ë°”ë¥¼ ë¹„í™œì„±í™”
             hpFillBackImage.enabled = false;
         }
 
-        // ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÀÛ
+        // ì• ë‹ˆë©”ì´ì…˜ ì‹œì‘
         FillAnimationAsync(newFillAmount).Forget();
 
-        // Ã¼·ÂÀÌ 0ÀÌ µÇ¸é ¾ÕÂÊ ¹Ùµµ ºñÈ°¼ºÈ­
+        // ì²´ë ¥ì´ 0ì´ ë˜ë©´ ì•ìª½ ë°”ë„ ë¹„í™œì„±í™”
         if (currentHP <= 0)
         {
             hpFillFrontImage.enabled = false;
@@ -115,7 +115,7 @@ public class MonsterHPBar : MonoBehaviour
         }
     }
 
-    // ÇÃ·¹ÀÌ¾î¿¡°Ô µ¥¹ÌÁö¸¦ ¹Ş¾Æ ÇØ´ç ÁÙÀÇ ¸ó½ºÅÍ HP¹Ù°¡ ÁÙ¾îµå´Â ¾Ö´Ï¸ŞÀÌ¼Ç
+    // í”Œë ˆì´ì–´ì—ê²Œ ë°ë¯¸ì§€ë¥¼ ë°›ì•„ í•´ë‹¹ ì¤„ì˜ ëª¬ìŠ¤í„° HPë°”ê°€ ì¤„ì–´ë“œëŠ” ì• ë‹ˆë©”ì´ì…˜
     private async UniTask FillAnimationAsync(float newFillAmount)
     {
         fillCts?.Cancel();
@@ -129,18 +129,18 @@ public class MonsterHPBar : MonoBehaviour
         
         try
         {
-            // Á¡Â÷ ÁÙ¾îµé°Ô ÇÔ
+            // ì ì°¨ ì¤„ì–´ë“¤ê²Œ í•¨
             float elapsedTime = 0f;
             while (elapsedTime < animDuration && !token.IsCancellationRequested)
             {
-                // ÀÌÀü ÁÙ¿¡¼­ ´ÙÀ½ ÁÙ·Î ³Ñ¾î°¥ ¶§, startFillAmount°¡ targetFillAmountº¸´Ù ÀÛÀ» ¼ö ÀÖÀ½
-                // ÀÌ °æ¿ì ¾Ö´Ï¸ŞÀÌ¼Ç ¾øÀÌ Áï½Ã ¹İ¿µÇØ¾ß ÀÚ¿¬½º·¯¿ò
+                // ì´ì „ ì¤„ì—ì„œ ë‹¤ìŒ ì¤„ë¡œ ë„˜ì–´ê°ˆ ë•Œ, startFillAmountê°€ targetFillAmountë³´ë‹¤ ì‘ì„ ìˆ˜ ìˆìŒ
+                // ì´ ê²½ìš° ì• ë‹ˆë©”ì´ì…˜ ì—†ì´ ì¦‰ì‹œ ë°˜ì˜í•´ì•¼ ìì—°ìŠ¤ëŸ¬ì›€
                 if (oldFillAmount < newFillAmount)
                     oldFillAmount = newFillAmount;
 
                 float tmp = Mathf.Lerp(oldFillAmount, newFillAmount, elapsedTime / animDuration);
 
-                // FrontImageÀÇ Color ÇÁ·ÎÆÛÆ¼¸¦ º¯°æ
+                // FrontImageì˜ Color í”„ë¡œí¼í‹°ë¥¼ ë³€ê²½
                 hpFillFrontImage.fillAmount = tmp;
 
                 elapsedTime += Time.deltaTime;
@@ -149,17 +149,17 @@ public class MonsterHPBar : MonoBehaviour
         }
         catch (OperationCanceledException)
         {
-            // ¿¹¿Ü Ã³¸®
+            // ì˜ˆì™¸ ì²˜ë¦¬
         }
         finally
         {
             hpFillFrontImage.fillAmount = newFillAmount;
         }
     }
-    // ÇÃ·¹ÀÌ¾î¿¡°Ô µ¥¹ÌÁö¸¦ ¹Ş¾Æ ÀüÃ¼ ¸ó½ºÅÍ HP¹Ù°¡ ÁÙ¾îµå´Â ¾Ö´Ï¸ŞÀÌ¼Ç
+    // í”Œë ˆì´ì–´ì—ê²Œ ë°ë¯¸ì§€ë¥¼ ë°›ì•„ ì „ì²´ ëª¬ìŠ¤í„° HPë°”ê°€ ì¤„ì–´ë“œëŠ” ì• ë‹ˆë©”ì´ì…˜
     private async UniTaskVoid OverallFlashAsync(float previousFillRatio)
     {
-        // 1. Á¡¸ê¿ë ÀÌ¹ÌÁö º¹Á¦
+        // 1. ì ë©¸ìš© ì´ë¯¸ì§€ ë³µì œ
         var flash = EffectManager.Instance.PlayEffect(hpFlashPrefab.name, hpFlashParent);
 
         Image flashImage = flash.GetComponent<Image>();
@@ -167,7 +167,7 @@ public class MonsterHPBar : MonoBehaviour
         flashImage.enabled = true;
         flashImage.color = Color.white;
 
-        // 2. Á¡¸ê ¾Ö´Ï¸ŞÀÌ¼Ç
+        // 2. ì ë©¸ ì• ë‹ˆë©”ì´ì…˜
         float elapsedTime = 0f;
         while (elapsedTime < flashDuration)
         {
@@ -177,7 +177,7 @@ public class MonsterHPBar : MonoBehaviour
             await UniTask.Yield();
         }
 
-        // 3. Á¤¸®
+        // 3. ì •ë¦¬
         if (EffectManager.Instance != null)
         {
             EffectManager.Instance.ReturnEffectToPool(hpFlashPrefab.name, flash);
@@ -188,21 +188,21 @@ public class MonsterHPBar : MonoBehaviour
         }
     }
 
-    // ¸ğµç È°¼º ÇÃ·¡½Ã ¿ÀºêÁ§Æ®¸¦ ÆÄ±«ÇÏ´Â ÇïÆÛ ÇÔ¼ö
+    // ëª¨ë“  í™œì„± í”Œë˜ì‹œ ì˜¤ë¸Œì íŠ¸ë¥¼ íŒŒê´´í•˜ëŠ” í—¬í¼ í•¨ìˆ˜
 
-    // UI º¸ÀÌ±â
+    // UI ë³´ì´ê¸°
     public void Show(Monster newTarget)
     {
-        // µÎ °¡Áö Á¶°ÇÀ» ¸ğµÎ ¸¸Á·ÇÒ ¶§ ÀÌÀü flash ÀÌÆåÆ® Á¤¸®
-        // 1. Å¸°ÙÀÌ ¹Ù²î¾ú´ÂÁö
-        // 2. È°¼ºµÈ »óÅÂÀÇ ÀÌÆåÆ®°¡ ³²¾ÆÀÖ´ÂÁö
+        // ë‘ ê°€ì§€ ì¡°ê±´ì„ ëª¨ë‘ ë§Œì¡±í•  ë•Œ ì´ì „ flash ì´í™íŠ¸ ì •ë¦¬
+        // 1. íƒ€ê²Ÿì´ ë°”ë€Œì—ˆëŠ”ì§€
+        // 2. í™œì„±ëœ ìƒíƒœì˜ ì´í™íŠ¸ê°€ ë‚¨ì•„ìˆëŠ”ì§€
         bool targetChanged = (currentTarget != null && currentTarget != newTarget);
         bool hasActiveFlashes = EffectManager.Instance.GetActiveEffectCount(hpFlashPrefab.name) > 0;
         
         if (targetChanged && hasActiveFlashes)
             EffectManager.Instance.ClearEffectsByName(hpFlashPrefab.name);
 
-        // »õ·Î¿î Å¸°Ù ¼³Á¤
+        // ìƒˆë¡œìš´ íƒ€ê²Ÿ ì„¤ì •
         this.currentTarget = newTarget;
 
         canvasGroup.alpha = 1f;

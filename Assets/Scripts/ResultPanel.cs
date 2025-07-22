@@ -1,19 +1,23 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Cysharp.Threading.Tasks;
+using System;
 
-// ´øÀü °á°ú µ¥ÀÌÅÍ¸¦ ´ãÀ» °£´ÜÇÑ ±¸Á¶Ã¼
+// ë˜ì „ ê²°ê³¼ ë°ì´í„°ë¥¼ ë‹´ì„ ê°„ë‹¨í•œ êµ¬ì¡°ì²´
 public struct DungeonResultData
 {
+    public float ClearTime;
     public int HuntEXP;
     public int ClearEXP;
+    public Sprite RankSprite;
 }
 
 [RequireComponent(typeof(CanvasGroup))]
 public class ResultPanel : MonoBehaviour
 {
-    [Header("UI ÂüÁ¶")]
+    [Header("UI ì°¸ì¡°")]
+    [SerializeField] private Image rankImage;
+    [SerializeField] private TextMeshProUGUI clearTimeText;
     [SerializeField] private TextMeshProUGUI totalExpText;
     [SerializeField] private TextMeshProUGUI huntExpText;
     [SerializeField] private TextMeshProUGUI clearExpText;
@@ -26,13 +30,15 @@ public class ResultPanel : MonoBehaviour
     {
         canvasGroup = GetComponent<CanvasGroup>();
         
-        // Ã³À½¿¡´Â »óÈ£ÀÛ¿ë ºÒ°¡
-        gameObject.SetActive(false);
+        // ì²˜ìŒì—ëŠ” íˆ¬ëª…í•˜ê³  ìƒí˜¸ì‘ìš© ë¶ˆê°€
+        canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
+        this.gameObject.SetActive(false);
     }
+
     private void Start()
     {   
-        // ¹öÆ° Å¬¸¯ ÀÌº¥Æ®¿¡ DungeonManagerÀÇ ÇÔ¼öµéÀ» ¿¬°á
+        // ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ì— DungeonManagerì˜ í•¨ìˆ˜ë“¤ì„ ì—°ê²°
         if (DungeonManager.Instance != null)
         {
             returnTownButton.onClick.AddListener(DungeonManager.Instance.ReturnToTown);
@@ -40,16 +46,34 @@ public class ResultPanel : MonoBehaviour
         }
     }
 
-    // °á°ú µ¥ÀÌÅÍ¸¦ ¹Ş¾Æ UI¸¦ Ã¤¿ì°í, ÆĞ³ÎÀ» º¸¿©ÁÖ´Â ¸ŞÀÎ ÇÔ¼ö
-    public void Show(DungeonResultData resultData)
+    // ê²°ê³¼ ë°ì´í„°ë¥¼ ë°›ì•„ UIë¥¼ ì±„ìš°ëŠ” í•¨ìˆ˜
+    public void SetResultData(DungeonResultData resultData)
     {
-        // 1. µ¥ÀÌÅÍ·Î UI ÅØ½ºÆ® ¾÷µ¥ÀÌÆ®
-        huntExpText.text = $"{resultData.HuntEXP:N0}"; // N0´Â Ãµ ´ÜÀ§ ÄŞ¸¶
-        clearExpText.text = $"{resultData.ClearEXP:N0}";
-        totalExpText.text = $"{resultData.HuntEXP+resultData.ClearEXP:N0}";
+        // 1. ë­í¬ ì´ë¯¸ì§€ ì„¤ì •
+        if (rankImage != null)
+        {
+            if (resultData.RankSprite != null)
+            {
+                rankImage.sprite = resultData.RankSprite;
+                rankImage.SetNativeSize();
+                rankImage.gameObject.SetActive(true);
+            }
+            else
+            {
+                // í‘œì‹œí•  ë­í¬ê°€ ì—†ìœ¼ë©´ ì´ë¯¸ì§€ë¥¼ ë¹„í™œì„±í™”
+                Debug.LogError("í‘œì‹œí•  ë­í¬ ìŠ¤í”„ë¼ì´íŠ¸ê°€ ì—†ìŒ!");
+                rankImage.gameObject.SetActive(false);
+            }
+        }
 
-        // 2. È°¼ºÈ­
-        gameObject.SetActive(true);
+        // 2. ë°ì´í„°ë¡œ UI í…ìŠ¤íŠ¸ ì—…ë°ì´íŠ¸
+        TimeSpan timeSpan = TimeSpan.FromSeconds(resultData.ClearTime);
+        clearTimeText.text = $"{timeSpan.Minutes}ë¶„ {timeSpan.Seconds}ì´ˆ {timeSpan.Milliseconds}";
+        huntExpText.text = $"{resultData.HuntEXP:N0}"; // N0ëŠ” ì²œ ë‹¨ìœ„ ì½¤ë§ˆ
+        clearExpText.text = $"{resultData.ClearEXP:N0}";
+        totalExpText.text = $"{resultData.HuntEXP + resultData.ClearEXP:N0}";
+
+        // 3. í™œì„±í™”
         canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
     }

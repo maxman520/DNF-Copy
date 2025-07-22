@@ -13,7 +13,7 @@ public class RunCommand : ICommand
     }
     public bool Execute(BehaviourController behaviourController)
     {
-        // behaviourControllerÀÇ Á¡ÇÁ ·ÎÁ÷À» È£Ãâ
+        // behaviourControllerì˜ ì í”„ ë¡œì§ì„ í˜¸ì¶œ
         return behaviourController.PerformRun(context);
     }
 }
@@ -26,7 +26,7 @@ public class JumpCommand : ICommand
     }
     public bool Execute(BehaviourController behaviourController)
     {
-        // behaviourControllerÀÇ Á¡ÇÁ ·ÎÁ÷À» È£Ãâ
+        // behaviourControllerì˜ ì í”„ ë¡œì§ì„ í˜¸ì¶œ
         return behaviourController.PerformJump(context);
     }
 }
@@ -40,7 +40,7 @@ public class AttackCommand : ICommand
     }
     public bool Execute(BehaviourController behaviourController)
     {
-        // behaviourControllerÀÇ °ø°İ ·ÎÁ÷À» È£Ãâ
+        // behaviourControllerì˜ ê³µê²© ë¡œì§ì„ í˜¸ì¶œ
         return behaviourController.PerformAttack(context);
     }
 }
@@ -56,7 +56,7 @@ public class SkillCommand : ICommand
     }
     public bool Execute(BehaviourController behaviourController)
     {
-        // behaviourControllerÀÇ ½ºÅ³ ½ÃÀü ·ÎÁ÷À» È£Ãâ
+        // behaviourControllerì˜ ìŠ¤í‚¬ ì‹œì „ ë¡œì§ì„ í˜¸ì¶œ
         return behaviourController.PerformSkill(context, skillIndex);
     }
 }

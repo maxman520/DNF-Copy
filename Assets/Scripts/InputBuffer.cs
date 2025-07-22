@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq; // Linq »ç¿ëÀ» À§ÇØ Ãß°¡
+using System.Linq; // Linq ì‚¬ìš©ì„ ìœ„í•´ ì¶”ê°€
 
 public class InputBuffer
 {
     private readonly Queue<(ICommand command, float timestamp)> buffer = new Queue<(ICommand, float)>();
-    private readonly float bufferTime; // ¹öÆÛ¿¡ µé¾î¿Â ÀÔ·ÂÀÌ À¯È¿ÇÑ ½Ã°£ (ÃÊ)
+    private readonly float bufferTime; // ë²„í¼ì— ë“¤ì–´ì˜¨ ì…ë ¥ì´ ìœ íš¨í•œ ì‹œê°„ (ì´ˆ)
 
     public InputBuffer(float bufferTime)
     {
@@ -14,14 +14,14 @@ public class InputBuffer
 
     public void AddCommand(ICommand command)
     {
-        // (Ä¿¸Çµå, »ı¼º ½Ã°£) Æ©ÇÃÀ» Å¥¿¡ Ãß°¡
+        // (ì»¤ë§¨ë“œ, ìƒì„± ì‹œê°„) íŠœí”Œì„ íì— ì¶”ê°€
         buffer.Enqueue((command, Time.time));
     }
 
-    // ¹öÆÛÀÇ ¸Ç ¾Õ Ä¿¸Çµå¸¦ 'µé¿©´Ùº¸±â'
+    // ë²„í¼ì˜ ë§¨ ì• ì»¤ë§¨ë“œë¥¼ 'ë“¤ì—¬ë‹¤ë³´ê¸°'
     public ICommand PeekCommand()
     {
-        // ³Ê¹« ¿À·¡µÈ Ä¿¸Çµå´Â ¿©±â¼­ Á¤¸®
+        // ë„ˆë¬´ ì˜¤ë˜ëœ ì»¤ë§¨ë“œëŠ” ì—¬ê¸°ì„œ ì •ë¦¬
         while (buffer.Count > 0 && Time.time - buffer.Peek().timestamp > bufferTime)
         {
             buffer.Dequeue();
@@ -29,14 +29,14 @@ public class InputBuffer
 
         if (buffer.Count > 0)
         {
-            // Å¥ÀÇ ¸Ç ¾Õ ¿ä¼Ò¸¦ ¹İÈ¯
+            // íì˜ ë§¨ ì• ìš”ì†Œë¥¼ ë°˜í™˜
             return buffer.Peek().command;
         }
 
         return null;
     }
 
-    // ¹öÆÛÀÇ ¸Ç ¾Õ Ä¿¸Çµå¸¦ Á¦°Å
+    // ë²„í¼ì˜ ë§¨ ì• ì»¤ë§¨ë“œë¥¼ ì œê±°
     public void RemoveCommand()
     {
         if (buffer.Count > 0)
@@ -45,10 +45,10 @@ public class InputBuffer
         }
     }
 
-    // µğ¹ö±ëÀ» À§ÇØ ÇöÀç ¹öÆÛÀÇ ³»¿ëÀ» ¹®ÀÚ¿­ ¸®½ºÆ®·Î ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    // ë””ë²„ê¹…ì„ ìœ„í•´ í˜„ì¬ ë²„í¼ì˜ ë‚´ìš©ì„ ë¬¸ìì—´ ë¦¬ìŠ¤íŠ¸ë¡œ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     public List<string> GetBufferedCommandNames()
     {
-        // ÇöÀç ¹öÆÛÀÇ ³»¿ëÀ» º¹»çÇÏ¿© Ã³¸® (¿øº» ÈÑ¼Õ ¹æÁö)
+        // í˜„ì¬ ë²„í¼ì˜ ë‚´ìš©ì„ ë³µì‚¬í•˜ì—¬ ì²˜ë¦¬ (ì›ë³¸ í›¼ì† ë°©ì§€)
         return buffer.Select(item => $"{item.command.GetType().Name} ({(bufferTime - (Time.time - item.timestamp)):F2}s left)").ToList();
     }
 }

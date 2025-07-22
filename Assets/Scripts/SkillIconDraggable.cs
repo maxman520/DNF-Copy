@@ -1,10 +1,10 @@
-// ½ºÅ³¼¥ Ã¢ÀÇ µå·¡±× °¡´ÉÇÑ ½ºÅ³ ¾ÆÀÌÄÜ¿¡ ºÙÀÏ ½ºÅ©¸³Æ®
+// ìŠ¤í‚¬ìƒµ ì°½ì˜ ë“œë˜ê·¸ ê°€ëŠ¥í•œ ìŠ¤í‚¬ ì•„ì´ì½˜ì— ë¶™ì¼ ìŠ¤í¬ë¦½íŠ¸
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
-    public SkillData skillData; // ÀÌ ¾ÆÀÌÄÜÀÌ ¾î¶² ½ºÅ³ÀÎÁö
+    public SkillData skillData; // ì´ ì•„ì´ì½˜ì´ ì–´ë–¤ ìŠ¤í‚¬ì¸ì§€
     private SkillShopUI skillShopUI;
 
     private RectTransform rectTransform;
@@ -14,7 +14,7 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
 
 
     
-    // ÀÚ½ÅÀ» ´ã°í ÀÖ´Â ÃÖ»óÀ§ Äµ¹ö½º¸¦ ÀúÀåÇÒ º¯¼ö
+    // ìì‹ ì„ ë‹´ê³  ìˆëŠ” ìµœìƒìœ„ ìº”ë²„ìŠ¤ë¥¼ ì €ì¥í•  ë³€ìˆ˜
     [SerializeField]private Canvas parentCanvas;
 
     private void Awake()
@@ -25,10 +25,10 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
         skillShopUI = GetComponentInParent<SkillShopUI>();
     }
 
-    // ¾ÆÀÌÄÜÀÌ Å¬¸¯µÇ¾úÀ» ¶§ È£Ãâ
+    // ì•„ì´ì½˜ì´ í´ë¦­ë˜ì—ˆì„ ë•Œ í˜¸ì¶œ
     public void OnPointerClick(PointerEventData eventData)
     {
-        // µå·¡±× ÁßÀÎ »óÅÂ¿¡¼­´Â Å¬¸¯À¸·Î Ã³¸®ÇÏÁö ¾ÊÀ½ (¼±ÅÃÀû)
+        // ë“œë˜ê·¸ ì¤‘ì¸ ìƒíƒœì—ì„œëŠ” í´ë¦­ìœ¼ë¡œ ì²˜ë¦¬í•˜ì§€ ì•ŠìŒ (ì„ íƒì )
         if (eventData.dragging)
         {
             return;
@@ -36,31 +36,31 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
 
         if (skillShopUI != null)
         {
-            // ½ºÅ³¼¥ ¸Å´ÏÀúÀÇ ShowDescription ÇÔ¼ö¸¦ È£Ãâ
+            // ìŠ¤í‚¬ìƒµ ë§¤ë‹ˆì €ì˜ ShowDescription í•¨ìˆ˜ë¥¼ í˜¸ì¶œ
             skillShopUI.ShowDescription(this.skillData);
-            Debug.Log($"'{skillData.skillName}' ¾ÆÀÌÄÜ Å¬¸¯µÊ. ¼³¸í Ç¥½Ã ¿äÃ»");
+            Debug.Log($"'{skillData.skillName}' ì•„ì´ì½˜ í´ë¦­ë¨. ì„¤ëª… í‘œì‹œ ìš”ì²­");
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // µå·¡±× ½ÃÀÛ ½Ã »óÅÂ ÀúÀå
+        // ë“œë˜ê·¸ ì‹œì‘ ì‹œ ìƒíƒœ ì €ì¥
         startPosition = rectTransform.position;
         startParent = transform.parent;
 
-        canvasGroup.alpha = 0.6f; // ¹İÅõ¸íÇÏ°Ô
-        canvasGroup.blocksRaycasts = false; // µå·Ó ÁöÁ¡À» °¨ÁöÇÒ ¼ö ÀÖµµ·Ï ·¹ÀÌÄ³½ºÆ®¸¦ Åë°ú½ÃÅ´
+        canvasGroup.alpha = 0.6f; // ë°˜íˆ¬ëª…í•˜ê²Œ
+        canvasGroup.blocksRaycasts = false; // ë“œë¡­ ì§€ì ì„ ê°ì§€í•  ìˆ˜ ìˆë„ë¡ ë ˆì´ìºìŠ¤íŠ¸ë¥¼ í†µê³¼ì‹œí‚´
 
-        // µå·¡±× Áß¿¡´Â ÃÖ»óÀ§ Äµ¹ö½º ÀÚ½ÄÀ¸·Î ¿Å°Ü¼­ ´Ù¸¥ UI¿¡ °¡·ÁÁöÁö ¾Ê°Ô ÇÔ
+        // ë“œë˜ê·¸ ì¤‘ì—ëŠ” ìµœìƒìœ„ ìº”ë²„ìŠ¤ ìì‹ìœ¼ë¡œ ì˜®ê²¨ì„œ ë‹¤ë¥¸ UIì— ê°€ë ¤ì§€ì§€ ì•Šê²Œ í•¨
         transform.SetParent(parentCanvas.transform);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // ¸¶¿ì½º À§Ä¡¸¦ µû¶ó ¾ÆÀÌÄÜ ÀÌµ¿
+        // ë§ˆìš°ìŠ¤ ìœ„ì¹˜ë¥¼ ë”°ë¼ ì•„ì´ì½˜ ì´ë™
         // rectTransform.position = Input.mousePosition;
 
-        // Input.mousePosition ´ë½Å eventData.position »ç¿ë
+        // Input.mousePosition ëŒ€ì‹  eventData.position ì‚¬ìš©
         rectTransform.position = eventData.position;
     }
 
@@ -69,7 +69,7 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
 
-        // ¿ø·¡ À§Ä¡¿Í ºÎ¸ğ·Î µÇµ¹¾Æ°¨
+        // ì›ë˜ ìœ„ì¹˜ì™€ ë¶€ëª¨ë¡œ ë˜ëŒì•„ê°
         rectTransform.position = startPosition;
         transform.SetParent(startParent);
     }

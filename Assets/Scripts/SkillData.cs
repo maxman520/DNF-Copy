@@ -3,12 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Skill Data", menuName = "Data/Skill Data")]
 public class SkillData : ScriptableObject
 {
-    [Header("±âº» Á¤º¸")]
+    [Header("ê¸°ë³¸ ì •ë³´")]
     public string skillName;
     [TextArea] public string description;
     public Sprite skillIcon;
 
-    [Header("ÇÙ½É ´É·ÂÄ¡")]
+    [Header("í•µì‹¬ ëŠ¥ë ¥ì¹˜")]
     public float coolTime = 1f;
     public float manaCost = 10f;
 

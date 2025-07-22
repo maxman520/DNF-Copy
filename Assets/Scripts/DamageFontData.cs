@@ -3,6 +3,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DamageFontData", menuName = "Data/Damage Font Data")]
 public class DamageFontData : ScriptableObject
 {
-    // ÀÎ½ºÆåÅÍ¿¡¼­ 0ºÎÅÍ 9±îÁö ¼ø¼­´ë·Î ½ºÇÁ¶óÀÌÆ®¸¦ ÇÒ´ç
+    // ì¸ìŠ¤í™í„°ì—ì„œ 0ë¶€í„° 9ê¹Œì§€ ìˆœì„œëŒ€ë¡œ ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ í• ë‹¹
     public Sprite[] numberSprites = new Sprite[10];
 }

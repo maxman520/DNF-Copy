@@ -19,7 +19,7 @@ public enum PlayerAnimState
 public class Player : Singleton<Player>
 {
     public PlayerStat Stats { get; private set; }
-    [Header("ÇÃ·¹ÀÌ¾î ½ºÅÈ")]
+    [Header("í”Œë ˆì´ì–´ ìŠ¤íƒ¯")]
     public float Atk;
     public float Def;
     public float MaxHP;
@@ -28,9 +28,12 @@ public class Player : Singleton<Player>
     public float CurrentMP;
     public float WalkSpeed;
     public float RunSpeed;
+    public int CurrentEXP;
+    public int Level = 1;
+    public int RequiredEXP = 1000; // 1ë ˆë²¨ì—ì„œ 2ë ˆë²¨ë¡œ ê°€ëŠ” ë° í•„ìš”í•œ ê²½í—˜ì¹˜
 
 
-    // »óÅÂ º¯¼ö
+    // ìƒíƒœ ë³€ìˆ˜
     public bool IsGrounded = true;
     public bool IsRunning = false;
     public bool IsMoving { get; set; } = false;
@@ -40,10 +43,10 @@ public class Player : Singleton<Player>
     public bool CanContinueAttack { get; set; } = false;
     public int AttackCounter = 0;
 
-    [Header("°ø°İ Á¤º¸")]
+    [Header("ê³µê²© ì •ë³´")]
     public AttackDetails[] AttackDetails;
-    [Header("È÷Æ®¹Ú½º ÂüÁ¶")]
-    [SerializeField] private PlayerHitbox comboHitbox; // ÀÏ¹İ ÄŞº¸ °ø°İ¿¡ »ç¿ëÇÒ È÷Æ®¹Ú½º
+    [Header("íˆíŠ¸ë°•ìŠ¤ ì°¸ì¡°")]
+    [SerializeField] private PlayerHitbox comboHitbox; // ì¼ë°˜ ì½¤ë³´ ê³µê²©ì— ì‚¬ìš©í•  íˆíŠ¸ë°•ìŠ¤
 
 
     private InputHandler inputHandler;
@@ -53,7 +56,7 @@ public class Player : Singleton<Player>
 
     public PlayerAnimState CurrentAnimState { get; set; }
 
-    // ÄÄÆ÷³ÍÆ® ÂüÁ¶
+    // ì»´í¬ë„ŒíŠ¸ ì°¸ì¡°
     public Rigidbody2D Rb { get; private set; }
     public Animator Anim { get; private set; }
     public Collider2D PlayerGround { get; private set; }
@@ -62,30 +65,30 @@ public class Player : Singleton<Player>
 
     protected override void Awake()
     {
-        // ½Ì±ÛÅÏ ÆĞÅÏ
+        // ì‹±ê¸€í„´ íŒ¨í„´
         base.Awake();
 
         CurrentAnimState = PlayerAnimState.Idle;
 
-        // ÄÄÆ÷³ÍÆ® ÂüÁ¶ º¯¼ö ÃÊ±âÈ­
+        // ì»´í¬ë„ŒíŠ¸ ì°¸ì¡° ë³€ìˆ˜ ì´ˆê¸°í™”
         Rb = GetComponent<Rigidbody2D>();
         Anim = GetComponentInChildren<Animator>();
         PlayerGround = transform.Find("Player_Ground").GetComponent<BoxCollider2D>();
         VisualsTransform = transform.Find("Visuals");
         HurtboxTransform = VisualsTransform.Find("Hurtbox");
 
-        // ÄÁÆ®·Ñ·¯ ÃÊ±âÈ­
+        // ì»¨íŠ¸ë¡¤ëŸ¬ ì´ˆê¸°í™”
         inputHandler = new InputHandler();
         animController = new AnimController(this);
         skillManager = GetComponent<SkillManager>();
         behaviourController = new BehaviourController(this, inputHandler, animController, skillManager);
 
         if (PlayerGround == null)
-            Debug.LogError("PlayerGround¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.", this);
+            Debug.LogError("PlayerGroundë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.", this);
         if (VisualsTransform == null)
-            Debug.LogError("Visuals TransformÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.", this);
+            Debug.LogError("Visuals Transformì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.", this);
 
-        // PlayerStat ·Îµå
+        // PlayerStat ë¡œë“œ
         Stats = GetComponent<PlayerStat>();
         if (Stats != null)
         {
@@ -103,23 +106,23 @@ public class Player : Singleton<Player>
     private void Update()
     {
         HandleCommands();
-        behaviourController.Flip(); // ¹æÇâ ÀüÈ¯ Ã³¸®
-        behaviourController.HandleGravity(); // ÇÃ·¹ÀÌ¾î visualsÀÇ localPosition.y¿¡ µû¶ó Áß·Â Ã³¸®
-        animController.UpdateAnimations(); // ¾Ö´Ï¸ŞÀÌ¼Ç Ã³¸®
+        behaviourController.Flip(); // ë°©í–¥ ì „í™˜ ì²˜ë¦¬
+        behaviourController.HandleGravity(); // í”Œë ˆì´ì–´ visualsì˜ localPosition.yì— ë”°ë¼ ì¤‘ë ¥ ì²˜ë¦¬
+        animController.UpdateAnimations(); // ì• ë‹ˆë©”ì´ì…˜ ì²˜ë¦¬
     }
 
     private void FixedUpdate()
     {
-        behaviourController.ApplyMovement(); // ÇÃ·¹ÀÌ¾î ÀÌµ¿ Ã³¸®
+        behaviourController.ApplyMovement(); // í”Œë ˆì´ì–´ ì´ë™ ì²˜ë¦¬
     }
     private void HandleCommands()
     {
-        // ¹öÆÛ¿¡¼­ Ä¿¸Çµå¸¦ ÇÏ³ª °¡Á®¿È
+        // ë²„í¼ì—ì„œ ì»¤ë§¨ë“œë¥¼ í•˜ë‚˜ ê°€ì ¸ì˜´
         ICommand command = inputHandler.PeekCommand();
 
         if (command != null)
         {
-            // Ä¿¸Çµå¸¦ ½ÇÇà, ¼º°øÇÏ¸é Ä¿¸Çµå¸¦ ¹öÆÛ¿¡¼­ Á¦°Å
+            // ì»¤ë§¨ë“œë¥¼ ì‹¤í–‰, ì„±ê³µí•˜ë©´ ì»¤ë§¨ë“œë¥¼ ë²„í¼ì—ì„œ ì œê±°
             if (command.Execute(behaviourController))
             {
                 inputHandler.RemoveCommand();
@@ -133,26 +136,26 @@ public class Player : Singleton<Player>
 
     public void OnDamaged(AttackDetails attackDetails, Vector3 attackPosition)
     {
-        // ÀÔÀ» µ¥¹ÌÁö °è»ê
+        // ì…ì„ ë°ë¯¸ì§€ ê³„ì‚°
         float damage = CalculateDamage(attackDetails);
 
-        // µ¥¹ÌÁö ÅØ½ºÆ® Ãâ·Â
+        // ë°ë¯¸ì§€ í…ìŠ¤íŠ¸ ì¶œë ¥
         EffectManager.Instance.PlayEffect("HurtDamageText",HurtboxTransform.position, Quaternion.identity, damage);
 
-        // ÇÇ°İ ¹İÀÀ
+        // í”¼ê²© ë°˜ì‘
         behaviourController.HandleHurt(attackDetails, attackPosition);
 
-        // ÀÌ¹Ì Á×¾ú´Ù¸é µ¥¹ÌÁö Àû¿ëX. return
+        // ì´ë¯¸ ì£½ì—ˆë‹¤ë©´ ë°ë¯¸ì§€ ì ìš©X. return
 
-        // µ¥¹ÌÁö Àû¿ë
+        // ë°ë¯¸ì§€ ì ìš©
         // ex) health -= damage;
-        // Debug.Log(damage + " ¸¸Å­ÀÇ ÇÇÇØ¸¦ ÀÔÀ½");
-        // ex) behaviourController.ApplyKnockback(...); // ³Ë¹é ¹× ÇÇ°İ ¹İÀÀ Ã³¸®
-        // BehaviourController¿¡ À§ÀÓÇÏ´Â °ÍÀÌ ÁÁÀ½
+        // Debug.Log(damage + " ë§Œí¼ì˜ í”¼í•´ë¥¼ ì…ìŒ");
+        // ex) behaviourController.ApplyKnockback(...); // ë„‰ë°± ë° í”¼ê²© ë°˜ì‘ ì²˜ë¦¬
+        // BehaviourControllerì— ìœ„ì„í•˜ëŠ” ê²ƒì´ ì¢‹ìŒ
     }
     private float CalculateDamage(AttackDetails attackDetails)
     {
-        // !! µ¥¹ÌÁö ¹èÀ²¿¡ ¸ó½ºÅÍÀÇ °ø°İ·ÂÀÌ ÀÌ¹Ì °öÇØÁ®ÀÖÀ½ !!
+        // !! ë°ë¯¸ì§€ ë°°ìœ¨ì— ëª¬ìŠ¤í„°ì˜ ê³µê²©ë ¥ì´ ì´ë¯¸ ê³±í•´ì ¸ìˆìŒ !!
         float finalDamage = (attackDetails.damageRate) - (Def * 0.5f);
         finalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage * UnityEngine.Random.Range(0.8f, 1.2f)));
 
@@ -160,16 +163,61 @@ public class Player : Singleton<Player>
     }
 
 
-    // ´øÀü ÀÔÀå ½Ã GameManager¿¡ ÀÇÇØ È£Ãâ
+    // ë˜ì „ ì…ì¥ ì‹œ GameManagerì— ì˜í•´ í˜¸ì¶œ
     public void OnEnterDungeon()
     {
         Anim.Play("Idle_Battle");
+        
+        // ë˜ì „ìœ¼ë¡œ ì´ë™ì‹œ ì²´ë ¥, ë§ˆë‚˜ íšŒë³µ (ë˜ì „ì—ì„œ ë°”ë¡œ ë‹¤ìŒ ë˜ì „ìœ¼ë¡œ ì´ë™ ì‹œ ëŒ€ë¹„)
+        CurrentHP = MaxHP;
+        CurrentMP = MaxMP;
     }
-    // ´øÀü ÅğÀå ½Ã GameManager¿¡ ÀÇÇØ È£Ãâ
-    public void OnExitDungeon()
+    // ë˜ì „ í‡´ì¥ ì‹œ GameManagerì— ì˜í•´ í˜¸ì¶œ
+    public void OnEnterTown()
     {
         animController.ResetAnimations();
+
+        // ë§ˆì„ë¡œ ì´ë™ì‹œ ì²´ë ¥, ë§ˆë‚˜ íšŒë³µ
+        CurrentHP = MaxHP;
+        CurrentMP = MaxMP;
     }
+
+    public void AddExp(int expAmount)
+    {
+        CurrentEXP += expAmount;
+        Debug.Log($"ê²½í—˜ì¹˜ {expAmount} íšë“! í˜„ì¬ ê²½í—˜ì¹˜: {CurrentEXP}");
+        // UI ì—…ë°ì´íŠ¸ ìš”ì²­
+        UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
+
+        while (CurrentEXP >= RequiredEXP)
+        {
+            CurrentEXP -= RequiredEXP;
+            LevelUp();
+        }
+    }
+
+    private void LevelUp()
+    {
+        Level++;
+        // ë‹¤ìŒ ë ˆë²¨ì—…ì— í•„ìš”í•œ ê²½í—˜ì¹˜ ê³„ì‚° (ì˜ˆ: ì´ì „ ê²½í—˜ì¹˜ì˜ 1.25ë°°)
+        RequiredEXP = Mathf.RoundToInt(RequiredEXP * 1.25f); 
+        Debug.Log($"ë ˆë²¨ì—…! í˜„ì¬ ë ˆë²¨: {Level}, ë‹¤ìŒ ë ˆë²¨ì—…ê¹Œì§€ í•„ìš”í•œ ê²½í—˜ì¹˜: {RequiredEXP}");
+        // ë ˆë²¨ì—… ì´í™íŠ¸ í˜¸ì¶œ
+        // ..
+
+        // TODO: ë ˆë²¨ì—…ì— ë”°ë¥¸ ìŠ¤íƒ¯ ì¦ê°€ ë¡œì§ (MaxHP, Atk ë“±)
+        MaxHP *= 1.1f;
+        MaxMP *= 1.1f;
+        Atk *= 1.1f;
+        Def *= 1.1f;
+        CurrentHP = MaxHP; // ë ˆë²¨ì—… ì‹œ ì²´ë ¥, ë§ˆë‚˜ íšŒë³µ
+        CurrentMP = MaxMP;
+
+        // UI ì—…ë°ì´íŠ¸ ìš”ì²­
+        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
+    }
+
 
     private void OnDisable()
     {
@@ -193,23 +241,23 @@ public class Player : Singleton<Player>
     }
     public void SetAttackDetails(int index)
     {
-        // 1. °ø°İ Á¤º¸ °¡Á®¿À±â
+        // 1. ê³µê²© ì •ë³´ ê°€ì ¸ì˜¤ê¸°
         AttackDetails details = AttackDetails[index];
 
-        // 2. YÃà ÆÇÁ¤ ±âÁØÁ¡ °áÁ¤
-        //    ÀÏ¹İ °ø°İÀº Ç×»ó ÇÃ·¹ÀÌ¾îÀÇ ¹ß¹ØÀ» ±âÁØÀ¸·Î ÇÔ
+        // 2. Yì¶• íŒì • ê¸°ì¤€ì  ê²°ì •
+        //    ì¼ë°˜ ê³µê²©ì€ í•­ìƒ í”Œë ˆì´ì–´ì˜ ë°œë°‘ì„ ê¸°ì¤€ìœ¼ë¡œ í•¨
         float originY = this.transform.position.y;
 
-        // 3. È÷Æ®¹Ú½º ÃÊ±âÈ­
+        // 3. íˆíŠ¸ë°•ìŠ¤ ì´ˆê¸°í™”
         if (comboHitbox != null)
         {
             comboHitbox.Initialize(details, originY);
         }
     }
     #endregion Animation Event Receivers
-#if UNITY_EDITOR // ¿¡µğÅÍ¿¡¼­¸¸ ½ÇÇàµÇµµ·Ï ÀüÃ³¸®±â »ç¿ë (ºôµå ½Ã Á¦¿Ü)
-    // µğ¹ö±ë UI¸¦ ÄÓÁö ¸»Áö °áÁ¤ÇÏ´Â º¯¼ö
-    [Header("µğ¹ö±× ¿É¼Ç")]
+#if UNITY_EDITOR // ì—ë””í„°ì—ì„œë§Œ ì‹¤í–‰ë˜ë„ë¡ ì „ì²˜ë¦¬ê¸° ì‚¬ìš© (ë¹Œë“œ ì‹œ ì œì™¸)
+    // ë””ë²„ê¹… UIë¥¼ ì¼¤ì§€ ë§ì§€ ê²°ì •í•˜ëŠ” ë³€ìˆ˜
+    [Header("ë””ë²„ê·¸ ì˜µì…˜")]
     [SerializeField] private bool showInputBufferUI = true;
 
     private void OnGUI()
@@ -218,20 +266,20 @@ public class Player : Singleton<Player>
 
         
 
-        // UI ½ºÅ¸ÀÏ ¼³Á¤
+        // UI ìŠ¤íƒ€ì¼ ì„¤ì •
         GUIStyle style = new GUIStyle();
         style.fontSize = 20;
         style.normal.textColor = Color.white;
         style.fontStyle = FontStyle.Bold;
 
-        // È­¸é ÁÂ»ó´Ü¿¡ UI ¿µ¿ªÀ» ¸¸µê
+        // í™”ë©´ ì¢Œìƒë‹¨ì— UI ì˜ì—­ì„ ë§Œë“¦
         GUILayout.BeginArea(new Rect(10, 10, 300, 500));
 
         GUILayout.Label("--- Input Buffer ---", style);
 
         if (inputHandler != null)
         {
-            // InputHandler·ÎºÎÅÍ ¹öÆÛ¿¡ ÀÖ´Â Ä¿¸Çµå ÀÌ¸§ ¸ñ·ÏÀ» °¡Á®¿È
+            // InputHandlerë¡œë¶€í„° ë²„í¼ì— ìˆëŠ” ì»¤ë§¨ë“œ ì´ë¦„ ëª©ë¡ì„ ê°€ì ¸ì˜´
             List<string> bufferedCommands = inputHandler.GetBufferedCommandNames();
 
             if (bufferedCommands.Count == 0)
@@ -240,7 +288,7 @@ public class Player : Singleton<Player>
             }
             else
             {
-                // ¹öÆÛ¿¡ ÀÖ´Â °¢ Ä¿¸Çµå¸¦ È­¸é¿¡ Ç¥½Ã
+                // ë²„í¼ì— ìˆëŠ” ê° ì»¤ë§¨ë“œë¥¼ í™”ë©´ì— í‘œì‹œ
                 foreach (string commandName in bufferedCommands)
                 {
                     GUILayout.Label(commandName, style);

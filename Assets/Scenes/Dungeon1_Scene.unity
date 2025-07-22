@@ -5759,6 +5759,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DungeonName: "\uC120\uB354\uB79C\uB4DC"
+  ClearEXP: 2000
+  RankTimeThresholds:
+  - 60
+  - 70
+  - 80
+  - 90
+  - 100
+  - 120
+  - 140
+  - 160
+  - 180
+  RankSprites:
+  - {fileID: 21300000, guid: 9ce2b22f3bf9fd241808f85306c63600, type: 3}
+  - {fileID: 21300000, guid: 62955b3ff9b027543815409c25e10099, type: 3}
+  - {fileID: 21300000, guid: 9bbb78c4c567b0740b7f04ff87921c75, type: 3}
+  - {fileID: 21300000, guid: 2e1d82d34c2d81c4e80530144f7db542, type: 3}
+  - {fileID: 21300000, guid: b0f6f17f880c64e4dac3e073184ecba4, type: 3}
+  - {fileID: 21300000, guid: 82cfe0e86c22faa41aa228de3d5abe03, type: 3}
+  - {fileID: 21300000, guid: a8a6e58216b567341a05b4d24b676d72, type: 3}
+  - {fileID: 21300000, guid: fbaf21e4bdbab5042bd610f4ac2dd294, type: 3}
+  - {fileID: 21300000, guid: 5da3467862358294ea3eae80f2328d7d, type: 3}
   Rooms:
   - {fileID: 532446191}
   - {fileID: 187648635}

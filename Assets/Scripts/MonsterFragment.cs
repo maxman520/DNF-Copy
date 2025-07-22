@@ -4,13 +4,13 @@ using System.Threading;
 
 public class MonsterFragment : MonoBehaviour
 {
-    [Header("¹°¸® º¯¼ö")]
-    [SerializeField] private float lifeTime = 5.0f; // ÃÑ »ıÁ¸ ½Ã°£
-    [SerializeField] private float fadeOutDuration = 1.0f; // »ç¶óÁö´Â µ¥ °É¸®´Â ½Ã°£
-    private const float GRAVITY = 21f; // ÆÄÆí¿¡ Àû¿ëµÉ °¡»ó Áß·Â
-    private float verticalVelocity; // ¼öÁ÷ ¼Óµµ
+    [Header("ë¬¼ë¦¬ ë³€ìˆ˜")]
+    [SerializeField] private float lifeTime = 5.0f; // ì´ ìƒì¡´ ì‹œê°„
+    [SerializeField] private float fadeOutDuration = 1.0f; // ì‚¬ë¼ì§€ëŠ” ë° ê±¸ë¦¬ëŠ” ì‹œê°„
+    private const float GRAVITY = 21f; // íŒŒí¸ì— ì ìš©ë  ê°€ìƒ ì¤‘ë ¥
+    private float verticalVelocity; // ìˆ˜ì§ ì†ë„
 
-    [Header("ÂüÁ¶")]
+    [Header("ì°¸ì¡°")]
     private Rigidbody2D rb;
     public Transform VisualTransform;
     private SpriteRenderer sr;
@@ -24,29 +24,29 @@ public class MonsterFragment : MonoBehaviour
 
     void Start()
     {
-        // »ı¼º°ú µ¿½Ã¿¡ ÀÚµ¿ ÆÄ±« ½ÃÄö½º ½ÃÀÛ
+        // ìƒì„±ê³¼ ë™ì‹œì— ìë™ íŒŒê´´ ì‹œí€€ìŠ¤ ì‹œì‘
         FadeAndDestroySequence(this.GetCancellationTokenOnDestroy()).Forget();
     }
 
     void Update()
     {
-        // °¡»ó Áß·Â ·ÎÁ÷
+        // ê°€ìƒ ì¤‘ë ¥ ë¡œì§
         HandleGravity();
     }
 
-    // ÀÌ ÆÄÆí¿¡ ÃÊ±â ÈûÀ» °¡ÇÏ´Â public ÇÔ¼ö
+    // ì´ íŒŒí¸ì— ì´ˆê¸° í˜ì„ ê°€í•˜ëŠ” public í•¨ìˆ˜
     public void Initialize(Vector2 horizontalForce, float verticalForce)
     {
-        // ¼öÆò/¼öÁ÷ ÀÌµ¿Àº ·çÆ®ÀÇ Rigidbody°¡ ´ã´ç
+        // ìˆ˜í‰/ìˆ˜ì§ ì´ë™ì€ ë£¨íŠ¸ì˜ Rigidbodyê°€ ë‹´ë‹¹
         rb.AddForce(horizontalForce, ForceMode2D.Impulse);
 
-        // °øÁßÀ¸·Î ¼Ú±¸Ä¡´Â ÈûÀº VisualsÀÇ verticalVelocity°¡ ´ã´ç
+        // ê³µì¤‘ìœ¼ë¡œ ì†Ÿêµ¬ì¹˜ëŠ” í˜ì€ Visualsì˜ verticalVelocityê°€ ë‹´ë‹¹
         this.verticalVelocity = verticalForce;
     }
 
     private void HandleGravity()
     {
-        // ÂøÁöÇßÀ¸¸é ´õ ÀÌ»ó °è»êÇÏÁö ¾ÊÀ½
+        // ì°©ì§€í–ˆìœ¼ë©´ ë” ì´ìƒ ê³„ì‚°í•˜ì§€ ì•ŠìŒ
         if (VisualTransform.localPosition.y <= 0f && verticalVelocity < 0)
         {
             rb.linearVelocity = Vector2.zero;
@@ -65,7 +65,7 @@ public class MonsterFragment : MonoBehaviour
             await UniTask.Delay(System.TimeSpan.FromSeconds(aliveDuration), cancellationToken: token);
         }
 
-        // ¼­¼­È÷ »ç¶óÁö´Â È¿°ú
+        // ì„œì„œíˆ ì‚¬ë¼ì§€ëŠ” íš¨ê³¼
         float elapsedTime = 0f;
         Color startColor = sr.color;
 

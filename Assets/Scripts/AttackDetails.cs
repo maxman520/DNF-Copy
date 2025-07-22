@@ -1,12 +1,12 @@
 using UnityEngine;
 
-[System.Serializable] // ÀÎ½ºÆåÅÍ Ã¢¿¡ ³ëÃâ
+[System.Serializable] // ì¸ìŠ¤í™í„° ì°½ì— ë…¸ì¶œ
 public struct AttackDetails
 {
     public string attackName;
-    public float damageRate;            // ÀÌ °ø°İÀÇ µ¥¹ÌÁö ¹èÀ². ±âº» 1
-    public float knockbackForce;    // ¼öÆò ³Ë¹éÀº Rigidbody ¼Óµµ·Î ¿©ÀüÈ÷ À¯È¿
-    public float launchForce;    // °øÁß¿¡ ¶ç¿ì´Â Èû (¶ç¿ì±â °ø°İÀÌ ¾Æ´Ï¸é 0)
-    public float yOffset; // yÃà ¹üÀ§ ¼³Á¤
-    // ÇÊ¿äÇÏ´Ù¸é ³ªÁß¿¡ °æÁ÷ ½Ã°£, ¼Ó¼º µîµµ Ãß°¡ °¡´É
+    public float damageRate;            // ì´ ê³µê²©ì˜ ë°ë¯¸ì§€ ë°°ìœ¨. ê¸°ë³¸ 1
+    public float knockbackForce;    // ìˆ˜í‰ ë„‰ë°±ì€ Rigidbody ì†ë„ë¡œ ì—¬ì „íˆ ìœ íš¨
+    public float launchForce;    // ê³µì¤‘ì— ë„ìš°ëŠ” í˜ (ë„ìš°ê¸° ê³µê²©ì´ ì•„ë‹ˆë©´ 0)
+    public float yOffset; // yì¶• ë²”ìœ„ ì„¤ì •
+    // í•„ìš”í•˜ë‹¤ë©´ ë‚˜ì¤‘ì— ê²½ì§ ì‹œê°„, ì†ì„± ë“±ë„ ì¶”ê°€ ê°€ëŠ¥
 }
