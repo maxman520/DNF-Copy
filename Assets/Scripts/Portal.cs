@@ -19,7 +19,7 @@ public class Portal : MonoBehaviour
 
     [Header("SameScene 타입 설정")]
     [Tooltip("같은 씬 내에서 이동할 때 사용")]
-    [SerializeField] private int targetRoomIndex;
+    [SerializeField] private Room targetRoom;
     [SerializeField] private Portal targetPortal;
 
     [Header("DifferentScene 타입 설정")]
@@ -39,8 +39,10 @@ public class Portal : MonoBehaviour
     // 포탈 활성화
     public void Activate()
     {
-        visualInactive?.SetActive(false);
-        visualActive?.SetActive(true);
+        if (visualInactive != null)
+            visualInactive?.SetActive(false);
+        if (visualActive != null)
+            visualActive?.SetActive(true);
 
         portalCollider.enabled = true; // 충돌 감지도 활성화
         Debug.Log($"포탈({this.name})이 활성화됨");
@@ -49,8 +51,10 @@ public class Portal : MonoBehaviour
     // 포탈 비활성화
     public void Deactivate()
     {
-        visualInactive?.SetActive(true);
-        visualActive?.SetActive(false);
+        if (visualInactive != null)
+            visualInactive?.SetActive(true);
+        if (visualActive != null)
+            visualActive?.SetActive(false);
 
         portalCollider.enabled = false; // 충돌 감지도 비활성화
         Debug.Log($"포탈({this.name})이 비활성화됨");
@@ -67,10 +71,10 @@ public class Portal : MonoBehaviour
         switch (portalType)
         {
             case PortalType.SameScene:
-                if (DungeonManager.Instance != null)
+                if (GameManager.Instance != null)
                 {
-                    Debug.Log($"{targetRoomIndex}번 방으로 이동");
-                    DungeonManager.Instance.EnterRoom(targetRoomIndex, targetPortal);
+                    Debug.Log($"{targetRoom.name} 방으로 이동");
+                    GameManager.Instance.EnterRoom(targetRoom, targetPortal);
                 }
                 break;
 

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.Cinemachine;
 using UnityEngine;
 
 public class Room : MonoBehaviour
@@ -20,7 +19,8 @@ public class Room : MonoBehaviour
     [Header("방 설정")]
     [SerializeField] public RoomType roomType;
     [SerializeField] public HasExit hasExit;
-    [SerializeField] public CinemachineCamera virtualCamera; // 이 방에서 사용할 가상 카메라
+    //[SerializeField] public CinemachineCamera virtualCamera; // 이 방에서 사용할 가상 카메라
+    [SerializeField] public BoxCollider2D CameraBound; // 이 방에서 사용할 카메라 경계
     [SerializeField] private List<Monster> monsters; // 이 방에 있는 모든 몬스터 리스트
     [SerializeField] private List<Portal> portals; // 이 방의 모든 포탈 리스트
 
@@ -29,36 +29,19 @@ public class Room : MonoBehaviour
 
     private bool isCleared = false;
 
-    public void OnEnable()
-    {
-        // 방이 활성화 되는 순간 Virtual_Camera의 Follow 타겟을 플레이어로 설정
-        virtualCamera.Follow = Player.Instance.transform;
-    }
 
     // 방이 활성화될 때 호출
     public void OnEnterRoom()
     {
-        Debug.Log($"{this.name}에 입장");
-
         // 이 방의 모든 것을 활성화
         this.gameObject.SetActive(true);
-
-        // 입장하면서 카메라 우선순위를 높여 카메라 변경
-        if (virtualCamera != null)
-            virtualCamera.Priority = 10;
     }
 
     // 방을 나갈 때 호출
     public void OnExitRoom()
     {
-        Debug.Log($"{this.name}에서 퇴장");
-
         // 이 방의 모든 것을 비활성화하여 연산을 멈춤
         this.gameObject.SetActive(false);
-
-        // 다른 카메라로 변경하기 위해 카메라 우선순위 낮춤
-        if (virtualCamera != null)
-            virtualCamera.Priority = 9;
     }
 
     void Update()

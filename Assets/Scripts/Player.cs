@@ -167,6 +167,7 @@ public class Player : Singleton<Player>
     public void OnEnterDungeon()
     {
         Anim.Play("Idle_Battle");
+        animController.ResetAnimations();
         
         // 던전으로 이동시 체력, 마나 회복 (던전에서 바로 다음 던전으로 이동 시 대비)
         CurrentHP = MaxHP;
@@ -175,6 +176,7 @@ public class Player : Singleton<Player>
     // 던전 퇴장 시 GameManager에 의해 호출
     public void OnEnterTown()
     {
+        Anim.Play("Idle");
         animController.ResetAnimations();
 
         // 마을로 이동시 체력, 마나 회복
@@ -216,6 +218,7 @@ public class Player : Singleton<Player>
         // UI 업데이트 요청
         UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
         UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
+        UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
     }
 
 
@@ -245,7 +248,7 @@ public class Player : Singleton<Player>
         AttackDetails details = AttackDetails[index];
 
         // 2. Y축 판정 기준점 결정
-        //    일반 공격은 항상 플레이어의 발밑을 기준으로 함
+        //    공격은 항상 플레이어의 발밑을 기준으로 함
         float originY = this.transform.position.y;
 
         // 3. 히트박스 초기화

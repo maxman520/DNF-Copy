@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using Cysharp.Threading.Tasks.Triggers;
 
 public class SkillManager : MonoBehaviour
 {

@@ -65,7 +65,8 @@ public class VinoshuMeteor : MonoBehaviour
     {
         GameObject meteorExplosion = EffectManager.Instance.PlayEffect("FireExplosion", transform.position, Quaternion.identity);
         attackDetails.yOffset += 0.3f; // 폭발 이펙트의 y축 범위는 메테오 자체의 y축 범위보다 넓게
-        meteorExplosion?.GetComponentInChildren<MonsterHitbox>().Initialize(attackDetails, origin);
+        if (meteorExplosion != null)
+            meteorExplosion?.GetComponentInChildren<MonsterHitbox>().Initialize(attackDetails, origin);
         
         if (impulseSource != null) // 카메라 흔들림. 흔들림의 x방향은 랜덤으로
             impulseSource.GenerateImpulse(new Vector3((Random.value < 0.5f ? -1 : 1), 1, 0));

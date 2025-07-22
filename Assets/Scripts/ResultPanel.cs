@@ -39,10 +39,10 @@ public class ResultPanel : MonoBehaviour
     private void Start()
     {   
         // 버튼 클릭 이벤트에 DungeonManager의 함수들을 연결
-        if (DungeonManager.Instance != null)
+        if (GameManager.Instance != null)
         {
-            returnTownButton.onClick.AddListener(DungeonManager.Instance.ReturnToTown);
-            nextDungeonButton.onClick.AddListener(DungeonManager.Instance.GoToNextDungeon);
+            returnTownButton.onClick.AddListener(GameManager.Instance.ReturnToTown);
+            nextDungeonButton.onClick.AddListener(GameManager.Instance.GoToNextDungeon);
         }
     }
 

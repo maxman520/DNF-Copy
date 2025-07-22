@@ -69,7 +69,7 @@ public class EffectManager : Singleton<EffectManager>
         else
         {
             // 풀에 없으면 새로 생성
-            effectObject = Instantiate(effectPrefabDict[name], position, rotation);
+            effectObject = Instantiate(effectPrefabDict[name], position, rotation, this.transform);
         }
 
         activeEffects[name].Add(effectObject);
@@ -102,7 +102,7 @@ public class EffectManager : Singleton<EffectManager>
         else
         {
             // 풀에 없으면 새로 생성
-            damageTextObj = Instantiate(effectPrefabDict[name], position, rotation);
+            damageTextObj = Instantiate(effectPrefabDict[name], position, rotation, this.transform);
         }
 
         damageTextObj.GetComponent<DamageText>().SetDamageAndPlay((int)damage);

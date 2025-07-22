@@ -523,7 +523,7 @@ public class Vinoshu : Monster
         
         // 플레이어에게 경험치 지급
         GameManager.Instance.AddExp(monsterData.EXP);
-        DungeonManager.Instance.AddHuntExp(monsterData.EXP);
+        GameManager.Instance.AddHuntExp(monsterData.EXP);
 
         // 물리적 움직임과 충돌을 중지
         rb.linearVelocity = Vector2.zero;
@@ -562,7 +562,7 @@ public class Vinoshu : Monster
 
         // 3. 던전 결과 창 표시 요청
         Debug.Log("던전 결과 창 표시를 요청");
-        DungeonManager.Instance.ShowResultPanel();
+        GameManager.Instance.ShowResultPanel();
 
         // 4. 최종 오브젝트 파괴
         await UniTask.Delay(System.TimeSpan.FromSeconds(1.0), cancellationToken: token);

@@ -447,7 +447,7 @@ public class Goblin : Monster
 
         // 플레이어에게 경험치 지급
         GameManager.Instance.AddExp(monsterData.EXP);
-        DungeonManager.Instance.AddHuntExp(monsterData.EXP);
+        GameManager.Instance.AddHuntExp(monsterData.EXP);
 
         // 물리적 움직임과 충돌을 중지
         rb.linearVelocity = Vector2.zero;

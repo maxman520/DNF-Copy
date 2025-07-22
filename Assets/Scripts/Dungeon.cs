@@ -19,17 +19,19 @@ public class Dungeon : MonoBehaviour
     [SerializeField] public string NextDungeonName; // 다음 던전의 씬 이름
     [Tooltip("이 던전이 끝나고 돌아갈 마을의 씬 이름")]
     [SerializeField] public string TownToReturn; // 던전이 끝나고 돌아가야할 마을의 씬 이름
+    [Tooltip("던전 클리어 후 돌아갈 마을에서의 스폰 좌표")]
+    [SerializeField] public Vector2 TownSpawnPosition;
 
     private void Start()
     {
         // 이 던전 씬이 시작될 때, DungeonManager에게 자신을 등록하고 시작을 요청
-        if (DungeonManager.Instance != null)
+        if (GameManager.Instance != null)
         {
-            DungeonManager.Instance.StartDungeon(this);
+            GameManager.Instance.StartDungeon(this);
         }
         else
         {
-            Debug.LogError("DungeonManager가 씬에 존재하지 않음");
+            Debug.LogError("GameManager가 씬에 존재하지 않음");
         }
     }
 }
