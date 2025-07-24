@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,11 +15,10 @@ public class GameManager : Singleton<GameManager>
 {
     public GameState CurrentState { get; private set; } = GameState.Town;
 
-    // --- Dungeon Logic --- (임시)
     private Dungeon currentDungeon;
     private float dungeonStartTime;
     private int totalHuntExp;
-    // ---
+    private Vector3? nextSpawnPosition = null;
 
     private void Start()
     {
@@ -75,17 +75,71 @@ public class GameManager : Singleton<GameManager>
             // case Town2, Town3, ...
                 CurrentState = GameState.Town;
                 Player.Instance.OnEnterTown();
-                RoomManager.Instance.UpdateCurrentRoomByPlayerPosition(); // 씬 로드 후 플레이어 위치 기반으로 카메라 경계 업데이트
                 break;
         }
     }
 
-    // Portal에 Player가 닿으면 Portal이 호출하는 함수
-    public void EnterRoom(Room targetRoom, Portal targetPortal)
+    private void InitializeMap(string mapName, List<Room> rooms, Vector3 startPosition)
     {
-        RoomManager.Instance.EnterRoom(targetRoom, targetPortal);
+        // 맵 이름 설정
+        UIManager.Instance.SetMapName(mapName);
+
+        if (rooms == null || rooms.Count == 0)
+        {
+            Debug.LogError("InitializeMap: rooms 리스트가 비어있거나 할당되지 않았음");
+            return;
+        }
+
+        // 플레이어 위치 설정
+        Player.Instance.transform.position = startPosition;
+
+        // 플레이어가 위치한 방 찾기
+        Room startRoom = null;
+        foreach (var room in rooms)
+        {
+            // Room의 CameraBound를 기준으로 현재 위치가 방 안에 있는지 확인
+            if (room.CameraBound != null && room.CameraBound.bounds.Contains(startPosition))
+            {
+                startRoom = room;
+                break;
+            }
+        }
+
+        // 만약 시작 위치에 해당하는 방을 찾지 못했다면, 첫 번째 방을 시작 방으로 사용
+        if (startRoom == null)
+        {
+            Debug.LogWarning("시작 위치에 해당하는 방을 찾지 못했습니다. 첫 번째 방을 대신 활성화합니다.");
+            startRoom = rooms[0];
+        }
+
+        // RoomManager의 currentRoom 변수 업데이트, 카메라 경계 설정
+        RoomManager.Instance.UpdateCurrentRoom(startRoom);
+        RoomManager.Instance.ChangeCameraConfiner(startRoom.CameraBound);
+        
+        // startRoom 제외 모든 방을 비활성화
+        foreach (var room in rooms)
+        {
+            if (room != startRoom)
+                room.gameObject.SetActive(false);
+        }
     }
 
+    // 마을 씬 시작 시 Town.cs가 호출
+    public void StartTown(Town townToStart)
+    {
+        Debug.Log($"마을 '{townToStart.TownName}'에 입장");
+        
+        // 지정된 스폰 위치가 있으면 사용하고, 없으면 타운의 기본 시작 위치 사용
+        Vector3 startPosition = nextSpawnPosition.HasValue ? nextSpawnPosition.Value : townToStart.StartPosition;
+        nextSpawnPosition = null; // 사용 후 초기화
+
+        InitializeMap(townToStart.TownName, townToStart.Rooms, startPosition);
+        
+        // 미니맵 비활성화
+        UIManager.Instance.HideMinimap();
+    }
+
+    // 던전 씬 시작 시 Dungeon.cs가 호출
     public void StartDungeon(Dungeon dungeonToStart)
     {
         Debug.Log($"새로운 던전 '{dungeonToStart.DungeonName}'을 시작");
@@ -95,37 +149,14 @@ public class GameManager : Singleton<GameManager>
         dungeonStartTime = Time.time;
         totalHuntExp = 0;
 
-        // 맵 이름 설정
-        if (UIManager.Instance != null)
-            UIManager.Instance.SetMapName(dungeonToStart.DungeonName);
-
-        if (currentDungeon.Rooms == null)
-            Debug.LogError("Dungeon_Data에 Room들이 할당되지 않았음");
-        
-        // 모든 방을 일단 끈다
-        foreach (var room in currentDungeon.Rooms)
-        {
-            room.gameObject.SetActive(false);
-        }
-
-        // 플레이어 위치를 던전 시작 지점으로 설정
-        Player.Instance.transform.position = currentDungeon.StartPosition;
-
-        // 첫 번째 방을 활성화
-        Room startRoom = currentDungeon.Rooms[0];
-        startRoom.OnEnterRoom();
-
-        // 플레이어 위치 기반으로 카메라 경계 업데이트
-        RoomManager.Instance.UpdateCurrentRoomByPlayerPosition(); 
+        InitializeMap(dungeonToStart.DungeonName, dungeonToStart.Rooms, dungeonToStart.StartPosition);
 
         // 미니맵 생성 요청 & 플레이어 미니맵 위치 업데이트
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.GenerateMinimap(dungeonToStart);
-            UIManager.Instance.UpdateMinimapPlayerPosition(0);
-        }
+        UIManager.Instance.GenerateMinimap(dungeonToStart);
+        UIManager.Instance.UpdateMinimapPlayerPosition(0);
     }
 
+    #region Result Panel
     public void AddHuntExp(int exp)
     {
         totalHuntExp += exp;
@@ -177,7 +208,9 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("결과를 확인했습니다. 마을로 돌아갑니다.");
         string townToReturn = currentDungeon.TownToReturn;
 
-        Player.Instance.transform.position = currentDungeon.TownSpawnPosition; // 플레이어 좌표 이동
+        // 다음 씬에서 사용할 스폰 위치 저장
+        nextSpawnPosition = currentDungeon.TownSpawnPosition;
+
         UIManager.Instance.HideResultPanel(); // 던전 결과 창 숨김
         currentDungeon = null;
         LoadScene(townToReturn); // 돌아가야할 마을 씬으로 변경
@@ -193,6 +226,7 @@ public class GameManager : Singleton<GameManager>
         // 다음 던전 씬 로드
         LoadScene(nextDungeonSceneName);
     }
+    #endregion Result Panel
 
     private bool isSlowing = false;
 

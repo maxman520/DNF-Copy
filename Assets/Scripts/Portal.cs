@@ -40,24 +40,22 @@ public class Portal : MonoBehaviour
     public void Activate()
     {
         if (visualInactive != null)
-            visualInactive?.SetActive(false);
+            visualInactive.SetActive(false);
         if (visualActive != null)
-            visualActive?.SetActive(true);
+            visualActive.SetActive(true);
 
         portalCollider.enabled = true; // 충돌 감지도 활성화
-        Debug.Log($"포탈({this.name})이 활성화됨");
     }
 
     // 포탈 비활성화
     public void Deactivate()
     {
         if (visualInactive != null)
-            visualInactive?.SetActive(true);
+            visualInactive.SetActive(true);
         if (visualActive != null)
-            visualActive?.SetActive(false);
+            visualActive.SetActive(false);
 
         portalCollider.enabled = false; // 충돌 감지도 비활성화
-        Debug.Log($"포탈({this.name})이 비활성화됨");
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -71,10 +69,10 @@ public class Portal : MonoBehaviour
         switch (portalType)
         {
             case PortalType.SameScene:
-                if (GameManager.Instance != null)
+                if (RoomManager.Instance != null)
                 {
                     Debug.Log($"{targetRoom.name} 방으로 이동");
-                    GameManager.Instance.EnterRoom(targetRoom, targetPortal);
+                    RoomManager.Instance.EnterRoom(targetRoom, targetPortal);
                 }
                 break;
 

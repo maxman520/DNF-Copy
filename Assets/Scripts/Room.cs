@@ -17,9 +17,8 @@ public class Room : MonoBehaviour
     }
 
     [Header("방 설정")]
-    [SerializeField] public RoomType roomType;
-    [SerializeField] public HasExit hasExit;
-    //[SerializeField] public CinemachineCamera virtualCamera; // 이 방에서 사용할 가상 카메라
+    [SerializeField] public RoomType roomType; // Normal, Start, Boss
+    [SerializeField] public HasExit hasExit; // 상하좌우 포탈의 유무
     [SerializeField] public BoxCollider2D CameraBound; // 이 방에서 사용할 카메라 경계
     [SerializeField] private List<Monster> monsters; // 이 방에 있는 모든 몬스터 리스트
     [SerializeField] private List<Portal> portals; // 이 방의 모든 포탈 리스트
@@ -30,7 +29,7 @@ public class Room : MonoBehaviour
     private bool isCleared = false;
 
 
-    // 방이 활성화될 때 호출
+    // 방을 입장할 때 호출
     public void OnEnterRoom()
     {
         // 이 방의 모든 것을 활성화
