@@ -2561,7 +2561,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 248830105}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3df772385f05659408e999028501e638, type: 3}
+  m_Script: {fileID: 11500000, guid: ad3e606b6de78494e9d6a9e94721fe26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   roomIconPrefab: {fileID: 1341128815132154863, guid: 079fa9f9d82b1a043b5fc0a29d7c4d84, type: 3}
@@ -3370,7 +3370,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 425070853}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca389301073ef82468c38f599bf798fa, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d0911bebff2b2d4e924501073aadba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rankImage: {fileID: 442444064}

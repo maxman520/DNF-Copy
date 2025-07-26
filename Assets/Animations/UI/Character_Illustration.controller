@@ -35,8 +35,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 7
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -4772068632667578400}
   m_Solo: 0
@@ -60,8 +63,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 9
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -5026780208556975739}
   m_Solo: 0
@@ -85,7 +91,10 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -795878257402120747}
@@ -110,8 +119,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 5
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -3955302438424084346}
   m_Solo: 0
@@ -135,8 +147,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 8
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6463931213542848663}
   m_Solo: 0
@@ -264,8 +279,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 3
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5166664628502783771}
   m_Solo: 0
@@ -445,8 +463,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 1
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -413064978186470132}
   m_Solo: 0
@@ -470,8 +491,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 2
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -5317308969960485734}
   m_Solo: 0
@@ -521,8 +545,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 12
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -4183213452352496776}
   m_Solo: 0
@@ -598,8 +625,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 15
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8680340992483542763}
   m_Solo: 0
@@ -623,10 +653,16 @@ AnimatorController:
   m_Name: Character_Illustration
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: CharacterIndex
+  - m_Name: characterIndex
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: -1
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: playTrigger
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
@@ -651,8 +687,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 13
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5621494509480338341}
   m_Solo: 0
@@ -766,8 +805,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 16
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1108403182311663831}
   m_Solo: 0
@@ -817,8 +859,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 6
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 3581324024667488382}
   m_Solo: 0
@@ -842,8 +887,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 11
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1623947088730589585}
   m_Solo: 0
@@ -867,8 +915,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 10
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -630097159498408368}
   m_Solo: 0
@@ -944,8 +995,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 14
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 9213599505224883847}
   m_Solo: 0
@@ -969,8 +1023,11 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 6
-    m_ConditionEvent: CharacterIndex
+    m_ConditionEvent: characterIndex
     m_EventTreshold: 4
+  - m_ConditionMode: 1
+    m_ConditionEvent: playTrigger
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6051603086630161683}
   m_Solo: 0
