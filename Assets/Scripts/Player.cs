@@ -18,7 +18,6 @@ public enum PlayerAnimState
 
 public class Player : Singleton<Player>
 {
-    public PlayerStat Stats { get; private set; }
     [Header("플레이어 스탯")]
     public float Atk;
     public float Def;
@@ -88,18 +87,26 @@ public class Player : Singleton<Player>
         if (VisualsTransform == null)
             Debug.LogError("Visuals Transform을 찾을 수 없습니다.", this);
 
-        // PlayerStat 로드
-        Stats = GetComponent<PlayerStat>();
-        if (Stats != null)
+        // DataManager에서 데이터 가져오기
+        CharacterData data = DataManager.Instance.SelectedCharacter;
+        if (data != null)
         {
-            this.Atk = Stats.Atk;
-            this.Def = Stats.Def;
-            this.MaxHP = Stats.MaxHP;
-            this.MaxMP = Stats.MaxMP;
-            this.CurrentHP = Stats.MaxHP;
-            this.CurrentMP = Stats.MaxMP;
-            this.WalkSpeed = Stats.MoveSpeed * 1.0f;
-            this.RunSpeed = Stats.MoveSpeed * 2.0f;
+            // DataManager에서 가져온 데이터로 스탯 초기화
+            this.Atk = data.Atk;
+            this.Def = data.Def;
+            this.MaxHP = data.MaxHP;
+            this.CurrentHP = this.MaxHP;
+            this.MaxMP = data.MaxMP;
+            this.CurrentMP = this.MaxMP;
+            this.WalkSpeed = data.MoveSpeed * 1.0f;
+            this.RunSpeed = data.MoveSpeed * 2.0f;
+            this.Level = data.Level;
+            this.CurrentEXP = data.CurrentEXP;
+            this.RequiredEXP = data.RequiredEXP;
+        }
+        else
+        {
+            Debug.LogWarning("DataManager에 선택된 캐릭터 정보가 없어 Inspector의 기본값으로 시작");
         }
     }
 

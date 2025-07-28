@@ -14,6 +14,7 @@ public class CharacterInfo
     [TextArea(3, 10)] // Inspector에서 여러 줄로 편하게 입력하도록 설정
     public string Description; // 직업 설명
     public Sprite EmblemSprite; // 문양 이미지
+    public GameObject PreviewPrefab; // 미리보기용 애니메이션 프리팹
 }
 
 public class CharacterCreate : MonoBehaviour
@@ -115,18 +116,91 @@ public class CharacterCreate : MonoBehaviour
 
     private void ValidateInput(string input)
     {
-        if (ConfirmButton != null) ConfirmButton.interactable = !string.IsNullOrEmpty(input);
+        if (ConfirmButton != null)
+            ConfirmButton.interactable = IsValidNickname(input, false);
     }
 
     public void CreateCharacter()
     {
         string characterName = CharacterNameInputField.text;
-        if (string.IsNullOrEmpty(characterName)) {
-            Debug.LogWarning("캐릭터 이름이 비어있음");
+        if (!IsValidNickname(characterName, true))
+        {
             return;
         }
-        Debug.Log($"캐릭터 '{characterName}' 생성");
+
+        // 현재 선택된 직업 정보 가져오기
+        if (currentSelectedIndex < 0 || currentSelectedIndex >= CharacterInfos.Length)
+        {
+            Debug.LogError("유효한 직업이 선택되지 않았음");
+            return;
+        }
+        CharacterInfo selectedInfo = CharacterInfos[currentSelectedIndex];
+
+        // 새 캐릭터 데이터 생성 및 모든 정보 초기화
+        CharacterData newCharacter = new CharacterData
+        {
+            CharacterName = characterName,
+            JobName = selectedInfo.Name,
+            PreviewPrefabName = selectedInfo.PreviewPrefab.name, // 프리팹 이름 저장
+
+            // 기본 스탯 설정
+            Level = 1,
+            CurrentEXP = 0,
+            RequiredEXP = 100, // 예시 값
+            Atk = 10f,
+            Def = 10f,
+            MoveSpeed = 3f,
+            MaxHP = 100f,
+            MaxMP = 100f,
+        };
+
+        // 데이터 매니저를 통해 캐릭터 추가
+        DataManager.Instance.AddCharacter(newCharacter);
+
+        Debug.Log($"캐릭터 '{characterName}' ({selectedInfo.Name}) 생성 완료");
         LoadCharacterSelectScene().Forget();
+    }
+    // 닉네임 유효성 검사
+    private bool IsValidNickname(string name, bool showWarning = false)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            if (showWarning) Debug.LogWarning("캐릭터 이름이 비어있음");
+            return false;
+        }
+
+        if (name.Contains(" "))
+        {
+            if (showWarning) Debug.LogWarning("캐릭터 이름에 공백을 포함할 수 없음");
+            return false;
+        }
+
+        // 글자 길이 계산 (한글 2, 영어/기타 1)
+        if (GetNicknameLength(name) > 12)
+        {
+            if (showWarning) Debug.LogWarning("캐릭터 이름은 한글 6자, 또는 영문 12자를 초과할 수 없음");
+            return false;
+        }
+
+        return true;
+    }
+    // 캐릭터 닉네임 길이 계산
+    private int GetNicknameLength(string name)
+    {
+        int length = 0;
+        foreach (char c in name)
+        {
+            // 한글 범위 (가-힣)
+            if (c >= '\uAC00' && c <= '\uD7A3')
+            {
+                length += 2;
+            }
+            else
+            {
+                length += 1;
+            }
+        }
+        return length;
     }
 
     public void ShowNicknamePanel()
