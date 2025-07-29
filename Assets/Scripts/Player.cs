@@ -87,27 +87,7 @@ public class Player : Singleton<Player>
         if (VisualsTransform == null)
             Debug.LogError("Visuals Transform을 찾을 수 없습니다.", this);
 
-        // DataManager에서 데이터 가져오기
-        CharacterData data = DataManager.Instance.SelectedCharacter;
-        if (data != null)
-        {
-            // DataManager에서 가져온 데이터로 스탯 초기화
-            this.Atk = data.Atk;
-            this.Def = data.Def;
-            this.MaxHP = data.MaxHP;
-            this.CurrentHP = this.MaxHP;
-            this.MaxMP = data.MaxMP;
-            this.CurrentMP = this.MaxMP;
-            this.WalkSpeed = data.MoveSpeed * 1.0f;
-            this.RunSpeed = data.MoveSpeed * 2.0f;
-            this.Level = data.Level;
-            this.CurrentEXP = data.CurrentEXP;
-            this.RequiredEXP = data.RequiredEXP;
-        }
-        else
-        {
-            Debug.LogWarning("DataManager에 선택된 캐릭터 정보가 없어 Inspector의 기본값으로 시작");
-        }
+        
     }
 
     private void Update()
@@ -180,7 +160,7 @@ public class Player : Singleton<Player>
         CurrentHP = MaxHP;
         CurrentMP = MaxMP;
     }
-    // 던전 퇴장 시 GameManager에 의해 호출
+    // 던전 퇴장, 마을 입장 시 GameManager에 의해 호출
     public void OnEnterTown()
     {
         Anim.Play("Idle");
@@ -189,6 +169,26 @@ public class Player : Singleton<Player>
         // 마을로 이동시 체력, 마나 회복
         CurrentHP = MaxHP;
         CurrentMP = MaxMP;
+    }
+
+    public void InitializeStats(CharacterData data)
+    {
+        this.Atk = data.Atk;
+        this.Def = data.Def;
+        this.MaxHP = data.MaxHP;
+        this.CurrentHP = this.MaxHP;
+        this.MaxMP = data.MaxMP;
+        this.CurrentMP = this.MaxMP;
+        this.WalkSpeed = data.MoveSpeed * 1.0f;
+        this.RunSpeed = data.MoveSpeed * 2.0f;
+        this.Level = data.Level;
+        this.CurrentEXP = data.CurrentEXP;
+        this.RequiredEXP = data.RequiredEXP;
+
+        // UI 업데이트 요청
+        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
+        UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
     }
 
     public void AddExp(int expAmount)

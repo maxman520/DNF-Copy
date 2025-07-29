@@ -26,8 +26,6 @@ public class CharacterSelect : MonoBehaviour
         if (StartGameButton != null)
         {
             StartGameButton.onClick.AddListener(StartGame);
-            // 시작 시에는 선택된 캐릭터가 없으므로 비활성화
-            StartGameButton.interactable = false;
         }
         else
         {
@@ -45,7 +43,7 @@ public class CharacterSelect : MonoBehaviour
 
         if (DeleteCharacterButton != null)
         {
-            // ToDo: DeleteCharacterButton.onClick.AddListener(DeleteCharacter);
+            DeleteCharacterButton.onClick.AddListener(DeleteCharacter);
         }
         else
         {
@@ -80,15 +78,18 @@ public class CharacterSelect : MonoBehaviour
             }
         }
 
-        // 첫 번째 캐릭터가 있다면 기본으로 선택
+        // 첫 번째 캐릭터가 있다면 기본으로 선택하고, 없다면 선택 해제 상태로 둠
         if (characters.Count > 0)
         {
-            // 첫 번째 슬롯을 클릭한 것으로 처리
             SelectCharacter(CharacterSlots[0]);
+        }
+        else
+        {
+            SelectCharacter(null);
         }
     }
 
-    // 슬롯의 OnPointerClick에서 호출
+    // 슬롯의 OnPointerClick에서 호출되거나, 캐릭터가 없을 때 null로 호출됨
     public void SelectCharacter(CharacterSlot slot)
     {
         // 이전에 선택된 슬롯이 있다면 선택 해제
@@ -96,13 +97,24 @@ public class CharacterSelect : MonoBehaviour
         {
             selectedSlot.Deselect();
         }
-        // 현재 슬롯만 선택 효과를 켠다
+        
         selectedSlot = slot;
-        selectedSlot.Select();
 
+        // 새로 선택된 슬롯이 있다면 선택 효과를 켬
+        if (selectedSlot != null)
+        {
+            selectedSlot.Select();
+        }
+
+        // 버튼 활성화 상태는 항상 현재 선택된 슬롯을 기준으로 결정
+        bool isCharacterSelected = selectedSlot != null;
         if (StartGameButton != null)
         {
-            StartGameButton.interactable = (selectedSlot != null);
+            StartGameButton.interactable = isCharacterSelected;
+        }
+        if (DeleteCharacterButton != null)
+        {
+            DeleteCharacterButton.interactable = isCharacterSelected;
         }
     }
 
@@ -116,5 +128,21 @@ public class CharacterSelect : MonoBehaviour
     public void CreateCharacter()
     {
         SceneManager.LoadScene("CharacterCreate_Scene");
+    }
+
+    public void DeleteCharacter()
+    {
+        if (selectedSlot == null)
+        {
+            Debug.LogWarning("삭제할 캐릭터가 선택되지 않았습니다.");
+            return;
+        }
+
+        // DataManager에 캐릭터 삭제 요청 (영구 데이터 삭제)
+        DataManager.Instance.DeleteCharacter(selectedSlot.GetCharacterData());
+
+        // 데이터와 UI를 새로고침
+        LoadCharacterData();
+        PopulateCharacterSlots();
     }
 }

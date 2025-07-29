@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
-public class CharacterSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class CharacterSlot : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI 요소")]
     public Transform PreviewAreaParent; // 각 슬롯의 프리팹 생성 위치
@@ -50,16 +50,8 @@ public class CharacterSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHand
                 // ※ 중요: 씬에 있는 메인 카메라에 "MainCamera" 태그가 설정되어 있어야 함
                 Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
-                // 4. 계산된 월드 좌표에 부모 없이(!), 원래 크기 그대로 생성
+                // 4. 계산된 월드 좌표에 부모 없이, 원래 크기 그대로 생성
                 characterInstance = Instantiate(previewPrefab, worldPosition, Quaternion.identity);
-
-                // 5. (선택) 생성된 프리팹의 Sorting Layer를 UI보다 높게 설정
-                //    예시: "CharacterPreview"라는 Sorting Layer를 만들었다고 가정
-                // Renderer renderer = characterInstance.GetComponentInChildren<Renderer>();
-                // if (renderer != null)
-                // {
-                //     renderer.sortingLayerName = "CharacterPreview";
-                // }
             }
             else
             {
@@ -90,29 +82,5 @@ public class CharacterSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHand
     public void OnPointerClick(PointerEventData eventData)
     {
         characterSelectManager.SelectCharacter(this);
-    }
-
-    /// 드래그 앤 드롭 관련 함수들
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        // TODO: 드래그 시작 로직 구현
-        Debug.Log($"Begin Drag: {characterData.CharacterName}");
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        // TODO: 드래그 중 로직 구현
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        // TODO: 드래그 종료 로직 구현
-        Debug.Log($"End Drag: {characterData.CharacterName}");
-    }
-
-    public void OnDrop(PointerEventData eventData)
-    {
-        // TODO: 다른 슬롯이 여기에 드롭되었을 때 로직 구현
-        Debug.Log($"Dropped on: {characterData.CharacterName}");
     }
 }

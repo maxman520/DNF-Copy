@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class DataManager : Singleton<DataManager>
 {
+
     private AccountData accountData;
     private string dataPath; // 데이터가 저장될 파일의 전체 경로
 
@@ -60,5 +61,19 @@ public class DataManager : Singleton<DataManager>
     public List<CharacterData> GetCharacters()
     {
         return accountData.Characters;
+    }
+
+    // 캐릭터 삭제 함수
+    public void DeleteCharacter(CharacterData characterToDelete)
+    {
+        if (accountData.Characters.Remove(characterToDelete))
+        {
+            SaveData(); // 변경 사항을 파일에 바로 저장
+            Debug.Log($"캐릭터 삭제됨: {characterToDelete.CharacterName}. 총 캐릭터 수: {accountData.Characters.Count}");
+        }
+        else
+        {
+            Debug.LogWarning($"삭제하려는 캐릭터를 찾지 못했습니다: {characterToDelete.CharacterName}");
+        }
     }
 }

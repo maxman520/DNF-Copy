@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +14,9 @@ public enum GameState
 
 public class GameManager : Singleton<GameManager>
 {
+    [Header("플레이어 설정")]
+    public GameObject playerPrefab; // 인스펙터에서 할당할 플레이어 프리팹
+
     public GameState CurrentState { get; private set; } = GameState.Town;
 
     private Dungeon currentDungeon;
@@ -20,23 +24,36 @@ public class GameManager : Singleton<GameManager>
     private int totalHuntExp;
     private Vector3? nextSpawnPosition = null;
 
-    private void Start()
+    private void InitializePlayerStats(CharacterData data)
     {
-        // 게임 시작 시 스탯 초기화
-        InitializePlayerState();
-    }
-
-    public void InitializePlayerState()
-    {
-        // UI 매니저에게 초기 UI 업데이트 요청
-        UIManager.Instance.UpdateHP(Player.Instance.MaxHP, Player.Instance.CurrentHP);
-        UIManager.Instance.UpdateMP(Player.Instance.MaxMP, Player.Instance.CurrentMP);
-        UIManager.Instance.UpdateEXP(Player.Instance.RequiredEXP, Player.Instance.CurrentEXP);
+        Player.Instance.InitializeStats(data);
+        Debug.Log($"플레이어 스탯 초기화");
     }
 
     public void AddExp(int expAmount)
     {
         Player.Instance.AddExp(expAmount);
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        // Player 인스턴스가 없으면 생성 (Ex. 게임 시작)
+        if (Player.Instance == null)
+        {
+            GameObject playerObject = Instantiate(playerPrefab);
+            playerObject.transform.position = new Vector3(0, 0, 0);
+            playerObject.name = "Player"; // 인스턴스 이름 설정
+            Player player = playerObject.GetComponent<Player>();
+            if (player != null)
+            {
+                InitializePlayerStats(DataManager.Instance.SelectedCharacter);
+            }
+            else
+            {
+                Debug.LogError("소환된 플레이어 프리팹에 Player 컴포넌트가 없습니다.");
+            }   
+        }
     }
 
     private void OnEnable()
