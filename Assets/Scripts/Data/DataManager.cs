@@ -8,6 +8,8 @@ public class DataManager : Singleton<DataManager>
     private AccountData accountData;
     private string dataPath; // 데이터가 저장될 파일의 전체 경로
 
+    public CharacterData SelectedCharacter { get; private set; }
+
     protected override void Awake()
     {
         base.Awake(); // 싱글톤 설정
@@ -48,8 +50,6 @@ public class DataManager : Singleton<DataManager>
         Debug.Log($"캐릭터 추가됨: {newCharacter.CharacterName} ({newCharacter.JobName}). 총 캐릭터 수: {accountData.Characters.Count}");
     }
 
-    public CharacterData SelectedCharacter { get; private set; }
-
     // 캐릭터 선택 시 호출되어 선택된 캐릭터 정보를 저장
     public void SelectCharacter(CharacterData data)
     {
@@ -74,6 +74,32 @@ public class DataManager : Singleton<DataManager>
         else
         {
             Debug.LogWarning($"삭제하려는 캐릭터를 찾지 못했습니다: {characterToDelete.CharacterName}");
+        }
+    }
+
+    // 현재 선택된 캐릭터의 데이터를 업데이트하고 저장하는 함수
+    public void UpdateAndSaveCurrentCharacter(CharacterData updatedData)
+    {
+        if (SelectedCharacter == null)
+        {
+            Debug.LogWarning("선택된 캐릭터가 없어 저장할 수 없습니다.");
+            return;
+        }
+
+        // 계정 데이터에서 현재 선택된 캐릭터와 동일한 닉네임을 가진 캐릭터를 찾음
+        int index = accountData.Characters.FindIndex(c => c.CharacterName == SelectedCharacter.CharacterName);
+
+        if (index != -1)
+        {
+            // 찾았으면 데이터 업데이트
+            accountData.Characters[index] = updatedData;
+            SelectedCharacter = updatedData; // 현재 선택된 캐릭터 정보도 최신화
+            SaveData();
+            Debug.Log($"캐릭터 데이터 업데이트 및 저장 완료: {updatedData.CharacterName}");
+        }
+        else
+        {
+            Debug.LogWarning($"저장할 캐릭터를 계정 목록에서 찾지 못했습니다: {SelectedCharacter.CharacterName}");
         }
     }
 }

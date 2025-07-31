@@ -25,6 +25,7 @@ public class CharacterCreate : MonoBehaviour
     public Button CreateButton; // 캐릭터 생성창을 여는 버튼
     public Button ConfirmButton; // 최종적으로 캐릭터를 생성하는 버튼
     public Button CancelButton; // 닉네임 입력창을 닫는 버튼
+    public Button ReturnButton; // 캐릭터 선택창으로 돌아가는 버튼
     public SpriteRenderer BackgroundImageSR;  // Background 이미지의 스프라이트 렌더러
     public Sprite[] CharacterBackgrounds;
 
@@ -58,7 +59,7 @@ public class CharacterCreate : MonoBehaviour
     {
         // --- 기본 버튼 및 입력 필드 설정 ---
         if (NicknamePanel != null) NicknamePanel.SetActive(false);
-        else Debug.LogError("Nickname Panel이 할당되지 않았습니다.");
+        else Debug.LogError("닉네임 입력 패널이 할당되지 않음");
 
         if (CreateButton != null) CreateButton.onClick.AddListener(ShowNicknamePanel);
         else Debug.LogError("생성 버튼이 할당되지 않음");
@@ -68,6 +69,9 @@ public class CharacterCreate : MonoBehaviour
 
         if (CancelButton != null) CancelButton.onClick.AddListener(HideNicknamePanel);
         else Debug.LogError("취소 버튼이 할당되지 않음");
+
+        if (CancelButton != null) ReturnButton.onClick.AddListener(ReturnToSelect);
+        else Debug.LogError("이전으로 버튼이 할당되지 않음");
 
         if (CharacterNameInputField != null) CharacterNameInputField.onValueChanged.AddListener(ValidateInput);
         else Debug.LogError("캐릭터 이름 입력 필드가 할당되지 않음");
@@ -119,47 +123,6 @@ public class CharacterCreate : MonoBehaviour
         if (ConfirmButton != null)
             ConfirmButton.interactable = IsValidNickname(input, false);
     }
-
-    public void CreateCharacter()
-    {
-        string characterName = CharacterNameInputField.text;
-        if (!IsValidNickname(characterName, true))
-        {
-            return;
-        }
-
-        // 현재 선택된 직업 정보 가져오기
-        if (currentSelectedIndex < 0 || currentSelectedIndex >= CharacterInfos.Length)
-        {
-            Debug.LogError("유효한 직업이 선택되지 않았음");
-            return;
-        }
-        CharacterInfo selectedInfo = CharacterInfos[currentSelectedIndex];
-
-        // 새 캐릭터 데이터 생성 및 모든 정보 초기화
-        CharacterData newCharacter = new CharacterData
-        {
-            CharacterName = characterName,
-            JobName = selectedInfo.Name,
-            PreviewPrefabName = selectedInfo.PreviewPrefab.name, // 프리팹 이름 저장
-
-            // 기본 스탯 설정
-            Level = 1,
-            CurrentEXP = 0,
-            RequiredEXP = 100, // 예시 값
-            Atk = 10f,
-            Def = 10f,
-            MoveSpeed = 3f,
-            MaxHP = 100f,
-            MaxMP = 100f,
-        };
-
-        // 데이터 매니저를 통해 캐릭터 추가
-        DataManager.Instance.AddCharacter(newCharacter);
-
-        Debug.Log($"캐릭터 '{characterName}' ({selectedInfo.Name}) 생성 완료");
-        LoadCharacterSelectScene().Forget();
-    }
     // 닉네임 유효성 검사
     private bool IsValidNickname(string name, bool showWarning = false)
     {
@@ -202,6 +165,47 @@ public class CharacterCreate : MonoBehaviour
         }
         return length;
     }
+    #region Button - OnClick
+    public void CreateCharacter()
+    {
+        string characterName = CharacterNameInputField.text;
+        if (!IsValidNickname(characterName, true))
+        {
+            return;
+        }
+
+        // 현재 선택된 직업 정보 가져오기
+        if (currentSelectedIndex < 0 || currentSelectedIndex >= CharacterInfos.Length)
+        {
+            Debug.LogError("유효한 직업이 선택되지 않았음");
+            return;
+        }
+        CharacterInfo selectedInfo = CharacterInfos[currentSelectedIndex];
+
+        // 새 캐릭터 데이터 생성 및 모든 정보 초기화
+        CharacterData newCharacter = new CharacterData
+        {
+            CharacterName = characterName,
+            JobName = selectedInfo.Name,
+            PreviewPrefabName = selectedInfo.PreviewPrefab.name, // 프리팹 이름 저장
+
+            // 기본 스탯 설정
+            Level = 1,
+            CurrentEXP = 0,
+            RequiredEXP = 100, // 예시 값
+            Atk = 10f,
+            Def = 10f,
+            MoveSpeed = 3f,
+            MaxHP = 100f,
+            MaxMP = 100f,
+        };
+
+        // 데이터 매니저를 통해 캐릭터 추가
+        DataManager.Instance.AddCharacter(newCharacter);
+
+        Debug.Log($"캐릭터 '{characterName}' ({selectedInfo.Name}) 생성 완료");
+        LoadCharacterSelectScene().Forget();
+    }
 
     public void ShowNicknamePanel()
     {
@@ -214,6 +218,13 @@ public class CharacterCreate : MonoBehaviour
         if (NicknamePanel != null) NicknamePanel.SetActive(false);
         else Debug.LogError("Nickname Panel이 할당되지 않았습니다.");
     }
+
+    public void ReturnToSelect()
+    {
+        LoadCharacterSelectScene().Forget();
+    }
+    
+    #endregion Button - OnClick
 
     private async UniTaskVoid LoadCharacterSelectScene()
     {

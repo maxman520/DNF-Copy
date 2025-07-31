@@ -9,7 +9,7 @@ public class CharacterData
     // 스탯 정보
     public int Level = 1;
     public int CurrentEXP = 0;
-    public int RequiredEXP = 100;
+    public int RequiredEXP = 1000;
 
     public float Atk = 10f;
     public float Def = 10f;

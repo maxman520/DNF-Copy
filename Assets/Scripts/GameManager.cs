@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -45,7 +44,7 @@ public class GameManager : Singleton<GameManager>
             playerObject.transform.position = new Vector3(0, 0, 0);
             playerObject.name = "Player"; // 인스턴스 이름 설정
             Player player = playerObject.GetComponent<Player>();
-            if (player != null)
+            if (player != null && DataManager.Instance != null)
             {
                 InitializePlayerStats(DataManager.Instance.SelectedCharacter);
             }
@@ -222,7 +221,7 @@ public class GameManager : Singleton<GameManager>
     // "마을로 돌아가기" 버튼이 호출할 함수
     public void ReturnToTown()
     {
-        Debug.Log("결과를 확인했습니다. 마을로 돌아갑니다.");
+        Debug.Log("마을로 돌아갑니다.");
         string townToReturn = currentDungeon.TownToReturn;
 
         // 다음 씬에서 사용할 스폰 위치 저장
@@ -244,6 +243,57 @@ public class GameManager : Singleton<GameManager>
         LoadScene(nextDungeonSceneName);
     }
     #endregion Result Panel
+
+    public void GoToTown()
+    {
+        ReturnToTown();
+    }
+
+    public void ResetGameAndGoToCharacterSelect()
+    {
+        SavePlayerData();
+
+        // 다른 싱글톤 인스턴스 파괴
+        if (MainCamera.Instance != null) Destroy(MainCamera.Instance.gameObject);
+        if (VirtualCamera.Instance != null) Destroy(VirtualCamera.Instance.gameObject);
+        if (RoomManager.Instance != null) Destroy(RoomManager.Instance.gameObject);
+        if (UIManager.Instance != null) Destroy(UIManager.Instance.gameObject);
+        if (EffectManager.Instance != null) Destroy(EffectManager.Instance.gameObject);
+        if (Player.Instance != null) Destroy(Player.Instance.gameObject);
+
+        // 자기 자신 파괴
+        Destroy(gameObject);
+
+        // 캐릭터 선택 씬 로드
+        SceneManager.LoadScene("CharacterSelect_Scene");
+    }
+
+    public void SavePlayerData()
+    {
+        if (Player.Instance == null || DataManager.Instance == null) return;
+
+        // 현재 플레이어의 데이터를 기반으로 새로운 CharacterData 생성
+        CharacterData currentData = new CharacterData
+        {
+            // CharacterID, CharacterName, JobName 등은 기존 정보를 유지해야 함
+            CharacterName = DataManager.Instance.SelectedCharacter.CharacterName,
+            JobName = DataManager.Instance.SelectedCharacter.JobName,
+            PreviewPrefabName = DataManager.Instance.SelectedCharacter.PreviewPrefabName,
+
+            // 업데이트가 필요한 정보들
+            Level = Player.Instance.Level,
+            CurrentEXP = Player.Instance.CurrentEXP,
+            RequiredEXP = Player.Instance.RequiredEXP,
+            Atk = Player.Instance.Atk,
+            Def = Player.Instance.Def,
+            MaxHP = Player.Instance.MaxHP,
+            MaxMP = Player.Instance.MaxMP,
+            MoveSpeed = Player.Instance.WalkSpeed // WalkSpeed를 기본 이동속도로 저장
+        };
+
+        // DataManager에 업데이트 요청
+        DataManager.Instance.UpdateAndSaveCurrentCharacter(currentData);
+    }
 
     private bool isSlowing = false;
 

@@ -23,32 +23,15 @@ public class CharacterSelect : MonoBehaviour
         PopulateCharacterSlots();
 
         // 3. 버튼들의 리스너 설정
-        if (StartGameButton != null)
-        {
-            StartGameButton.onClick.AddListener(StartGame);
-        }
-        else
-        {
-            Debug.LogError("게임 시작 버튼이 인스펙터에서 할당되지 않음");
-        }
+        if (StartGameButton != null) StartGameButton.onClick.AddListener(StartGame);
+        else Debug.LogError("게임 시작 버튼이 인스펙터에서 할당되지 않음");
         
-        if (CreateCharacterButton != null)
-        {
-            CreateCharacterButton.onClick.AddListener(CreateCharacter);
-        }
-        else
-        {
-            Debug.LogError("캐릭터 생성 버튼이 인스펙터에서 할당되지 않음");
-        }
+        if (CreateCharacterButton != null) CreateCharacterButton.onClick.AddListener(CreateCharacter);
+        else Debug.LogError("캐릭터 생성 버튼이 인스펙터에서 할당되지 않음");
 
-        if (DeleteCharacterButton != null)
-        {
-            DeleteCharacterButton.onClick.AddListener(DeleteCharacter);
-        }
-        else
-        {
-            Debug.LogError("캐릭터 삭제 버튼이 인스펙터에서 할당되지 않음");
-        }
+        if (DeleteCharacterButton != null) DeleteCharacterButton.onClick.AddListener(DeleteCharacter);
+        else Debug.LogError("캐릭터 삭제 버튼이 인스펙터에서 할당되지 않음");
+        
     }
 
     void LoadCharacterData()
@@ -79,7 +62,7 @@ public class CharacterSelect : MonoBehaviour
         }
 
         // 첫 번째 캐릭터가 있다면 기본으로 선택하고, 없다면 선택 해제 상태로 둠
-        if (characters.Count > 0)
+        if (characters.Count > 0 && CharacterSlots[0] != null)
         {
             SelectCharacter(CharacterSlots[0]);
         }

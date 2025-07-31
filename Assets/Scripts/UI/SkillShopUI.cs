@@ -17,6 +17,16 @@ public class SkillShopUI : MonoBehaviour
     [Header("배울 수 있는 스킬 목록")]
     [SerializeField] private SkillData[] availableSkills;
 
+    private void OnEnable()
+    {
+        UIManager.Instance?.OpenUI(this.gameObject);
+    }
+
+    private void OnDisable()
+    {
+        UIManager.Instance?.CloseUI(this.gameObject);
+    }
+
     void Start()
     {
         InitializeShop();

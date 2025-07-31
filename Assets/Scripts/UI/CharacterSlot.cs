@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
@@ -26,7 +25,7 @@ public class CharacterSlot : MonoBehaviour, IPointerClickHandler
     {
         this.characterData = data;
         this.characterSelectManager = manager;
-        NameText.text = data.CharacterName;
+        NameText.text = "Lv." + data.Level + " " + data.CharacterName;
 
         // 이전에 있던 프리팹이 혹시 남아있다면 삭제
         if (characterInstance != null)
@@ -47,7 +46,6 @@ public class CharacterSlot : MonoBehaviour, IPointerClickHandler
                 screenPosition.z = 10.0f;
 
                 // 3. 스크린 좌표를 월드 좌표로 변환
-                // ※ 중요: 씬에 있는 메인 카메라에 "MainCamera" 태그가 설정되어 있어야 함
                 Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
                 // 4. 계산된 월드 좌표에 부모 없이, 원래 크기 그대로 생성

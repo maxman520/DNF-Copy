@@ -209,16 +209,16 @@ public class Player : Singleton<Player>
     {
         Level++;
         // 다음 레벨업에 필요한 경험치 계산 (예: 이전 경험치의 1.25배)
-        RequiredEXP = Mathf.RoundToInt(RequiredEXP * 1.25f); 
+        RequiredEXP = Mathf.RoundToInt(RequiredEXP * 1.25f);
         Debug.Log($"레벨업! 현재 레벨: {Level}, 다음 레벨업까지 필요한 경험치: {RequiredEXP}");
         // 레벨업 이펙트 호출
         // ..
 
-        // TODO: 레벨업에 따른 스탯 증가 로직 (MaxHP, Atk 등)
-        MaxHP *= 1.1f;
-        MaxMP *= 1.1f;
-        Atk *= 1.1f;
-        Def *= 1.1f;
+        // 레벨업에 따른 스탯 증가 로직 (MaxHP, Atk 등)
+        MaxHP = Mathf.RoundToInt(MaxHP * 1.1f);
+        MaxMP = Mathf.RoundToInt(MaxMP * 1.1f);
+        Atk = Mathf.RoundToInt(Atk * 1.1f);
+        Def = Mathf.RoundToInt(Def * 1.1f);
         CurrentHP = MaxHP; // 레벨업 시 체력, 마나 회복
         CurrentMP = MaxMP;
 

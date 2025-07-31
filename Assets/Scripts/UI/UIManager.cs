@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Triggers;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using TMPro;
 using UnityEngine;
@@ -31,6 +32,11 @@ public class UIManager : Singleton<UIManager>
     [Header("던전 결과 창")]
     [SerializeField] private ResultPanel resultPanel; // 던전 결과 창
 
+    [Header("메뉴창")]
+    [SerializeField] private MenuUI menuPanel; // 메뉴창
+
+    private List<GameObject> openedUIList = new List<GameObject>(); // 열려있는 창의 리스트. Esc버튼을 누를 시 창을 닫는데에 사용
+
     private Monster currentTarget; // 현재 추적 중인 타겟 몬스터
     private CancellationTokenSource monsterHPBarCts; // 몬스터 HP바 자동 숨김 작업을 위한 토큰
     private void Start()
@@ -40,7 +46,8 @@ public class UIManager : Singleton<UIManager>
         bossHPBar?.gameObject.SetActive(false);
 
         skillShopUI?.gameObject.SetActive(false); // 스킬샵 창 비활성화
-        minimapUI.gameObject.SetActive(false); // 미니맵 비활성화
+        minimapUI?.gameObject.SetActive(false); // 미니맵 비활성화
+        menuPanel?.gameObject.SetActive(false); // 메뉴 창 비활성화
     }
 
     private void Update()
@@ -48,10 +55,61 @@ public class UIManager : Singleton<UIManager>
         // 'K' 키를 누르면 스킬샵 창을 토글
         if (Input.GetKeyDown(KeyCode.K))
         {
-            if (skillShopUI != null)
-            {
-                skillShopUI.ToggleShop();
-            }
+            ToggleSkillShopUI();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            HandleEscapeKey();
+        }
+    }
+
+    public void ToggleMenuUI()
+    {
+        if (menuPanel != null)
+        {
+            menuPanel.gameObject.SetActive(!menuPanel.gameObject.activeSelf);
+        }
+    }
+
+    private void HandleEscapeKey()
+    {
+        // 열려있는 UI가 있다면 가장 마지막에 열린 UI를 닫음
+        if (openedUIList.Count > 0)
+        {
+            // 리스트의 가장 마지막 요소 (가장 최근에 열린 창)를 가져옴
+            GameObject lastOpenedUI = openedUIList[openedUIList.Count - 1];
+            lastOpenedUI.SetActive(false); // 이 창을 닫으면 OnDisable에서 리스트에서 제거됨
+        }
+        // 열려있는 UI가 없다면 메뉴창을 토글
+        else
+        {
+            ToggleMenuUI();
+        }
+    }
+
+    // UI 창이 열릴 때 리스트에 추가
+    public void OpenUI(GameObject uiObject)
+    {
+        if (!openedUIList.Contains(uiObject))
+        {
+            openedUIList.Add(uiObject);
+        }
+    }
+
+    // UI 창이 닫힐 때 리스트에서 제거
+    public void CloseUI(GameObject uiObject)
+    {
+        if (openedUIList.Contains(uiObject))
+        {
+            openedUIList.Remove(uiObject);
+        }
+    }
+
+    public void ToggleSkillShopUI() {
+        if (skillShopUI != null)
+        {
+            skillShopUI.ToggleShop();
         }
     }
 
