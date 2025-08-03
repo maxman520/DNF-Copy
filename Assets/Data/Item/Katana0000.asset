@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffbf93ef2bf44684295fa1f8716a2e72, type: 3}
+  m_Name: Katana0000
+  m_EditorClassIdentifier: 
+  ItemName: "\uC544\uC2A4\uB77C\uC774\uC758 \uCE74\uD0C0\uB098"
+  ItemIcon: {fileID: 21300000, guid: cc728da9dfbee5444b26e691af575b7b, type: 3}
+  ItemKind: 0
+  ItemDescription: 
+  EquipType: 5
+  AttackPower: 20
+  DefensePower: 0
+  WeaponSpriteLibrary: {fileID: 7108339969198208228, guid: 21a39f85f93bcf84db1b1365ee5d2926, type: 3}

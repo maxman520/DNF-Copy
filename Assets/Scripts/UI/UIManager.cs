@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -21,7 +20,7 @@ public class UIManager : Singleton<UIManager>
     [Tooltip("보스 몬스터용 HP바")]
     [SerializeField] private MonsterHPBar bossHPBar; // 보스 몬스터 HP 바
 
-    [Header("스킬창")]
+    [Header("스킬 창")]
     [SerializeField] private SkillShopUI skillShopUI; // 스킬샵 창
 
 
@@ -32,8 +31,13 @@ public class UIManager : Singleton<UIManager>
     [Header("던전 결과 창")]
     [SerializeField] private ResultPanel resultPanel; // 던전 결과 창
 
-    [Header("메뉴창")]
-    [SerializeField] private MenuUI menuPanel; // 메뉴창
+    [Header("메뉴 창")]
+    [SerializeField] private MenuUI menuPanel; // 메뉴 창
+
+    [Header("인벤토리 창")]
+    [SerializeField] private InventoryUI inventoryPanel; // 인벤토리 창
+
+
 
     private List<GameObject> openedUIList = new List<GameObject>(); // 열려있는 창의 리스트. Esc버튼을 누를 시 창을 닫는데에 사용
 
@@ -48,6 +52,7 @@ public class UIManager : Singleton<UIManager>
         skillShopUI?.gameObject.SetActive(false); // 스킬샵 창 비활성화
         minimapUI?.gameObject.SetActive(false); // 미니맵 비활성화
         menuPanel?.gameObject.SetActive(false); // 메뉴 창 비활성화
+        inventoryPanel?.gameObject.SetActive(false); // 인벤토리 창 비활성화
     }
 
     private void Update()
@@ -57,7 +62,12 @@ public class UIManager : Singleton<UIManager>
         {
             ToggleSkillShopUI();
         }
-
+        // 'I' 키를 누르면 스킬샵 창을 토글
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            ToggleInventoryUI();
+        }
+        // 'Escape' 키를 누르면 메뉴 창을 토글
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             HandleEscapeKey();
@@ -110,6 +120,14 @@ public class UIManager : Singleton<UIManager>
         if (skillShopUI != null)
         {
             skillShopUI.ToggleShop();
+        }
+    }
+
+    public void ToggleInventoryUI()
+    {
+        if (inventoryPanel != null)
+        {
+            inventoryPanel.gameObject.SetActive(!inventoryPanel.gameObject.activeSelf);
         }
     }
 

@@ -19,8 +19,14 @@ public enum PlayerAnimState
 public class Player : Singleton<Player>
 {
     [Header("플레이어 스탯")]
+    // 최종 스탯 (기본 + 장비)
     public float Atk;
     public float Def;
+    
+    // 기본 스탯 (레벨업, 캐릭터 고유값)
+    private float baseAtk;
+    private float baseDef;
+
     public float MaxHP;
     public float MaxMP;
     public float CurrentHP;
@@ -173,8 +179,14 @@ public class Player : Singleton<Player>
 
     public void InitializeStats(CharacterData data)
     {
-        this.Atk = data.Atk;
-        this.Def = data.Def;
+        // 기본 스탯 설정
+        this.baseAtk = data.Atk;
+        this.baseDef = data.Def;
+
+        // 최종 스탯 초기화 (처음엔 장비가 없으므로 기본 스탯과 동일)
+        this.Atk = this.baseAtk;
+        this.Def = this.baseDef;
+
         this.MaxHP = data.MaxHP;
         this.CurrentHP = this.MaxHP;
         this.MaxMP = data.MaxMP;
@@ -189,6 +201,16 @@ public class Player : Singleton<Player>
         UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
         UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
         UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
+    }
+
+    // PlayerEquipment에서 호출하여 장비로 인한 스탯 변동을 최종 스탯에 반영
+    public void UpdateEquipmentStats(int totalAttack, int totalDefense)
+    {
+        Atk = baseAtk + totalAttack;
+        Def = baseDef + totalDefense;
+
+        Debug.Log($"장비 스탯 적용 완료. 최종 공격력: {Atk}, 최종 방어력: {Def}");
+        // TODO: 여기에 스탯 변경 시 업데이트가 필요한 UI 호출 (캐릭터 정보 창 등)
     }
 
     public void AddExp(int expAmount)
@@ -226,6 +248,18 @@ public class Player : Singleton<Player>
         UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
         UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
         UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
+    }
+
+    public void HealHP(int amount)
+    {
+        CurrentHP = Mathf.Min(MaxHP, CurrentHP + amount);
+        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+    }
+
+    public void HealMP(int amount)
+    {
+        CurrentMP = Mathf.Min(MaxMP, CurrentMP + amount);
+        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
     }
 
 
