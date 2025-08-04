@@ -29,11 +29,6 @@ public class ResultPanel : MonoBehaviour
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
-        
-        // 처음에는 투명하고 상호작용 불가
-        canvasGroup.alpha = 0f;
-        canvasGroup.interactable = false;
-        this.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -73,8 +68,5 @@ public class ResultPanel : MonoBehaviour
         clearExpText.text = $"{resultData.ClearEXP:N0}";
         totalExpText.text = $"{resultData.HuntEXP + resultData.ClearEXP:N0}";
 
-        // 3. 활성화
-        canvasGroup.alpha = 1f;
-        canvasGroup.interactable = true;
     }
 }

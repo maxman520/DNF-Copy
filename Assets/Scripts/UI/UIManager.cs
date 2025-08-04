@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using TMPro;
 using UnityEngine;
@@ -37,7 +38,9 @@ public class UIManager : Singleton<UIManager>
     [Header("인벤토리 창")]
     [SerializeField] private InventoryUI inventoryPanel; // 인벤토리 창
 
-
+    
+    [Header("아이템 설명 창")]
+    [SerializeField] private ItemDescriptionPanel itemDescriptionPanel; // 아이템 설명 창
 
     private List<GameObject> openedUIList = new List<GameObject>(); // 열려있는 창의 리스트. Esc버튼을 누를 시 창을 닫는데에 사용
 
@@ -49,10 +52,12 @@ public class UIManager : Singleton<UIManager>
         monsterHPBar?.gameObject.SetActive(false);
         bossHPBar?.gameObject.SetActive(false);
 
+        resultPanel?.gameObject.SetActive(false); // 던전 결과 창 비활성화
         skillShopUI?.gameObject.SetActive(false); // 스킬샵 창 비활성화
         minimapUI?.gameObject.SetActive(false); // 미니맵 비활성화
         menuPanel?.gameObject.SetActive(false); // 메뉴 창 비활성화
         inventoryPanel?.gameObject.SetActive(false); // 인벤토리 창 비활성화
+        itemDescriptionPanel?.gameObject.SetActive(false); // 아이템 설명 창 비활성화
     }
 
     private void Update()
@@ -74,11 +79,21 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    public void ToggleMenuUI()
+
+    // UI 창이 열릴 때 리스트에 추가
+    public void OpenUI(GameObject uiObject)
     {
-        if (menuPanel != null)
+        if (!openedUIList.Contains(uiObject))
         {
-            menuPanel.gameObject.SetActive(!menuPanel.gameObject.activeSelf);
+            openedUIList.Add(uiObject);
+        }
+    }
+    // UI 창이 닫힐 때 리스트에서 제거
+    public void CloseUI(GameObject uiObject)
+    {
+        if (openedUIList.Contains(uiObject))
+        {
+            openedUIList.Remove(uiObject);
         }
     }
 
@@ -97,29 +112,24 @@ public class UIManager : Singleton<UIManager>
             ToggleMenuUI();
         }
     }
+    public void SetResultPanelData(DungeonResultData resultData) {
+        if (resultPanel != null)
+            resultPanel.SetResultData(resultData);
 
-    // UI 창이 열릴 때 리스트에 추가
-    public void OpenUI(GameObject uiObject)
+    }
+#region Toggle
+
+    public void ToggleMenuUI()
     {
-        if (!openedUIList.Contains(uiObject))
+        if (menuPanel != null)
         {
-            openedUIList.Add(uiObject);
+            menuPanel.gameObject.SetActive(!menuPanel.gameObject.activeSelf);
         }
     }
-
-    // UI 창이 닫힐 때 리스트에서 제거
-    public void CloseUI(GameObject uiObject)
-    {
-        if (openedUIList.Contains(uiObject))
-        {
-            openedUIList.Remove(uiObject);
-        }
-    }
-
     public void ToggleSkillShopUI() {
         if (skillShopUI != null)
         {
-            skillShopUI.ToggleShop();
+            skillShopUI.gameObject.SetActive(!skillShopUI.gameObject.activeSelf);
         }
     }
 
@@ -130,7 +140,12 @@ public class UIManager : Singleton<UIManager>
             inventoryPanel.gameObject.SetActive(!inventoryPanel.gameObject.activeSelf);
         }
     }
-
+    public void ToggleResultPanel()
+    {
+        if (resultPanel != null)
+            resultPanel.gameObject.SetActive(!resultPanel.gameObject.activeSelf);
+    }
+#endregion Toggle
     // 몬스터가 데미지를 입었을 때 호출될 함수
     public void OnMonsterDamaged(Monster monster)
     {
@@ -331,14 +346,15 @@ public class UIManager : Singleton<UIManager>
             this.mapName.text = name;
     }
 
-    #region Result Panel
-    public void ShowResultPanel(DungeonResultData resultData)
+    #region Item Description
+    public void ShowItemDescription(ItemData data, RectTransform slotRectTransform)
     {
-        resultPanel.gameObject.SetActive(true);
-        resultPanel.SetResultData(resultData);
+        itemDescriptionPanel?.Show(data, slotRectTransform);
     }
-    public void HideResultPanel() {
-        resultPanel.gameObject.SetActive(false);
+
+    public void HideItemDescription()
+    {
+        itemDescriptionPanel?.Hide();
     }
-    #endregion Result Panel
+    #endregion
 }

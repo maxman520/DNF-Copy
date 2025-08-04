@@ -65,9 +65,6 @@ public class Vinoshu : Monster
     [Header("공격 판정")]
     [SerializeField] private GameObject attackHitboxObject;
     private MonsterHitbox attackHitbox;
-    
-    // 무조건 인식 상태로 만들 것이므로 고블린과 다르게 isAware 변수는 필요없음
-    // protected bool isAware = false;
 
     [Header("AI 관련 변수")]
     protected bool isActing = false; // 현재 어떤 행동(Idle, Move 등)을 하고 있는지 여부
@@ -133,7 +130,8 @@ public class Vinoshu : Monster
         aiLoopCts = null;
 
         // 물리적 이동 즉시 중단
-        rb.linearVelocity = Vector2.zero;
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
         IsWalking = false;
     }
 
@@ -330,7 +328,8 @@ public class Vinoshu : Monster
                    && !token.IsCancellationRequested)
             {
                 Vector2 direction = (destination - transform.position).normalized;
-                rb.linearVelocity = direction * moveSpeed;
+                if (rb != null)
+                    rb.linearVelocity = direction * moveSpeed;
 
                 FlipTowardsPlayer();
 
@@ -343,7 +342,8 @@ public class Vinoshu : Monster
         }
         finally
         {
-            rb.linearVelocity = Vector2.zero;
+            if (rb != null)
+                rb.linearVelocity = Vector2.zero;
             IsWalking = false;
             isActing = false;
         }
@@ -463,7 +463,9 @@ public class Vinoshu : Monster
         isActing = false;
         IsWalking = false;
        
-        rb.linearVelocity = Vector2.zero; // 넉백 전에 속도 초기화
+        
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero; // 넉백 전에 속도 초기화
 
         // hurtbox 지점에 이펙트를 생성
         Vector3 hurtPoint = hurtboxTransform.position;
@@ -486,7 +488,8 @@ public class Vinoshu : Monster
             if (attackDetails.launchForce > 0)
             {
                 // 수평 넉백
-                rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
+                if (rb != null)
+                    rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
                 // 공중에 뜨는 힘 적용
                 verticalVelocity = attackDetails.launchForce;
@@ -505,7 +508,8 @@ public class Vinoshu : Monster
         else // 공중에 있을 때
         {   
             // 수평 넉백
-            rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
+            if (rb != null)
+                rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
             if (attackDetails.launchForce > 0) airHitCounter++;
             verticalVelocity = 2f + (attackDetails.launchForce * Mathf.Max(0, 0.5f - (airHitCounter * 0.125f)));
@@ -526,7 +530,8 @@ public class Vinoshu : Monster
         GameManager.Instance.AddHuntExp(monsterData.EXP);
 
         // 물리적 움직임과 충돌을 중지
-        rb.linearVelocity = Vector2.zero;
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
         GetComponentInChildren<Collider2D>().enabled = false;
 
         DeathSequenceAsync(this.GetCancellationTokenOnDestroy()).Forget();
@@ -601,7 +606,8 @@ public class Vinoshu : Monster
 
 
             // 위치와 속도, 중력 초기화
-            rb.linearVelocity = Vector2.zero;
+            if (rb != null)
+                rb.linearVelocity = Vector2.zero;
             // OnGetUpStateExit()에서 visualsTransform을 원 위치로 복구하도록 로직 옮김
             // visualsTransform.localPosition = startPos;
             verticalVelocity = 0f;

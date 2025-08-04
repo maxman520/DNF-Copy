@@ -33,12 +33,6 @@ public class SkillShopUI : MonoBehaviour
         descriptionPanel.SetActive(false); // 시작시엔 스킬 설명창은 꺼둠
     }
 
-    // 스킬샵 UI를 토글하는 함수
-    public void ToggleShop()
-    {
-        gameObject.SetActive(!gameObject.activeSelf);
-    }
-
     // 스킬샵 초기화
     private void InitializeShop()
     {

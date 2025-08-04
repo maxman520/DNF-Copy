@@ -15,7 +15,7 @@ MonoBehaviour:
   ItemName: "\uC544\uC2A4\uB77C\uC774\uC758 \uCE74\uD0C0\uB098"
   ItemIcon: {fileID: 21300000, guid: cc728da9dfbee5444b26e691af575b7b, type: 3}
   ItemKind: 0
-  ItemDescription: 
+  ItemDescription: "\uACF5\uACA9\uB825 +20"
   EquipType: 5
   AttackPower: 20
   DefensePower: 0

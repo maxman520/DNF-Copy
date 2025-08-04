@@ -29,6 +29,10 @@ public class InventoryUI : MonoBehaviour
         // 인벤토리 데이터가 변경될 때마다 UI를 업데이트하도록 이벤트 구독
         inventory.OnInventoryChanged += UpdateUI;
 
+        // 슬롯 이벤트 구독
+        InventorySlot.OnHoverEquipmentItem += HighlightEquipmentSlot;
+        InventorySlot.OnExitHover += UnhighlightAllEquipmentSlots;
+
         // 초기 UI 업데이트
         UpdateUI();
     }
@@ -84,6 +88,31 @@ public class InventoryUI : MonoBehaviour
         if (inventory != null)
         { 
             inventory.OnInventoryChanged -= UpdateUI;
+        }
+
+        InventorySlot.OnHoverEquipmentItem -= HighlightEquipmentSlot;
+        InventorySlot.OnExitHover -= UnhighlightAllEquipmentSlots;
+    }
+
+    // 특정 타입의 장비 슬롯을 하이라이트하는 함수
+    private void HighlightEquipmentSlot(EquipmentType type)
+    {
+        foreach (var slot in equipmentSlots)
+        {
+            if (slot.EquipType == type)
+            {
+                slot.Highlight();
+                break; // 하나만 찾으면 되므로 중단
+            }
+        }
+    }
+
+    // 모든 장비 슬롯의 하이라이트를 해제하는 함수
+    private void UnhighlightAllEquipmentSlots()
+    {
+        foreach (var slot in equipmentSlots)
+        {
+            slot.Unhighlight();
         }
     }
 }

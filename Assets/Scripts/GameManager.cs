@@ -181,7 +181,8 @@ public class GameManager : Singleton<GameManager>
     public void ShowResultPanel()
     {
         DungeonResultData resultData = CalculateDungeonResult();
-        UIManager.Instance.ShowResultPanel(resultData);
+        UIManager.Instance.SetResultPanelData(resultData);
+        UIManager.Instance.ToggleResultPanel();
     }
 
     private DungeonResultData CalculateDungeonResult()
@@ -227,7 +228,7 @@ public class GameManager : Singleton<GameManager>
         // 다음 씬에서 사용할 스폰 위치 저장
         nextSpawnPosition = currentDungeon.TownSpawnPosition;
 
-        UIManager.Instance.HideResultPanel(); // 던전 결과 창 숨김
+        UIManager.Instance.ToggleResultPanel(); // 던전 결과 창 숨김
         currentDungeon = null;
         LoadScene(townToReturn); // 돌아가야할 마을 씬으로 변경
     }

@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class EquipmentSlot : InventorySlot, IPointerClickHandler
@@ -12,6 +11,20 @@ public class EquipmentSlot : InventorySlot, IPointerClickHandler
         {
             // 장착된 아이템을 해제
             FindFirstObjectByType<Inventory>().UnEquip(EquipType);
+            Unhighlight();
+            UIManager.Instance.HideItemDescription(); // UIManager에 아이템 설명창 숨김을 요청
         }
+    }
+
+    public void Highlight()
+    {
+        if (forground != null)
+            forground.gameObject.SetActive(true);
+    }
+
+    public void Unhighlight()
+    {
+        if (forground != null)
+            forground.gameObject.SetActive(false);
     }
 }
