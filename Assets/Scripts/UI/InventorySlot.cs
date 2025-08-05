@@ -2,22 +2,34 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     // 이 슬롯에 마우스가 올라왔을 때, 아이템 종류를 외부에 알리기 위한 정적 이벤트
     public static event System.Action<EquipmentType> OnHoverEquipmentItem;
     public static event System.Action OnExitHover;
-
     [Header("UI 구성요소")]
     public Image Icon;
-    [SerializeField] protected Image forground;
+    [SerializeField] protected Image foreground;
 
+    public int Index { get; private set; }
     private ItemData item;
+    private Transform originalParent;
+    private Inventory inventory;
+    private Canvas parentCanvas; // 자신을 담고 있는 최상위 캔버스를 저장할 변수
+    private static InventorySlot draggedSlot;
 
     private void Awake()
     {
-        if (forground != null)
-            forground.gameObject.SetActive(false);
+        originalParent = transform; // 아이콘이 돌아올 원래 부모는 이 슬롯 자체
+        parentCanvas = GetComponentInParent<Canvas>();
+    }
+
+    private void Start()
+    {
+        if (Player.Instance != null)
+            inventory = Player.Instance.GetComponent<Inventory>();
+        
+        if (foreground != null) foreground.gameObject.SetActive(false);
     }
 
     public void AddItem(ItemData newItem)
@@ -32,11 +44,15 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         item = null;
         Icon.sprite = null;
         Icon.enabled = false;
-
-        if (forground != null)
-            forground.gameObject.SetActive(false);
+        if (foreground != null) foreground.gameObject.SetActive(false);
     }
 
+    public void SetIndex(int index)
+    {
+        Index = index;
+    }
+
+    #region Pointer Events
     // 슬롯에서 우클릭 시 호출
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -44,40 +60,79 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         {
             if (item != null && item is EquipmentData)
             {
-                // 아이템을 장착
-                FindFirstObjectByType<Inventory>().Equip(item as EquipmentData);
-                forground.gameObject.SetActive(false);
-                UIManager.Instance.HideItemDescription(); // UIManager에 아이템 설명창 숨김을 요청
+                inventory.Equip(item as EquipmentData);
+                UIManager.Instance.HideItemDescription();
+                foreground.gameObject.SetActive(false);
             }
         }
     }
 
-    // 마우스 포인터를 올렸을 때
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (item != null)
         {
-            if (forground != null) forground.gameObject.SetActive(true);
+            if (foreground != null) foreground.gameObject.SetActive(true);
 
             // UIManager에 아이템 설명창 표시를 요청
             UIManager.Instance.ShowItemDescription(item, transform as RectTransform);
 
             // 아이템이 장비라면, 해당하는 장비 종류를 이벤트로 외부에 알림
-            if (item is EquipmentData equipmentData)
-            {
-                OnHoverEquipmentItem?.Invoke(equipmentData.EquipType);
-            }
+            if (item is EquipmentData equipmentData) OnHoverEquipmentItem?.Invoke(equipmentData.EquipType);
         }
     }
 
-    // 마우스 포인터를 내렸을 때
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (forground != null) forground.gameObject.SetActive(false);
-
-        UIManager.Instance.HideItemDescription(); // UIManager에 아이템 설명창 숨김을 요청
-
-        // 아이템 종류와 상관없이, 마우스가 슬롯을 벗어나면 무조건 이벤트 발생
+        if (foreground != null) foreground.gameObject.SetActive(false);
+        UIManager.Instance.HideItemDescription();
+        // 아이템 종류와 상관없이, 마우스가 슬롯을 벗어나면 이벤트 발생
         OnExitHover?.Invoke();
     }
+    #endregion
+
+    #region Drag and Drop Events
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (item == null) return;
+        draggedSlot = this;
+
+        // 아이콘을 최상위로 옮겨 다른 UI 위에 그려지게 함
+        Icon.transform.SetParent(parentCanvas.transform);
+
+        // **핵심: 드래그 중인 아이콘이 마우스 이벤트를 통과시키도록 설정**
+        Icon.raycastTarget = false;
+
+        if (foreground != null) foreground.gameObject.SetActive(false);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (item == null) return;
+        
+        Icon.transform.position = eventData.position; // 마우스 위치로 아이콘 이동
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        // 드래그가 끝났으므로, 공용 변수를 비워줌
+        draggedSlot = null;
+
+        // 아이콘을 원래 슬롯으로 되돌림
+        Icon.transform.SetParent(originalParent);
+        Icon.transform.localPosition = Vector3.zero;
+
+        // 아이콘이 다시 마우스 이벤트를 받을 수 있도록 복원
+        Icon.raycastTarget = true;
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        // 드롭된 슬롯이 유효하고, 자기 자신이 아닐 때
+        if (draggedSlot != null && draggedSlot != this)
+        {
+            // 빈 슬롯이든 아이템이 있는 슬롯이든 교환
+            inventory.SwapItems(draggedSlot.Index, this.Index);
+        }
+    }
+    #endregion
 }

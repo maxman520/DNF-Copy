@@ -18,13 +18,13 @@ public class EquipmentSlot : InventorySlot, IPointerClickHandler
 
     public void Highlight()
     {
-        if (forground != null)
-            forground.gameObject.SetActive(true);
+        if (foreground != null)
+            foreground.gameObject.SetActive(true);
     }
 
     public void Unhighlight()
     {
-        if (forground != null)
-            forground.gameObject.SetActive(false);
+        if (foreground != null)
+            foreground.gameObject.SetActive(false);
     }
 }

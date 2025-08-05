@@ -1046,8 +1046,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd99c70cccf0d474bbca2147d0dd8a46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items:
+  Items:
   - {fileID: 11400000, guid: 6ca0ccd926384024d868f60cb96e7c86, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   Gold: 0
   Coin: 0
 --- !u!114 &5878065608870598077

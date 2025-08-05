@@ -12,10 +12,7 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
     private Vector3 startPosition;
     private Transform startParent;
 
-
-    
-    // 자신을 담고 있는 최상위 캔버스를 저장할 변수
-    [SerializeField]private Canvas parentCanvas;
+    private Canvas parentCanvas; // 자신을 담고 있는 최상위 캔버스를 저장할 변수
 
     private void Awake()
     {
@@ -48,7 +45,6 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
         startPosition = rectTransform.position;
         startParent = transform.parent;
 
-        canvasGroup.alpha = 0.6f; // 반투명하게
         canvasGroup.blocksRaycasts = false; // 드롭 지점을 감지할 수 있도록 레이캐스트를 통과시킴
 
         // 드래그 중에는 최상위 캔버스 자식으로 옮겨서 다른 UI에 가려지지 않게 함
@@ -58,9 +54,6 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
     public void OnDrag(PointerEventData eventData)
     {
         // 마우스 위치를 따라 아이콘 이동
-        // rectTransform.position = Input.mousePosition;
-
-        // Input.mousePosition 대신 eventData.position 사용
         rectTransform.position = eventData.position;
     }
 

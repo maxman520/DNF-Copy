@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
@@ -18,13 +17,10 @@ public class InventoryUI : MonoBehaviour
     void Start()
     {
         // 플레이어의 Inventory 컴포넌트를 찾아서 참조
-        inventory = FindFirstObjectByType<Inventory>();
-        if (inventory == null)
-        {
-            Debug.LogError("씬에 Inventory 컴포넌트를 가진 오브젝트가 없습니다.");
-            this.enabled = false;
-            return;
-        }
+        inventory = Player.Instance.GetComponent<Inventory>();
+
+        // 장비 장착 슬롯 초기화
+        inventory.Initialize();
 
         // 인벤토리 데이터가 변경될 때마다 UI를 업데이트하도록 이벤트 구독
         inventory.OnInventoryChanged += UpdateUI;
@@ -51,11 +47,13 @@ public class InventoryUI : MonoBehaviour
     private void UpdateUI()
     {
         // 1. 획득한 아이템 슬롯 업데이트
-        for (int i = 0; i < inventorySlots.Count; i++)
+        for (int i = 0; i < inventory.Items.Length; i++)
         {
-            if (i < inventory.items.Count)
+            inventorySlots[i].SetIndex(i); // 각 슬롯에 자신의 데이터 인덱스를 알려줌
+
+            if (inventory.Items[i] != null)
             {
-                inventorySlots[i].AddItem(inventory.items[i]);
+                inventorySlots[i].AddItem(inventory.Items[i]);
             }
             else
             {

@@ -69,8 +69,6 @@ public class SkillSlotUI : MonoBehaviour, IDropHandler
     // SkillManager가 호출하여 슬롯 UI를 업데이트
     public void UpdateSlot(int index, SkillData skillData)
     {
-        Debug.Log("UpdateSlot 호출");
-
         if (skillData != null)
         {
             iconImage.sprite = skillData.skillIcon;

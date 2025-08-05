@@ -10947,7 +10947,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &723214030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10965,7 +10965,7 @@ MonoBehaviour:
   itemNameText: {fileID: 551586870}
   itemDescriptionText: {fileID: 271323354}
   equipmentTypeText: {fileID: 416001826}
-  offset: {x: -167, y: 175}
+  offset: {x: 0, y: 200}
 --- !u!224 &723214031
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18693,7 +18693,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1237521485
 RectTransform:
   m_ObjectHideFlags: 0
