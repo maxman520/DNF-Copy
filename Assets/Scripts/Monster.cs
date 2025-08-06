@@ -4,6 +4,7 @@ public abstract class Monster : MonoBehaviour
 {
     [Header("데이터 참조")]
     [SerializeField] protected MonsterData monsterData; // 몬스터의 원본 데이터를 담는 ScriptableObject
+    [SerializeField] protected DropTable dropTable; // 드랍 테이블 참조 (사망 시 사용)
 
     [Header("실시간 스탯")]
     protected string name;
@@ -86,6 +87,13 @@ public abstract class Monster : MonoBehaviour
 
     protected abstract void Hurt(AttackDetails attackDetails, Vector2 attackPosition);
     protected abstract void Die();
+
+    protected void SpawnDrops()
+    {
+        if (dropTable == null) return;
+        if (DropManager.Instance == null) return;
+        DropManager.Instance.SpawnDrops(dropTable, transform.position);
+    }
 
     // 대기 애니메이션으로 진입 시 호출
     public abstract void OnIdleStateEnter();

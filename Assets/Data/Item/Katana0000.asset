@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemName: "\uC544\uC2A4\uB77C\uC774\uC758 \uCE74\uD0C0\uB098"
   ItemIcon: {fileID: 21300000, guid: cc728da9dfbee5444b26e691af575b7b, type: 3}
+  DropSprite: {fileID: 21300000, guid: 983516c2c720fad4da7c1a28b633cfcf, type: 3}
   ItemKind: 0
   ItemDescription: "\uACF5\uACA9\uB825 +20"
   EquipType: 5

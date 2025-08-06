@@ -98,4 +98,10 @@ public class Inventory : MonoBehaviour
 
         OnInventoryChanged?.Invoke(); // UI 업데이트
     }
+
+    public void AddGold(int amount)
+    {
+        Gold += Mathf.Max(0, amount);
+        OnInventoryChanged?.Invoke();
+    }
 }

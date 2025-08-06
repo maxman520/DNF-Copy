@@ -236,6 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monsterData: {fileID: 11400000, guid: 871f98b4b761626408a370b6b589fcc1, type: 2}
+  dropTable: {fileID: 11400000, guid: dc9e482fa070a5d4b933de47c92069ee, type: 2}
   currentAttackDetails:
     attackName: 
     damageRate: 0

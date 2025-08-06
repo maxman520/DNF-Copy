@@ -14,6 +14,7 @@ public class ItemData : ScriptableObject
     [Header("기본 정보")]
     public string ItemName;
     public Sprite ItemIcon;
+    public Sprite DropSprite; // 월드 드랍 시 표시될 스프라이트 (없으면 ItemIcon 사용)
     public Kind ItemKind;
     [TextArea]
     public string ItemDescription;

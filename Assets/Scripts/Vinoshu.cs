@@ -517,7 +517,7 @@ public class Vinoshu : Monster
         }
     }
 
-    protected override void Die()
+    protected override async void Die()
     {
         StopAILoop(); // 모든 비동기 작업 중단
         isActing = false;
@@ -534,7 +534,9 @@ public class Vinoshu : Monster
             rb.linearVelocity = Vector2.zero;
         GetComponentInChildren<Collider2D>().enabled = false;
 
-        DeathSequenceAsync(this.GetCancellationTokenOnDestroy()).Forget();
+        var token = this.GetCancellationTokenOnDestroy();
+        await DeathSequenceAsync(token);
+        // DeathSequenceAsync에서 Destroy 수행함. 만약 내부 Destroy를 제거한다면 여기서 Destroy(gameObject);
     }
 
     private async UniTask DeathSequenceAsync(CancellationToken token)

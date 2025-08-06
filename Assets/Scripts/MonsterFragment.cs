@@ -37,7 +37,7 @@ public class MonsterFragment : MonoBehaviour
     // 이 파편에 초기 힘을 가하는 public 함수
     public void Initialize(Vector2 horizontalForce, float verticalForce)
     {
-        // 수평/수직 이동은 루트의 Rigidbody가 담당
+        // 수평 이동은 루트의 Rigidbody가 담당
         rb.AddForce(horizontalForce, ForceMode2D.Impulse);
 
         // 공중으로 솟구치는 힘은 Visuals의 verticalVelocity가 담당

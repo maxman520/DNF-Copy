@@ -506,7 +506,8 @@ public class Goblin : Monster
                 }
             }
         }
-        // 3. 최종 오브젝트 파괴
+        // 3. 드랍 생성 후 최종 오브젝트 파괴
+        SpawnDrops();
         await UniTask.Delay(System.TimeSpan.FromSeconds(1.0), cancellationToken: token);
         Destroy(gameObject);
     }
