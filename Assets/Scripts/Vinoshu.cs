@@ -536,7 +536,6 @@ public class Vinoshu : Monster
 
         var token = this.GetCancellationTokenOnDestroy();
         await DeathSequenceAsync(token);
-        // DeathSequenceAsync에서 Destroy 수행함. 만약 내부 Destroy를 제거한다면 여기서 Destroy(gameObject);
     }
 
     private async UniTask DeathSequenceAsync(CancellationToken token)

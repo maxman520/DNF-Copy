@@ -9,7 +9,6 @@ public class DropManager : Singleton<DropManager>
 
     [Header("물리 설정")]
     [SerializeField] private float launchForce = 3.0f;
-    [SerializeField] private float horizontalJitter = 1.5f;
 
     public void SpawnDrops(DropTable table, Vector3 origin)
     {
@@ -37,14 +36,14 @@ public class DropManager : Singleton<DropManager>
                 if (entry != null && entry.Item != null)
                 {
                     int qty = Random.Range(entry.QuantityRange.x, entry.QuantityRange.y + 1);
-                    SpawnDropItem(entry.Item, qty, origin, table.DropSpreadRadius);
+                    SpawnDropItem(entry.Item, qty, origin);
                 }
             }
             else if (pick <= itemWeightSum + goldWeight)
             {
                 // 골드
                 int amount = Random.Range(table.Gold.AmountRange.x, table.Gold.AmountRange.y + 1);
-                SpawnDropGold(amount, origin, table.DropSpreadRadius);
+                SpawnDropGold(amount, origin);
             }
             else
             {
@@ -68,25 +67,19 @@ public class DropManager : Singleton<DropManager>
         return null;
     }
 
-    private void ApplyLaunch(Rigidbody2D rb, Transform visualsTransform, out float initialVerticalVelocity, out float visualsAngularVelocity)
+    private void ApplyLaunch(Rigidbody2D rb)
     {
-        initialVerticalVelocity = 0f;
-        visualsAngularVelocity = 0f;
         if (rb == null) return;
         float dir = Random.value < 0.5f ? -1f : 1f;
-        float h = Random.Range(0.5f, horizontalJitter) * dir;
+        float h = Random.Range(0.5f, 1f) * dir;
         // 수평 이동은 Rigidbody가 담당
         rb.AddForce(new Vector2(h, 0f), ForceMode2D.Impulse);
-        // 시각적 회전은 Visuals가 담당하므로 각속도만 전달
-        visualsAngularVelocity = 360f * dir;
-        // 공중으로 솟구치는 힘은 Visuals의 verticalVelocity가 담당하므로 초기값만 반환
-        initialVerticalVelocity = launchForce;
     }
 
-    private void SpawnDropItem(ItemData item, int quantity, Vector3 origin, float spread)
+    private void SpawnDropItem(ItemData item, int quantity, Vector3 origin)
     {
         if (DropItemPrefab == null) return;
-        Vector3 pos = origin + (Vector3)(Random.insideUnitCircle * spread);
+        Vector3 pos = origin;
         var go = Instantiate(DropItemPrefab, pos, Quaternion.identity);
         var wi = go.GetComponent<DropItem>();
         if (wi != null)
@@ -94,15 +87,7 @@ public class DropManager : Singleton<DropManager>
             wi.Initialize(item, quantity);
         }
         var rb = go.GetComponent<Rigidbody2D>();
-        float v0; float av;
-        var visuals = go.transform.Find("Visuals");
-        ApplyLaunch(rb, visuals, out v0, out av);
-        // DropItem에 초기 verticalVelocity와 visuals 각속도 전달
-        if (wi != null)
-        {
-            wi.SetInitialVerticalVelocity(v0);
-            wi.SetVisualsAngularVelocity(av);
-        }
+        ApplyLaunch(rb);
 
         // 스프라이트 적용: DropSprite 우선, 없으면 ItemIcon
         var sr = go.GetComponentInChildren<SpriteRenderer>();
@@ -112,10 +97,10 @@ public class DropManager : Singleton<DropManager>
         }
     }
 
-    private void SpawnDropGold(int amount, Vector3 origin, float spread)
+    private void SpawnDropGold(int amount, Vector3 origin)
     {
         if (DropGoldPrefab == null) return;
-        Vector3 pos = origin + (Vector3)(Random.insideUnitCircle * spread);
+        Vector3 pos = origin;
         var go = Instantiate(DropGoldPrefab, pos, Quaternion.identity);
         var wg = go.GetComponent<DropGold>();
         if (wg != null)
@@ -123,13 +108,6 @@ public class DropManager : Singleton<DropManager>
             wg.Initialize(amount);
         }
         var rb = go.GetComponent<Rigidbody2D>();
-        float v0; float av;
-        var visuals = go.transform.Find("Visuals");
-        ApplyLaunch(rb, visuals, out v0, out av);
-        if (wg != null)
-        {
-            wg.SetInitialVerticalVelocity(v0);
-            wg.SetVisualsAngularVelocity(av);
-        }
+        ApplyLaunch(rb);
     }
 }

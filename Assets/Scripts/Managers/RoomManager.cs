@@ -41,6 +41,7 @@ public class RoomManager : Singleton<RoomManager>
         if (VirtualCamera.Instance != null)
         {
             VirtualCamera.Instance.ChangeConfiner(newBound);
+            VirtualCamera.Instance.SetFollowTarget(Player.Instance.transform);
         }
     }
 }

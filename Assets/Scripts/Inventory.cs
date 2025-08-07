@@ -52,24 +52,36 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void Equip(EquipmentData itemToEquip)
+    // 인덱스를 명확히 지정해서 장착
+    public void Equip(int index)
     {
-        EquipmentType type = itemToEquip.EquipType;
+        if (index < 0 || index >= Items.Length) return;
+        var equip = Items[index] as EquipmentData;
+        if (equip == null) return;
 
-        // 1. 이미 해당 부위에 다른 아이템을 장착 중인지 확인
-        if (EquippedItems[type] != null)
+        EquipmentType type = equip.EquipType;
+        var currentlyEquipped = EquippedItems.ContainsKey(type) ? EquippedItems[type] : null;
+
+        // 선택 슬롯 비우기
+        Items[index] = null;
+
+        var pe = GetComponent<PlayerEquipment>();
+        if (currentlyEquipped != null)
         {
-            UnEquip(type); // 기존 아이템을 인벤토리로 돌려보냄 (장비 교체)
+            // 기존 장비의 능력치/외형 해제
+            pe?.UnEquip(type);
         }
 
-        // 2. 인벤토리에서 새 아이템 제거
-        RemoveItem(itemToEquip);
+        // 새 장비 장착
+        EquippedItems[type] = equip;
+        pe?.Equip(equip);
 
-        // 3. 장비 슬롯에 새 아이템 등록
-        EquippedItems[type] = itemToEquip;
+        // 기존 장비는 인벤토리에 반환
+        if (currentlyEquipped != null)
+        {
+            AddItem(currentlyEquipped);
+        }
 
-        // 4. 실제 플레이어에게 능력치 및 외형 적용
-        GetComponent<PlayerEquipment>()?.Equip(itemToEquip);
         OnInventoryChanged?.Invoke();
     }
 

@@ -1048,8 +1048,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Items:
   - {fileID: 11400000, guid: 6ca0ccd926384024d868f60cb96e7c86, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 6ca0ccd926384024d868f60cb96e7c86, type: 2}
+  - {fileID: 11400000, guid: 21fd0362424450c4a813726d633bb176, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

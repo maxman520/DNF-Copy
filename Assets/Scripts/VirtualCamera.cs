@@ -4,11 +4,14 @@ using Unity.Cinemachine;
 public class VirtualCamera : Singleton<VirtualCamera>
 {
     private CinemachineConfiner2D confiner;
+    private CinemachineCamera virtualCam;
+
 
     protected override void Awake()
     {
         base.Awake();
         confiner = GetComponent<CinemachineConfiner2D>();
+        virtualCam = GetComponent<CinemachineCamera>();
     }
 
     public void ChangeConfiner(Collider2D newBound)
@@ -24,5 +27,13 @@ public class VirtualCamera : Singleton<VirtualCamera>
         confiner.BoundingShape2D = newBound;
         // 경계가 유효하므로 Confiner를 활성화
         confiner.enabled = true;
+    }
+
+    public void SetFollowTarget(Transform target)  // Follow 설정 메서드
+    {
+        if (virtualCam != null)
+        {
+            virtualCam.Follow = target;
+        }
     }
 }

@@ -35,6 +35,4 @@ public class DropTable : ScriptableObject
     [Header("드랍 개수/연출")]
     [Tooltip("최소~최대 드랍 개수 (아이템+골드 합)")]
     public Vector2Int DropCountRange = new Vector2Int(0, 2);
-    [Tooltip("드랍 시 퍼지는 반경")]
-    public float DropSpreadRadius = 0.5f;
 }

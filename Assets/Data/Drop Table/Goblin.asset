@@ -21,4 +21,3 @@ MonoBehaviour:
     AmountRange: {x: 10, y: 30}
   EmptyWeight: 0
   DropCountRange: {x: 1, y: 1}
-  DropSpreadRadius: 0.5

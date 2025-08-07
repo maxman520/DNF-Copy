@@ -16,7 +16,7 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
     private Transform originalParent;
     private Inventory inventory;
     private Canvas parentCanvas; // 자신을 담고 있는 최상위 캔버스를 저장할 변수
-    private static InventorySlot draggedSlot;
+    protected static InventorySlot draggedSlot;
 
     private void Awake()
     {
@@ -60,7 +60,7 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         {
             if (item != null && item is EquipmentData)
             {
-                inventory.Equip(item as EquipmentData);
+                inventory.Equip(Index);
                 UIManager.Instance.HideItemDescription();
                 foreground.gameObject.SetActive(false);
             }
@@ -99,7 +99,7 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         // 아이콘을 최상위로 옮겨 다른 UI 위에 그려지게 함
         Icon.transform.SetParent(parentCanvas.transform);
 
-        // **핵심: 드래그 중인 아이콘이 마우스 이벤트를 통과시키도록 설정**
+        // 드래그 중인 아이콘이 마우스 이벤트를 통과시키도록 설정
         Icon.raycastTarget = false;
 
         if (foreground != null) foreground.gameObject.SetActive(false);
@@ -127,11 +127,24 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 
     public void OnDrop(PointerEventData eventData)
     {
-        // 드롭된 슬롯이 유효하고, 자기 자신이 아닐 때
-        if (draggedSlot != null && draggedSlot != this)
+        if (draggedSlot == null) return;
+        
+        Debug.Log("InventorySlot OnDrop 호출됨");
+
+        // 1) 장비 슬롯에서 인벤토리 슬롯으로 드롭 → 탈착만 수행, 드롭 위치 무시
+        if (draggedSlot is EquipmentSlot eqSlot)
         {
-            // 빈 슬롯이든 아이템이 있는 슬롯이든 교환
-            inventory.SwapItems(draggedSlot.Index, this.Index);
+            inventory.UnEquip(eqSlot.EquipType);
+            return;
+        }
+
+        // 2) 인벤토리 슬롯 ↔ 인벤토리 슬롯 → 교환
+        if (draggedSlot is InventorySlot invSlot)
+        {
+            if (invSlot != this)
+            {
+                inventory.SwapItems(invSlot.Index, this.Index);
+            }
         }
     }
     #endregion

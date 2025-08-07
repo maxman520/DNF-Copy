@@ -6,11 +6,18 @@ public class DropItem: MonoBehaviour
     public int Quantity = 1;
 
     [Header("중력/점프")]
-    [SerializeField] private float gravity = 21f;
+    [SerializeField] private float gravity;
     [SerializeField] private float verticalVelocity;
     private Transform visuals;
     private Rigidbody2D rb;
     private float visualsAngularVelocity;
+
+    // 플레이어 근접 및 획득 관련
+    private bool isPlayerInRange = false;
+    private DropNameLabel nameLabel;
+    private SpriteRenderer nameBg;
+    [SerializeField] private Sprite highlightBgSprite;
+    private Sprite originalBgSprite;
 
     private void Awake()
     {
@@ -20,72 +27,36 @@ public class DropItem: MonoBehaviour
         {
             visuals.localPosition = Vector3.zero;
         }
-    }
+        visualsAngularVelocity = 360 * (Random.value < 0.5f ? -1f : 1f);
 
-    private void Reset()
-    {
-        var col = GetComponent<Collider2D>();
-        if (col != null) col.isTrigger = false;
+        nameLabel = GetComponentInChildren<DropNameLabel>();
+        if (nameLabel != null)
+        {
+            nameBg = nameLabel.GetComponentInChildren<SpriteRenderer>();
+            if (nameBg != null)
+            {
+                originalBgSprite = nameBg.sprite;
+            }
+        }
     }
 
     public void Initialize(ItemData item, int quantity)
     {
         this.Item = item;
         this.Quantity = Mathf.Max(1, quantity);
-    }
 
-    public void SetInitialVerticalVelocity(float v0)
-    {
-        verticalVelocity = Mathf.Max(0f, v0);
-    }
-    public void SetVisualsAngularVelocity(float av)
-    {
-        visualsAngularVelocity = av;
+        if (nameLabel != null)
+        {
+            string txt = (this.Quantity > 1) ? $"{this.Item.ItemName} ({this.Quantity}EA)" : this.Item.ItemName;
+            nameLabel.SetText(txt);
+        }
     }
 
     private void Update()
     {
         HandleVertical();
-    }
 
-    private void HandleVertical()
-    {
-        if (visuals == null) return;
-        // 이미 바닥에 닿아 있고 아래로 가는 중이면 정지
-        if (visuals.localPosition.y <= 0f && verticalVelocity <= 0f)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
-            visuals.localPosition = new Vector3(visuals.localPosition.x, 0f, visuals.localPosition.z);
-            verticalVelocity = 0f;
-            return;
-        }
-        // 중력 적용 및 이동
-        verticalVelocity -= gravity * Time.deltaTime;
-        visuals.localPosition += new Vector3(0f, verticalVelocity * Time.deltaTime, 0f);
-        // 공중에서는 visuals 회전 연출
-        if (verticalVelocity != 0f)
-        {
-            visuals.localRotation *= Quaternion.Euler(0f, 0f, visualsAngularVelocity * Time.deltaTime);
-        }
-        // 착지 체크
-        if (visuals.localPosition.y < 0f && verticalVelocity < 0f)
-        {
-            visuals.localPosition = new Vector3(visuals.localPosition.x, 0f, visuals.localPosition.z);
-            verticalVelocity = 0f;
-            // 착지 시 회전 초기화
-            transform.rotation = Quaternion.identity;
-            visuals.localRotation = Quaternion.identity;
-        }
-    }
-
-    private bool IsLanded()
-    {
-        return visuals != null && visuals.localPosition.y <= 0f && Mathf.Approximately(verticalVelocity, 0f);
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("PlayerGround") && IsLanded())
+        if (isPlayerInRange && Input.GetKeyDown(KeyCode.X))
         {
             var inv = Player.Instance.GetComponent<Inventory>();
             if (inv != null)
@@ -96,6 +67,56 @@ public class DropItem: MonoBehaviour
                 }
             }
             Destroy(gameObject);
+        }
+    }
+
+    private void HandleVertical()
+    {
+        if (visuals == null) return;
+        // 이미 바닥에 닿아 있고 아래로 가는 중이면 정지
+        if (IsLanded())
+        {
+            rb.linearVelocity = Vector2.zero;
+            visuals.localPosition = Vector3.zero;
+            verticalVelocity = 0f;
+            // 착지 시 회전 초기화
+            transform.rotation = Quaternion.identity;
+            visuals.localRotation = Quaternion.identity;
+            return;
+        }
+        // 중력 적용 및 이동
+        verticalVelocity -= gravity * Time.deltaTime;
+        visuals.localPosition += new Vector3(0f, verticalVelocity * Time.deltaTime, 0f);
+        // 공중에서는 visuals 회전 연출 (높이가 0보다 클 때 회전 유지)
+        visuals.localRotation *= Quaternion.Euler(0f, 0f, visualsAngularVelocity * Time.deltaTime);
+    }
+
+    private bool IsLanded()
+    {
+        return visuals != null && visuals.localPosition.y <= 0f && verticalVelocity <= 0;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("PlayerGround") && IsLanded())
+        {
+            isPlayerInRange = true;
+            if (nameBg != null && highlightBgSprite != null)
+            {
+                nameBg.sprite = highlightBgSprite;
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("PlayerGround"))
+        {
+            isPlayerInRange = false;
+            if (nameBg != null)
+            {
+                nameBg.sprite = originalBgSprite;
+            }
         }
     }
 }
