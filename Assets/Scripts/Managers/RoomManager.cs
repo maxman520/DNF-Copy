@@ -1,8 +1,8 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class RoomManager : Singleton<RoomManager>
 {
+    public event System.Action<Room> OnRoomEntered;
     private Room currentRoom;
 
     // 플레이어 위치를 기반으로 CurrentRoom을 업데이트
@@ -20,14 +20,15 @@ public class RoomManager : Singleton<RoomManager>
             return;
         }
 
-        // 이전 방 퇴장 처리
-        currentRoom?.OnExitRoom();
+        // 이전 방 퇴장. 비활성화.
+        currentRoom.OnExitRoom();
 
         // 새로운 방으로 설정
         currentRoom = targetRoom;
 
-        // 새로운 방 입장 처리
+        // 새로운 방 입장. 활성화.
         currentRoom.OnEnterRoom();
+        OnRoomEntered?.Invoke(targetRoom); // UI Manager에게 새로운 방 입장 알림
 
         // 카메라 경계 변경
         ChangeCameraConfiner(currentRoom.CameraBound);

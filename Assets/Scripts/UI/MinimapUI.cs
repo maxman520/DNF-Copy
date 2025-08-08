@@ -59,7 +59,7 @@ public class MinimapUI : MonoBehaviour
         }
     }
 
-    // 플레이어의 위치가 바뀔 때 DungeonManager가 호출
+    // 플레이어의 위치가 바뀔 때 GameManager가 호출
     public void UpdatePlayerPosition(int newRoomIndex)
     {
         if (currentDungeon == null || newRoomIndex < 0 || newRoomIndex >= currentDungeon.Rooms.Count) return;

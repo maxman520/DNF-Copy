@@ -13,7 +13,6 @@ public class DropItem: MonoBehaviour
     private float visualsAngularVelocity;
 
     // 플레이어 근접 및 획득 관련
-    private bool isPlayerInRange = false;
     private DropNameLabel nameLabel;
     private SpriteRenderer nameBg;
     [SerializeField] private Sprite highlightBgSprite;
@@ -55,19 +54,19 @@ public class DropItem: MonoBehaviour
     private void Update()
     {
         HandleVertical();
+    }
 
-        if (isPlayerInRange && Input.GetKeyDown(KeyCode.X))
+    public void Pickup()
+    {
+        var inv = Player.Instance.GetComponent<Inventory>();
+        if (inv != null)
         {
-            var inv = Player.Instance.GetComponent<Inventory>();
-            if (inv != null)
+            for (int i = 0; i < Quantity; i++)
             {
-                for (int i = 0; i < Quantity; i++)
-                {
-                    inv.AddItem(Item);
-                }
+                inv.AddItem(Item);
             }
-            Destroy(gameObject);
         }
+        Destroy(gameObject);
     }
 
     private void HandleVertical()
@@ -100,7 +99,7 @@ public class DropItem: MonoBehaviour
     {
         if (other.CompareTag("PlayerGround") && IsLanded())
         {
-            isPlayerInRange = true;
+            Player.Instance.ItemToPickUp = this;
             if (nameBg != null && highlightBgSprite != null)
             {
                 nameBg.sprite = highlightBgSprite;
@@ -112,7 +111,10 @@ public class DropItem: MonoBehaviour
     {
         if (other.CompareTag("PlayerGround"))
         {
-            isPlayerInRange = false;
+            if (Player.Instance.ItemToPickUp == this)
+            {
+                Player.Instance.ItemToPickUp = null;
+            }
             if (nameBg != null)
             {
                 nameBg.sprite = originalBgSprite;

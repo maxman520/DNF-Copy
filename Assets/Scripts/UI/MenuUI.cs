@@ -38,6 +38,13 @@ public class MenuUI : MonoBehaviour
             bool isInDungeon = SceneManager.GetActiveScene().name.Contains("Dungeon");
             goToTownButton.interactable = isInDungeon;
         }
+        // 메뉴창이 활성화될 때, 현재 씬이 던전인지 확인하여 '캐릭터 선택' 버튼 활성화
+        if (characterSelectButton != null)
+        {
+            // 현재 활성화된 씬의 이름에 "Dungeon"이 포함되어 있는지 확인
+            bool isInDungeon = SceneManager.GetActiveScene().name.Contains("Dungeon");
+            characterSelectButton.interactable = !isInDungeon;
+        }
     }
 
     private void OnDisable()
@@ -59,10 +66,14 @@ public class MenuUI : MonoBehaviour
         DeactivateMenu();
     }
 
-    // 인벤토리 버튼 (구현 예정)
+    // 인벤토리 버튼
     public void OnInventoryButtonClicked()
     {
-        Debug.Log("인벤토리 열기 (구현 예정)");
+        // UIManager를 통해 인벤토리 UI를 토글
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ToggleSkillShopUI();
+        }
         DeactivateMenu();
     }
 

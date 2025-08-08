@@ -19,6 +19,7 @@ public class AnimController
     private readonly int hurt1 = Animator.StringToHash("hurt1");
     private readonly int hurt2 = Animator.StringToHash("hurt2");
     private readonly int airborne = Animator.StringToHash("airborne");
+    private readonly int pickUp = Animator.StringToHash("pickUp");
 
 
     private readonly Player player;
@@ -86,6 +87,12 @@ public class AnimController
     public void UpdateJumpAnimation(float value) {
         player.Anim.SetFloat(yVelocity, value);
     }
+
+    public void PlayPickUp()
+    {
+        player.Anim.SetTrigger(pickUp);
+    }
+
     public void ResetJumpAttackTrigger() {
         player.Anim.ResetTrigger(attack0);
     }

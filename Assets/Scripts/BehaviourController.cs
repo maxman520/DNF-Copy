@@ -98,17 +98,26 @@ public class BehaviourController
             return true;
         }
 
-
         // < 지상 공격 >
-        // 공격을 이어갈 수 있는 타이밍이라면
+        // 1. 콤보 공격을 이어갈 수 있다면 공격이 최우선
         if (player.CanContinueAttack)
         {
             player.AttackCounter++;
             PerformComboAttack();
             return true;
         }
-        // 첫 공격인 경우
-        else if (!player.HasState(PlayerAnimState.Attack))
+
+        // 2. 콤보 중이 아닐 때, 아이템이 근처에 있고, 플레이어가 공격/점프 상태가 아니라면 아이템 줍기
+        if (player.ItemToPickUp != null && !player.HasState(PlayerAnimState.Attack) && !player.HasState(PlayerAnimState.Jump))
+        {
+            animController.PlayPickUp();
+            player.ItemToPickUp.Pickup();
+            player.ItemToPickUp = null; // 아이템을 주웠으므로 참조 제거
+            return true;
+        }
+
+        // 3. 아이템도 없고, 콤보도 아니라면 새로운 공격 시작
+        if (!player.HasState(PlayerAnimState.Attack))
         {
             player.Rb.linearVelocity = Vector2.zero;
             // 달리는 중 공격

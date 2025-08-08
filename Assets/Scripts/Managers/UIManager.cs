@@ -58,6 +58,11 @@ public class UIManager : Singleton<UIManager>
         menuPanel?.gameObject.SetActive(false); // 메뉴 창 비활성화
         inventoryPanel?.gameObject.SetActive(false); // 인벤토리 창 비활성화
         itemDescriptionPanel?.gameObject.SetActive(false); // 아이템 설명 창 비활성화
+
+        // RoomManager 이벤트 구독
+        if (RoomManager.Instance != null) {
+            RoomManager.Instance.OnRoomEntered += HandleRoomEntered;
+        }
     }
 
     private void Update()
@@ -80,7 +85,7 @@ public class UIManager : Singleton<UIManager>
     }
 
 
-    // UI 창이 열릴 때 리스트에 추가
+    // UI 창이 열릴 때 리스트에 추가. 각각의 창이 OnEnable 에서 호출
     public void OpenUI(GameObject uiObject)
     {
         if (!openedUIList.Contains(uiObject))
@@ -88,7 +93,7 @@ public class UIManager : Singleton<UIManager>
             openedUIList.Add(uiObject);
         }
     }
-    // UI 창이 닫힐 때 리스트에서 제거
+    // UI 창이 닫힐 때 리스트에서 제거. 각각의 창이 OnDisable 에서 호출
     public void CloseUI(GameObject uiObject)
     {
         if (openedUIList.Contains(uiObject))
@@ -135,9 +140,10 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleInventoryUI()
     {
-        if (inventoryPanel != null)
+        if (inventoryPanel != null && itemDescriptionPanel != null)
         {
             inventoryPanel.gameObject.SetActive(!inventoryPanel.gameObject.activeSelf);
+            itemDescriptionPanel.gameObject.SetActive(false); // 아이템 설명 창도 인벤토리와 함께 비활성화
         }
     }
     public void ToggleResultPanel()
@@ -315,7 +321,22 @@ public class UIManager : Singleton<UIManager>
     #endregion Player
 
     #region Minimap
-    // 미니맵 생성 요청을 받는 함수
+    // RoomManager의 OnRoomEntered 이벤트가 발생했을 때 호출될 함수
+    private void HandleRoomEntered(Room newRoom)
+    {
+        if (GameManager.Instance == null || GameManager.Instance.CurrentDungeon == null) return;
+
+        // 현재 던전의 방 목록에서 새로운 방의 인덱스를 찾음
+        int roomIndex = GameManager.Instance.CurrentDungeon.Rooms.IndexOf(newRoom);
+
+        if (roomIndex != -1)
+        {
+            // 찾은 인덱스로 미니맵 업데이트
+            UpdateMinimapPlayerPosition(roomIndex);
+        }
+    }
+
+    // 미니맵 생성 요청을 받는 함수''
     public void GenerateMinimap(Dungeon dungeonData)
     {
         if (minimapUI != null)

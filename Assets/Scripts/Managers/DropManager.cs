@@ -7,9 +7,6 @@ public class DropManager : Singleton<DropManager>
     public GameObject DropItemPrefab;
     public GameObject DropGoldPrefab;
 
-    [Header("물리 설정")]
-    [SerializeField] private float launchForce = 3.0f;
-
     public void SpawnDrops(DropTable table, Vector3 origin)
     {
         if (table == null)

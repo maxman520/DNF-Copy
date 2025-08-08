@@ -17,7 +17,7 @@ MonoBehaviour:
     Weight: 1
     QuantityRange: {x: 1, y: 1}
   Gold:
-    Weight: 1
+    Weight: 0
     AmountRange: {x: 10, y: 30}
   EmptyWeight: 0
   DropCountRange: {x: 1, y: 1}

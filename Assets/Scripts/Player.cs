@@ -48,6 +48,8 @@ public class Player : Singleton<Player>
     public bool CanContinueAttack { get; set; } = false;
     public int AttackCounter = 0;
 
+    public DropItem ItemToPickUp { get; set; }
+
     [Header("공격 정보")]
     public AttackDetails[] AttackDetails;
     [Header("히트박스 참조")]

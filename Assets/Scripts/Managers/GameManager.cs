@@ -18,7 +18,7 @@ public class GameManager : Singleton<GameManager>
 
     public GameState CurrentState { get; private set; } = GameState.Town;
 
-    private Dungeon currentDungeon;
+    public Dungeon CurrentDungeon { get; private set; }
     private float dungeonStartTime;
     private int totalHuntExp;
     private Vector3? nextSpawnPosition = null;
@@ -159,7 +159,7 @@ public class GameManager : Singleton<GameManager>
     public void StartDungeon(Dungeon dungeonToStart)
     {
         Debug.Log($"새로운 던전 '{dungeonToStart.DungeonName}'을 시작");
-        this.currentDungeon = dungeonToStart;
+        CurrentDungeon = dungeonToStart;
 
         // 던전 관련 정보 초기화
         dungeonStartTime = Time.time;
@@ -191,30 +191,30 @@ public class GameManager : Singleton<GameManager>
         Sprite rankSprite = null;
 
         // 랭크 계산
-        if (currentDungeon.RankTimeThresholds != null && currentDungeon.RankSprites != null &&
-            currentDungeon.RankTimeThresholds.Count == currentDungeon.RankSprites.Count)
+        if (CurrentDungeon.RankTimeThresholds != null && CurrentDungeon.RankSprites != null &&
+            CurrentDungeon.RankTimeThresholds.Count == CurrentDungeon.RankSprites.Count)
         {
             // 가장 좋은 랭크(가장 짧은 시간)부터 순회
-            for (int i = 0; i < currentDungeon.RankTimeThresholds.Count; i++)
+            for (int i = 0; i < CurrentDungeon.RankTimeThresholds.Count; i++)
             {
-                if (clearTime <= currentDungeon.RankTimeThresholds[i])
+                if (clearTime <= CurrentDungeon.RankTimeThresholds[i])
                 {
-                    rankSprite = currentDungeon.RankSprites[i];
+                    rankSprite = CurrentDungeon.RankSprites[i];
                     break; // 조건에 맞는 첫 랭크를 찾으면 중단
                 }
             }
 
             // 모든 시간 기준을 초과했다면 가장 낮은 랭크를 부여
-            if (rankSprite == null && currentDungeon.RankSprites.Count > 0)
+            if (rankSprite == null && CurrentDungeon.RankSprites.Count > 0)
             {
-                rankSprite = currentDungeon.RankSprites[currentDungeon.RankSprites.Count - 1];
+                rankSprite = CurrentDungeon.RankSprites[CurrentDungeon.RankSprites.Count - 1];
             }
         }
         return new DungeonResultData
         {
             ClearTime = clearTime,
             HuntEXP = totalHuntExp,
-            ClearEXP = currentDungeon.ClearEXP,
+            ClearEXP = CurrentDungeon.ClearEXP,
             RankSprite = rankSprite
         };
     }
@@ -223,13 +223,13 @@ public class GameManager : Singleton<GameManager>
     public void ReturnToTown()
     {
         Debug.Log("마을로 돌아갑니다.");
-        string townToReturn = currentDungeon.TownToReturn;
+        string townToReturn = CurrentDungeon.TownToReturn;
 
         // 다음 씬에서 사용할 스폰 위치 저장
-        nextSpawnPosition = currentDungeon.TownSpawnPosition;
+        nextSpawnPosition = CurrentDungeon.TownSpawnPosition;
 
         UIManager.Instance.ToggleResultPanel(); // 던전 결과 창 숨김
-        currentDungeon = null;
+        CurrentDungeon = null;
         LoadScene(townToReturn); // 돌아가야할 마을 씬으로 변경
     }
 
@@ -238,7 +238,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("결과를 확인했습니다. 다음 던전으로 이동합니다.");
 
-        string nextDungeonSceneName = currentDungeon.NextDungeonName; // 임시 값. 현재 던전 데이터에 다음 던전 이름도 추가할 것
+        string nextDungeonSceneName = CurrentDungeon.NextDungeonName; // 임시 값. 현재 던전 데이터에 다음 던전 이름도 추가할 것
 
         // 다음 던전 씬 로드
         LoadScene(nextDungeonSceneName);

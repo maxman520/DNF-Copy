@@ -18425,7 +18425,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1190305581
 RectTransform:
   m_ObjectHideFlags: 0
@@ -32826,8 +32826,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DropItemPrefab: {fileID: 4867302415939313636, guid: e19c22ca9e01af246ae878e532c11687, type: 3}
   DropGoldPrefab: {fileID: 4867302415939313636, guid: d9615f6727b2259479795daf4982c3f0, type: 3}
-  launchForce: 3
-  horizontalJitter: 1.5
 --- !u!4 &2141650964
 Transform:
   m_ObjectHideFlags: 0
