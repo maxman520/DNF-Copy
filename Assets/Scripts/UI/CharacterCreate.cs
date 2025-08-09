@@ -181,23 +181,13 @@ public class CharacterCreate : MonoBehaviour
             return;
         }
         CharacterInfo selectedInfo = CharacterInfos[currentSelectedIndex];
-
+        
         // 새 캐릭터 데이터 생성 및 모든 정보 초기화
         CharacterData newCharacter = new CharacterData
         {
             CharacterName = characterName,
             JobName = selectedInfo.Name,
-            PreviewPrefabName = selectedInfo.PreviewPrefab.name, // 프리팹 이름 저장
-
-            // 기본 스탯 설정
-            Level = 1,
-            CurrentEXP = 0,
-            RequiredEXP = 100, // 예시 값
-            Atk = 10f,
-            Def = 10f,
-            MoveSpeed = 3f,
-            MaxHP = 100f,
-            MaxMP = 100f,
+            PreviewPrefabName = selectedInfo.PreviewPrefab.name // 프리팹 이름 저장
         };
 
         // 데이터 매니저를 통해 캐릭터 추가

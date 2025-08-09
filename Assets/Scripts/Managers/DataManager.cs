@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class DataManager : Singleton<DataManager>
 {
+    private Dictionary<string, ItemData> itemDatabase = new Dictionary<string, ItemData>();
 
     private AccountData accountData;
     private string dataPath; // 데이터가 저장될 파일의 전체 경로
@@ -15,6 +16,35 @@ public class DataManager : Singleton<DataManager>
         base.Awake(); // 싱글톤 설정
         dataPath = Path.Combine(Application.persistentDataPath, "CharacterData.json"); // 데이터 경로 설정
         LoadData(); // 저장된 데이터가 있는지 확인하고 불러옴
+        LoadItemData();
+    }
+
+    private void LoadItemData()
+    {
+        ItemData[] items = Resources.LoadAll<ItemData>("Data/Items");
+        foreach (ItemData item in items)
+        {
+            if (!itemDatabase.ContainsKey(item.itemID))
+            {
+                itemDatabase.Add(item.itemID, item);
+            }
+            else
+            {
+                Debug.LogWarning($"중복된 아이템 ID 발견: {item.itemID}");
+            }
+        }
+        Debug.Log($"{itemDatabase.Count}개의 아이템 데이터를 로드");
+    }
+
+    public ItemData GetItemByID(string id)
+    {
+        if (itemDatabase.TryGetValue(id, out ItemData item))
+        {
+            return item;
+        }
+        if (id != "")
+            Debug.LogWarning($"아이템 ID '{id}'를 찾을 수 없음");
+        return null;
     }
 
     public void LoadData()
@@ -34,7 +64,7 @@ public class DataManager : Singleton<DataManager>
         }
     }
 
-    // 데이터를 저장하는 함수
+    // 데이터를 저장
     private void SaveData()
     {
         string json = JsonUtility.ToJson(accountData, true); // accountData의 캐릭터 데이터를 JSON 형식의 문자열로 변환
@@ -42,7 +72,7 @@ public class DataManager : Singleton<DataManager>
         Debug.Log($"데이터 저장 완료. 경로: {dataPath}");
     }
 
-    // 새로운 캐릭터 추가 함수
+    // 새로운 캐릭터 추가
     public void AddCharacter(CharacterData newCharacter)
     {
         accountData.Characters.Add(newCharacter); // 새로운 캐릭터 정보를 받아서 accountData의 리스트에 추가

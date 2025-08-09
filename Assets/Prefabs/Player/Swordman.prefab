@@ -911,7 +911,6 @@ GameObject:
   - component: {fileID: 6472395573752494184}
   - component: {fileID: 4663317455413923394}
   - component: {fileID: 3958790405235064565}
-  - component: {fileID: 5878065608870598077}
   m_Layer: 0
   m_Name: Swordman
   m_TagString: Untagged
@@ -1046,41 +1045,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd99c70cccf0d474bbca2147d0dd8a46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Items:
-  - {fileID: 11400000, guid: 6ca0ccd926384024d868f60cb96e7c86, type: 2}
-  - {fileID: 11400000, guid: 6ca0ccd926384024d868f60cb96e7c86, type: 2}
-  - {fileID: 11400000, guid: 21fd0362424450c4a813726d633bb176, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  Gold: 0
-  Coin: 0
---- !u!114 &5878065608870598077
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4667290351747684066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b803267a8f4d6347bf1b702cf2e13a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  inventorySize: 16
   equipmentParts:
   - EquipmentType: 5
     SpriteLibraryComponent: {fileID: 2753686839073187782}
     DefaultSpriteLibraryAsset: {fileID: 7108339969198208228, guid: f9e0d3af3ee4413439f245333ebefb1f, type: 3}
+  Items: []
+  Gold: 0
+  Coin: 0
 --- !u!1 &4748995416912863023
 GameObject:
   m_ObjectHideFlags: 0

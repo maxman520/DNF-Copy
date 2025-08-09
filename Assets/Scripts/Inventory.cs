@@ -1,10 +1,27 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
+using System.Collections.Generic;
+using System.Linq;
+
+// 각 장비 부위와 그에 해당하는 SpriteLibrary 컴포넌트를 연결하는 헬퍼 클래스
+[System.Serializable]
+public class EquipmentPart
+{
+    public EquipmentType EquipmentType;
+    public SpriteLibrary SpriteLibraryComponent;
+    public SpriteLibraryAsset DefaultSpriteLibraryAsset;
+}
 
 public class Inventory : MonoBehaviour
 {
+    [Header("인벤토리 크기 설정 (반드시 인벤토리 아이템 슬롯 개수와 같아야 함)")]
+    [SerializeField] private int inventorySize = 16;
+
+    [Header("장비 부위별 스프라이트 라이브러리 설정")]
+    [SerializeField] private List<EquipmentPart> equipmentParts;
+
     // --- 인벤토리 데이터 ---
-    public ItemData[] Items;
+    public SavedItem[] Items;
     public Dictionary<EquipmentType, EquipmentData> EquippedItems = new Dictionary<EquipmentType, EquipmentData>();
 
     // --- 재화 ---
@@ -12,71 +29,106 @@ public class Inventory : MonoBehaviour
     public int Coin = 0;
 
     // --- 이벤트 ---
-    public event System.Action OnInventoryChanged; // 인벤토리에 변화가 생길 때 UI를 업데이트하기 위한 이벤트
+    public event System.Action OnInventoryChanged;
 
-    public void Initialize()
+    // --- 내부 참조 ---
+    private Player playerStats;
+    private int currentTotalAttack = 0;
+    private int currentTotalDefense = 0;
+
+    private void Awake()
     {
-        // 모든 장비 슬롯을 null로 초기화
+        // 아이템 칸 초기화
+        Items = new SavedItem[inventorySize];
+        for (int i = 0; i < inventorySize; i++)
+        {
+            // 각 슬롯에 비어있는 new SavedItem 인스턴스를 생성하여 할당
+            Items[i] = new SavedItem { ItemID = "", Quantity = 0 };
+        }
+
+        // 게임 시작 시 모든 장비 부위를 기본 에셋으로 초기화
+        foreach (var part in equipmentParts)
+        {
+            if (part.SpriteLibraryComponent != null && part.DefaultSpriteLibraryAsset != null)
+            {
+                part.SpriteLibraryComponent.spriteLibraryAsset = part.DefaultSpriteLibraryAsset;
+            }
+        }
+        EquippedItems.Clear();
         foreach (EquipmentType type in System.Enum.GetValues(typeof(EquipmentType)))
         {
             EquippedItems.Add(type, null);
         }
     }
+    public void SetPlayer(Player player)
+    {
+        playerStats = player;
+    }
 
-    // 빈 슬롯을 찾아 아이템 추가
     public void AddItem(ItemData itemToAdd)
     {
+        if (itemToAdd is ConsumableData)
+        {
+            for (int i = 0; i < Items.Length; i++)
+            {
+                if (Items[i] != null && Items[i].ItemID == itemToAdd.itemID)
+                {
+                    Items[i].Quantity++;
+                    OnInventoryChanged?.Invoke();
+                    return;
+                }
+            }
+        }
+
         for (int i = 0; i < Items.Length; i++)
         {
-            if (Items[i] == null)
+            if (Items[i] == null || string.IsNullOrEmpty(Items[i].ItemID))
             {
-                Items[i] = itemToAdd;
+                Items[i] = new SavedItem { ItemID = itemToAdd.itemID, Quantity = 1 };
                 OnInventoryChanged?.Invoke();
-                return; // 아이템 추가 후 함수 종료
+                return;
             }
         }
         Debug.LogWarning("인벤토리가 가득 찼습니다.");
     }
 
-    // 특정 아이템을 찾아 제거
     public void RemoveItem(ItemData itemToRemove)
     {
         for (int i = 0; i < Items.Length; i++)
         {
-            if (Items[i] == itemToRemove)
+            if (Items[i] != null && Items[i].ItemID == itemToRemove.itemID)
             {
-                Items[i] = null;
+                Items[i].Quantity--;
+                if (Items[i].Quantity <= 0)
+                {
+                    Items[i] = null;
+                }
                 OnInventoryChanged?.Invoke();
                 return;
             }
         }
     }
-
-    // 인덱스를 명확히 지정해서 장착
+    // 인덱스를 통한 장비 장착
     public void Equip(int index)
     {
-        if (index < 0 || index >= Items.Length) return;
-        var equip = Items[index] as EquipmentData;
+        if (index < 0 || index >= Items.Length || Items[index] == null) return;
+
+        ItemData itemToEquip = DataManager.Instance.GetItemByID(Items[index].ItemID);
+        var equip = itemToEquip as EquipmentData;
         if (equip == null) return;
 
         EquipmentType type = equip.EquipType;
         var currentlyEquipped = EquippedItems.ContainsKey(type) ? EquippedItems[type] : null;
 
-        // 선택 슬롯 비우기
         Items[index] = null;
 
-        var pe = GetComponent<PlayerEquipment>();
         if (currentlyEquipped != null)
         {
-            // 기존 장비의 능력치/외형 해제
-            pe?.UnEquip(type);
+            UnEquip(type, false); // UnEquip 내부에서 AddItem을 호출하지 않도록 false 전달
         }
 
-        // 새 장비 장착
-        EquippedItems[type] = equip;
-        pe?.Equip(equip);
+        Equip(equip, true);
 
-        // 기존 장비는 인벤토리에 반환
         if (currentlyEquipped != null)
         {
             AddItem(currentlyEquipped);
@@ -84,31 +136,67 @@ public class Inventory : MonoBehaviour
 
         OnInventoryChanged?.Invoke();
     }
+    // 장비 데이터를 통한 장비 장착
+    public void Equip(EquipmentData equip, bool fromInventory = true)
+    {
+        if (equip == null) return;
 
-    public void UnEquip(EquipmentType type)
+        EquipmentType type = equip.EquipType;
+        if (fromInventory && EquippedItems.ContainsKey(type) && EquippedItems[type] != null)
+        {
+            Debug.LogWarning($"{type} 부위에 이미 아이템이 장착되어 있습니다: {EquippedItems[type].ItemName}");
+            return;
+        }
+
+        EquippedItems[type] = equip;
+
+        // 스탯 변경
+        currentTotalAttack += equip.AttackPower;
+        currentTotalDefense += equip.DefensePower;
+        playerStats.UpdateEquipmentStats(currentTotalAttack, currentTotalDefense);
+
+        // 외형 변경
+        EquipmentPart partToEquip = equipmentParts.FirstOrDefault(p => p.EquipmentType == equip.EquipType);
+        if (partToEquip != null && equip is WeaponData weaponData && weaponData.WeaponSpriteLibrary != null)
+        {
+            partToEquip.SpriteLibraryComponent.spriteLibraryAsset = weaponData.WeaponSpriteLibrary;
+        }
+
+        OnInventoryChanged?.Invoke();
+    }
+
+    public void UnEquip(EquipmentType type, bool addToInventory = true)
     {
         EquipmentData itemToUnEquip = EquippedItems[type];
         if (itemToUnEquip == null) return;
 
-        // 1. 플레이어에게 적용된 능력치 및 외형 먼저 해제
-        GetComponent<PlayerEquipment>()?.UnEquip(type);
+        // 스탯 변경
+        currentTotalAttack -= itemToUnEquip.AttackPower;
+        currentTotalDefense -= itemToUnEquip.DefensePower;
+        playerStats.UpdateEquipmentStats(currentTotalAttack, currentTotalDefense);
 
-        // 2. 장비 슬롯에서 아이템 제거
+        // 외형 변경
+        EquipmentPart partToUnEquip = equipmentParts.FirstOrDefault(p => p.EquipmentType == type);
+        if (partToUnEquip != null)
+        {
+            partToUnEquip.SpriteLibraryComponent.spriteLibraryAsset = partToUnEquip.DefaultSpriteLibraryAsset;
+        }
+
         EquippedItems[type] = null;
 
-        // 3. 인벤토리에 아이템 추가
-        AddItem(itemToUnEquip);
+        if (addToInventory)
+        {
+            AddItem(itemToUnEquip);
+        }
+
         OnInventoryChanged?.Invoke();
     }
 
-    // 두 인덱스의 아이템을 교환
     public void SwapItems(int indexA, int indexB)
     {
         if (indexA < 0 || indexA >= Items.Length || indexB < 0 || indexB >= Items.Length) return;
-
         (Items[indexA], Items[indexB]) = (Items[indexB], Items[indexA]);
-
-        OnInventoryChanged?.Invoke(); // UI 업데이트
+        OnInventoryChanged?.Invoke();
     }
 
     public void AddGold(int amount)
@@ -116,4 +204,7 @@ public class Inventory : MonoBehaviour
         Gold += Mathf.Max(0, amount);
         OnInventoryChanged?.Invoke();
     }
+
+    public int GetCurrentTotalAttack() { return currentTotalAttack; }
+    public int GetCurrentTotalDefense() { return currentTotalDefense; }
 }

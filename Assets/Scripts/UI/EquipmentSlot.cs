@@ -23,7 +23,7 @@ public class EquipmentSlot : InventorySlot, IPointerClickHandler, IDropHandler
         if (draggedSlot == null) return;
         var inv = Player.Instance.GetComponent<Inventory>();
         if (inv == null) return;
-        Debug.Log("EquipmentSlot OnDrop 호출됨");
+        
         // 1) 인벤토리 → 장비: 장착(이미 장착 시 교체)
         if (draggedSlot is InventorySlot invSlot)
         {

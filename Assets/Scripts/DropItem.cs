@@ -58,7 +58,7 @@ public class DropItem: MonoBehaviour
 
     public void Pickup()
     {
-        var inv = Player.Instance.GetComponent<Inventory>();
+        var inv = Player.Instance.PlayerInventory;
         if (inv != null)
         {
             for (int i = 0; i < Quantity; i++)

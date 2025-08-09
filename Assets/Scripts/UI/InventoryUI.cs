@@ -17,10 +17,7 @@ public class InventoryUI : MonoBehaviour
     void Start()
     {
         // 플레이어의 Inventory 컴포넌트를 찾아서 참조
-        inventory = Player.Instance.GetComponent<Inventory>();
-
-        // 장비 장착 슬롯 초기화
-        inventory.Initialize();
+        inventory = Player.Instance.PlayerInventory;
 
         // 인벤토리 데이터가 변경될 때마다 UI를 업데이트하도록 이벤트 구독
         inventory.OnInventoryChanged += UpdateUI;
@@ -53,7 +50,7 @@ public class InventoryUI : MonoBehaviour
 
             if (inventory.Items[i] != null)
             {
-                inventorySlots[i].AddItem(inventory.Items[i]);
+                inventorySlots[i].SetItemData(inventory.Items[i]);
             }
             else
             {
@@ -61,13 +58,13 @@ public class InventoryUI : MonoBehaviour
             }
         }
 
-        // 2. 장착된 아이템 슬롯 업데이트
+        // 2. 장착된 장비 슬롯 업데이트
         foreach (var slot in equipmentSlots)
         {
             EquipmentData equippedItem = inventory.EquippedItems[slot.EquipType];
             if (equippedItem != null)
             {
-                slot.AddItem(equippedItem);
+                slot.SetItemData(new SavedItem { ItemID = equippedItem.itemID, Quantity = 1 });
             }
             else
             {
@@ -76,8 +73,8 @@ public class InventoryUI : MonoBehaviour
         }
 
         // 3. 재화 텍스트 업데이트
-        goldText.text = inventory.Gold.ToString();
-        coinText.text = inventory.Coin.ToString();
+        goldText.text = inventory.Gold.ToString("N0");
+        coinText.text = inventory.Coin.ToString("N0");
     }
 
     private void OnDestroy()

@@ -24,8 +24,8 @@ public class Player : Singleton<Player>
     public float Def;
     
     // 기본 스탯 (레벨업, 캐릭터 고유값)
-    private float baseAtk;
-    private float baseDef;
+    public float baseAtk { get; private set; }
+    public float baseDef { get; private set; }
 
     public float MaxHP;
     public float MaxMP;
@@ -69,6 +69,7 @@ public class Player : Singleton<Player>
     public Collider2D PlayerGround { get; private set; }
     public Transform VisualsTransform { get; private set; }
     public Transform HurtboxTransform { get; private set; }
+    public Inventory PlayerInventory { get; private set; }
 
     protected override void Awake()
     {
@@ -80,6 +81,8 @@ public class Player : Singleton<Player>
         // 컴포넌트 참조 변수 초기화
         Rb = GetComponent<Rigidbody2D>();
         Anim = GetComponentInChildren<Animator>();
+        PlayerInventory = GetComponent<Inventory>();
+        PlayerInventory.SetPlayer(this);
         PlayerGround = transform.Find("Player_Ground").GetComponent<BoxCollider2D>();
         VisualsTransform = transform.Find("Visuals");
         HurtboxTransform = VisualsTransform.Find("Hurtbox");
@@ -96,6 +99,64 @@ public class Player : Singleton<Player>
             Debug.LogError("Visuals Transform을 찾을 수 없습니다.", this);
 
         
+    }
+    private void Start()
+    {
+        InitializeStats(DataManager.Instance.SelectedCharacter);
+    }
+    public void InitializeStats(CharacterData data)
+    {
+        Debug.Log("플레이어 데이터 초기화 시작");
+        // 기본 스탯 설정
+        this.baseAtk = data.baseAtk;
+        this.baseDef = data.baseDef;
+
+        // 최종 스탯 초기화 (장비 미적용 상태)
+        this.Atk = this.baseAtk;
+        this.Def = this.baseDef;
+
+        this.MaxHP = data.MaxHP;
+        this.CurrentHP = this.MaxHP;
+        this.MaxMP = data.MaxMP;
+        this.CurrentMP = this.MaxMP;
+        this.WalkSpeed = data.MoveSpeed * 1.0f;
+        this.RunSpeed = data.MoveSpeed * 2.0f;
+        this.Level = data.Level;
+        this.CurrentEXP = data.CurrentEXP;
+        this.RequiredEXP = data.RequiredEXP;
+
+        // 재화 로드
+        PlayerInventory.Gold = data.Gold;
+
+        // 인벤토리 및 장비 로드
+        if (PlayerInventory != null && DataManager.Instance != null)
+        {
+            // 1. 저장된 아이템으로 인벤토리 채우기
+            for (int i = 0; i < data.inventoryItems.Count; i++)
+            {
+                if (i < PlayerInventory.Items.Length)
+                {
+                    PlayerInventory.Items[i] = data.inventoryItems[i];
+                }
+            }
+
+            // 2. 저장된 장비 아이템 장착
+            foreach (string itemID in data.equippedItemIDs)
+            {
+                EquipmentData equipment = DataManager.Instance.GetItemByID(itemID) as EquipmentData;
+                if (equipment != null)
+                {
+                    PlayerInventory.Equip(equipment); // 인덱스가 아닌 EquipmentData로 장착
+                }
+            }
+        }
+        
+        Debug.Log("플레이어 데이터 초기화 완료");
+
+        // UI 업데이트 요청
+        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
+        UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
     }
 
     private void Update()
@@ -179,33 +240,7 @@ public class Player : Singleton<Player>
         CurrentMP = MaxMP;
     }
 
-    public void InitializeStats(CharacterData data)
-    {
-        // 기본 스탯 설정
-        this.baseAtk = data.Atk;
-        this.baseDef = data.Def;
-
-        // 최종 스탯 초기화 (처음엔 장비가 없으므로 기본 스탯과 동일)
-        this.Atk = this.baseAtk;
-        this.Def = this.baseDef;
-
-        this.MaxHP = data.MaxHP;
-        this.CurrentHP = this.MaxHP;
-        this.MaxMP = data.MaxMP;
-        this.CurrentMP = this.MaxMP;
-        this.WalkSpeed = data.MoveSpeed * 1.0f;
-        this.RunSpeed = data.MoveSpeed * 2.0f;
-        this.Level = data.Level;
-        this.CurrentEXP = data.CurrentEXP;
-        this.RequiredEXP = data.RequiredEXP;
-
-        // UI 업데이트 요청
-        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
-        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
-        UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
-    }
-
-    // PlayerEquipment에서 호출하여 장비로 인한 스탯 변동을 최종 스탯에 반영
+    // Inventory 에서 호출하여 장비로 인한 스탯 변동을 최종 스탯에 반영
     public void UpdateEquipmentStats(int totalAttack, int totalDefense)
     {
         Atk = baseAtk + totalAttack;
@@ -241,10 +276,15 @@ public class Player : Singleton<Player>
         // 레벨업에 따른 스탯 증가 로직 (MaxHP, Atk 등)
         MaxHP = Mathf.RoundToInt(MaxHP * 1.1f);
         MaxMP = Mathf.RoundToInt(MaxMP * 1.1f);
-        Atk = Mathf.RoundToInt(Atk * 1.1f);
-        Def = Mathf.RoundToInt(Def * 1.1f);
+        baseAtk = Mathf.RoundToInt(baseAtk * 1.1f);
+        baseDef = Mathf.RoundToInt(baseDef * 1.1f);
         CurrentHP = MaxHP; // 레벨업 시 체력, 마나 회복
         CurrentMP = MaxMP;
+
+        // 장비로 인한 추가 스탯을 다시 계산하여 최종 스탯에 반영
+        int totalAttackFromItems = PlayerInventory.GetCurrentTotalAttack();
+        int totalDefenseFromItems = PlayerInventory.GetCurrentTotalDefense();
+        UpdateEquipmentStats(totalAttackFromItems, totalDefenseFromItems);
 
         // UI 업데이트 요청
         UIManager.Instance.UpdateHP(MaxHP, CurrentHP);

@@ -23,12 +23,6 @@ public class GameManager : Singleton<GameManager>
     private int totalHuntExp;
     private Vector3? nextSpawnPosition = null;
 
-    private void InitializePlayerStats(CharacterData data)
-    {
-        Player.Instance.InitializeStats(data);
-        Debug.Log($"플레이어 스탯 초기화");
-    }
-
     public void AddExp(int expAmount)
     {
         Player.Instance.AddExp(expAmount);
@@ -40,19 +34,14 @@ public class GameManager : Singleton<GameManager>
         // Player 인스턴스가 없으면 생성 (Ex. 게임 시작)
         if (Player.Instance == null)
         {
-            GameObject playerObject = Instantiate(playerPrefab);
-            playerObject.transform.position = new Vector3(0, 0, 0);
-            playerObject.name = "Player"; // 인스턴스 이름 설정
-            Player player = playerObject.GetComponent<Player>();
-            if (player != null && DataManager.Instance != null)
-            {
-                InitializePlayerStats(DataManager.Instance.SelectedCharacter);
-            }
-            else
-            {
-                Debug.LogError("소환된 플레이어 프리팹에 Player 컴포넌트가 없습니다.");
-            }   
+            Instantiate(playerPrefab);
+            Player.Instance.transform.position = new Vector3(0, 0, 0);
+            Player.Instance.name = "Player"; // 인스턴스 이름 설정
         }
+    }
+    private void Start()
+    {
+        
     }
 
     private void OnEnable()
@@ -273,24 +262,48 @@ public class GameManager : Singleton<GameManager>
     {
         if (Player.Instance == null || DataManager.Instance == null) return;
 
+        Inventory inventory = Player.Instance.GetComponent<Inventory>();
+        if (inventory == null) return;
+
         // 현재 플레이어의 데이터를 기반으로 새로운 CharacterData 생성
         CharacterData currentData = new CharacterData
         {
-            // CharacterID, CharacterName, JobName 등은 기존 정보를 유지해야 함
+            // 기본 정보 유지
             CharacterName = DataManager.Instance.SelectedCharacter.CharacterName,
             JobName = DataManager.Instance.SelectedCharacter.JobName,
             PreviewPrefabName = DataManager.Instance.SelectedCharacter.PreviewPrefabName,
 
-            // 업데이트가 필요한 정보들
+            // 스탯 정보 업데이트
             Level = Player.Instance.Level,
             CurrentEXP = Player.Instance.CurrentEXP,
             RequiredEXP = Player.Instance.RequiredEXP,
-            Atk = Player.Instance.Atk,
-            Def = Player.Instance.Def,
+            baseAtk = Player.Instance.baseAtk,
+            baseDef = Player.Instance.baseDef,
             MaxHP = Player.Instance.MaxHP,
             MaxMP = Player.Instance.MaxMP,
-            MoveSpeed = Player.Instance.WalkSpeed // WalkSpeed를 기본 이동속도로 저장
+            MoveSpeed = Player.Instance.WalkSpeed,
+            Gold = inventory.Gold
         };
+
+        // 인벤토리 아이템 저장
+        currentData.inventoryItems.Clear();
+        foreach (var item in inventory.Items)
+        {
+            if (item != null)
+            {
+                currentData.inventoryItems.Add(item);
+            }
+        }
+
+        // 장착 아이템 저장
+        currentData.equippedItemIDs.Clear();
+        foreach (var item in inventory.EquippedItems.Values)
+        {
+            if (item != null)
+            {
+                currentData.equippedItemIDs.Add(item.itemID);
+            }
+        }
 
         // DataManager에 업데이트 요청
         DataManager.Instance.UpdateAndSaveCurrentCharacter(currentData);
