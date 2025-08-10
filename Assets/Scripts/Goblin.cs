@@ -70,15 +70,6 @@ public class Goblin : Monster
         anim.SetBool("isDead", isDead);
     }
 
-    /*
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 80, 200, 20), "goblin IsGrounded: " + IsGrounded);
-        GUI.Label(new Rect(10, 90, 200, 20), "goblin IsWalking: " + IsWalking);
-        GUI.Label(new Rect(10, 100, 200, 20), "goblin isActing: " + isActing);
-        GUI.Label(new Rect(10, 110, 200, 20), "goblin isAware: " + isAware);
-    }
-    */
     #endregion Unity Lifecycle
 
 

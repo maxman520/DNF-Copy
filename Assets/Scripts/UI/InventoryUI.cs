@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -14,6 +15,13 @@ public class InventoryUI : MonoBehaviour
 
     private Inventory inventory;
 
+    private void OnEnable()
+    {
+        UIManager.Instance?.OpenUI(this.gameObject);
+        // UI가 활성화될 때, 한 프레임 뒤에 UI를 업데이트하여 데이터 로딩 순서 문제를 해결.
+        UpdateUIAfterFrame().Forget();
+    }
+    
     void Start()
     {
         // 플레이어의 Inventory 컴포넌트를 찾아서 참조
@@ -21,18 +29,18 @@ public class InventoryUI : MonoBehaviour
 
         // 인벤토리 데이터가 변경될 때마다 UI를 업데이트하도록 이벤트 구독
         inventory.OnInventoryChanged += UpdateUI;
-
-        // 슬롯 이벤트 구독
         InventorySlot.OnHoverEquipmentItem += HighlightEquipmentSlot;
         InventorySlot.OnExitHover += UnhighlightAllEquipmentSlots;
-
-        // 초기 UI 업데이트
-        UpdateUI();
     }
-
-    private void OnEnable()
+	
+    private async UniTaskVoid UpdateUIAfterFrame()
     {
-        UIManager.Instance?.OpenUI(this.gameObject);
+        // 한 프레임 대기하여 모든 Start, Awake가 실행될 시간을 벌도록 함.
+        await UniTask.Yield(); 
+        if (inventory != null)
+        {
+            UpdateUI();
+        }
     }
 
     private void OnDisable()
@@ -43,18 +51,23 @@ public class InventoryUI : MonoBehaviour
     // 인벤토리 전체 UI를 최신 데이터로 업데이트
     private void UpdateUI()
     {
+        if (inventory == null) return;
+
         // 1. 획득한 아이템 슬롯 업데이트
         for (int i = 0; i < inventory.Items.Length; i++)
         {
-            inventorySlots[i].SetIndex(i); // 각 슬롯에 자신의 데이터 인덱스를 알려줌
+            if (i < inventorySlots.Count) // 슬롯 범위 확인
+            {
+                inventorySlots[i].SetIndex(i);; // 각 슬롯에 자신의 데이터 인덱스를 알려줌
 
-            if (inventory.Items[i] != null)
-            {
-                inventorySlots[i].SetItemData(inventory.Items[i]);
-            }
-            else
-            {
-                inventorySlots[i].ClearSlot();
+                if (inventory.Items[i] != null)
+                {
+                    inventorySlots[i].SetItemData(inventory.Items[i]);
+                }
+                else
+                {
+                    inventorySlots[i].ClearSlot();
+                }
             }
         }
 

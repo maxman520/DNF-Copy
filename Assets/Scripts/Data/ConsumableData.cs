@@ -14,6 +14,7 @@ public class ConsumableData : ItemData
     [Header("소비 아이템 정보")]
     public ConsumableEffectType EffectType;
     public int EffectValue; // 효과량 (예: 회복량)
+    public float Cooldown; // 쿨타임 (초)
 
     public ConsumableData()
     {
@@ -21,10 +22,8 @@ public class ConsumableData : ItemData
     }
 
     // 아이템 사용 로직
-    public void Use()
+    public void Use(Player player)
     {
-        // 플레이어를 찾아서 효과 적용
-        Player player = FindFirstObjectByType<Player>();
         if (player == null) return;
 
         switch (EffectType)

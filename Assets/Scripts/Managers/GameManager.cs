@@ -305,6 +305,13 @@ public class GameManager : Singleton<GameManager>
             }
         }
 
+        // 퀵슬롯 아이템 저장
+        currentData.quickSlotItemIDs.Clear();
+        foreach (var itemID in inventory.QuickSlotItemIDs)
+        {
+            currentData.quickSlotItemIDs.Add(itemID);
+        }
+
         // DataManager에 업데이트 요청
         DataManager.Instance.UpdateAndSaveCurrentCharacter(currentData);
     }

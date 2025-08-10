@@ -1,12 +1,12 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using System; // Action 이벤트를 위해 추가
 using System.Collections.Generic;
 
 public class InputHandler : System.IDisposable
 {
     private readonly PlayerInputActions inputActions;
     private readonly InputBuffer inputBuffer;
+
+    private readonly QuickSlotUI quickSlotUI;
     private bool isDisposed = false;
 
     // 입력 상태 프로퍼티
@@ -17,6 +17,7 @@ public class InputHandler : System.IDisposable
         inputActions = new PlayerInputActions();
         inputActions.Player.Enable();
         inputBuffer = new InputBuffer(0.3f); // 0.3초 동안 입력을 기억하도록 버퍼 생성
+        quickSlotUI = GameObject.FindFirstObjectByType<QuickSlotUI>();
 
 
         // 입력 액션 이벤트가 발생하면, 그에 맞는 커맨드를 생성해 입력 버퍼에 집어넣음
@@ -42,6 +43,12 @@ public class InputHandler : System.IDisposable
         inputActions.Player.SkillSlot_12.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 11));
         inputActions.Player.SkillSlot_13.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 12));
         inputActions.Player.SkillSlot_14.performed += ctx => AddCommandIfInDungeon(new SkillCommand(ctx, 13));
+        inputActions.Player.QuickSlot_1.performed += ctx => UseQuickSlotItem(0);
+        inputActions.Player.QuickSlot_2.performed += ctx => UseQuickSlotItem(1);
+        inputActions.Player.QuickSlot_3.performed += ctx => UseQuickSlotItem(2);
+        inputActions.Player.QuickSlot_4.performed += ctx => UseQuickSlotItem(3);
+        inputActions.Player.QuickSlot_5.performed += ctx => UseQuickSlotItem(4);
+        inputActions.Player.QuickSlot_6.performed += ctx => UseQuickSlotItem(5);
 
     }
     // 버퍼의 맨 위 커맨드 '확인'
@@ -67,6 +74,14 @@ public class InputHandler : System.IDisposable
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Dungeon)
         {
             inputBuffer.AddCommand(command);
+        }
+    }
+
+    private void UseQuickSlotItem(int index)
+    {
+        if (quickSlotUI != null)
+        {
+            quickSlotUI.UseItem(index);
         }
     }
 

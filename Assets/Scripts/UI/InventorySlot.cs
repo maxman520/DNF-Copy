@@ -16,12 +16,13 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
 
     public int Index { get; private set; }
     private SavedItem savedItem;
-    private ItemData itemData; // 전체 데이터 캐싱
+    private ItemData itemData;
 
     private Transform originalParent;
     private Inventory inventory;
     private Canvas parentCanvas;
     protected static InventorySlot draggedSlot;
+    [SerializeField] private QuickSlotUI quickSlotUI; // 퀵슬롯 참조
 
     private void Awake()
     {
@@ -76,7 +77,7 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         itemData = null;
         Icon.sprite = null;
 
-        // 아이콘 숨김 처리
+        // 아이템 아이콘 숨김 처리
         var tempColor = Icon.color;
         tempColor.a = 0f;
         Icon.color = tempColor;
@@ -90,17 +91,28 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         Index = index;
     }
 
+    public ItemData GetItemData()
+    {
+        return itemData;
+    }
+
     #region Pointer Events
     // 슬롯에서 우클릭 시 호출
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            if (itemData != null && itemData is EquipmentData)
+            if (itemData == null) return;
+
+            if (itemData is EquipmentData)
             {
                 inventory.Equip(Index);
                 UIManager.Instance.HideItemDescription();
                 if (foreground != null) foreground.gameObject.SetActive(false);
+            }
+            else if (itemData is ConsumableData)
+            {
+                inventory.RegisterItemToEmptyQuickSlot(itemData);
             }
         }
     }

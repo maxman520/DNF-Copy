@@ -26,4 +26,5 @@ public class CharacterData
     // 인벤토리 정보
     public List<SavedItem> inventoryItems = new List<SavedItem>();
     public List<string> equippedItemIDs = new List<string>();
+    public List<string> quickSlotItemIDs = new List<string>();
 }

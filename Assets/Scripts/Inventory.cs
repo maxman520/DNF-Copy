@@ -22,6 +22,7 @@ public class Inventory : MonoBehaviour
 
     // --- 인벤토리 데이터 ---
     public SavedItem[] Items;
+    public string[] QuickSlotItemIDs = new string[6];
     public Dictionary<EquipmentType, EquipmentData> EquippedItems = new Dictionary<EquipmentType, EquipmentData>();
 
     // --- 재화 ---
@@ -46,6 +47,11 @@ public class Inventory : MonoBehaviour
             Items[i] = new SavedItem { ItemID = "", Quantity = 0 };
         }
 
+        for (int i = 0; i < QuickSlotItemIDs.Length; i++)
+        {
+            QuickSlotItemIDs[i] = "";
+        }
+
         // 게임 시작 시 모든 장비 부위를 기본 에셋으로 초기화
         foreach (var part in equipmentParts)
         {
@@ -60,6 +66,8 @@ public class Inventory : MonoBehaviour
             EquippedItems.Add(type, null);
         }
     }
+
+    // 참조 설정을 위해 Player의 Awake에서 호출. 
     public void SetPlayer(Player player)
     {
         playerStats = player;
@@ -207,4 +215,48 @@ public class Inventory : MonoBehaviour
 
     public int GetCurrentTotalAttack() { return currentTotalAttack; }
     public int GetCurrentTotalDefense() { return currentTotalDefense; }
+
+    public void RefreshUI()
+    {
+        OnInventoryChanged?.Invoke();
+    }
+
+    public void RegisterItemToEmptyQuickSlot(ItemData itemToRegister)
+    {
+        // 소비 아이템만 등록 가능
+        if (itemToRegister == null || !(itemToRegister is ConsumableData))
+        {
+            return;
+        }
+
+        // 이미 퀵슬롯에 등록되어 있는지 확인
+        if (QuickSlotItemIDs.Contains(itemToRegister.itemID))
+        {
+            Debug.Log($"'{itemToRegister.ItemName}'은(는) 이미 퀵슬롯에 등록되어 있습니다.");
+            return;
+        }
+
+        // 비어있는 퀵슬롯 찾기
+        int emptySlotIndex = -1;
+        for (int i = 0; i < QuickSlotItemIDs.Length; i++)
+        {
+            if (string.IsNullOrEmpty(QuickSlotItemIDs[i]))
+            {
+                emptySlotIndex = i;
+                break;
+            }
+        }
+
+        // 비어있는 슬롯이 있다면 아이템 등록
+        if (emptySlotIndex != -1)
+        { 
+            QuickSlotItemIDs[emptySlotIndex] = itemToRegister.itemID;
+            Debug.Log($"'{itemToRegister.ItemName}'을(를) {emptySlotIndex + 1}번 퀵슬롯에 등록했습니다.");
+            OnInventoryChanged?.Invoke(); // UI 갱신
+        }
+        else
+        {
+            Debug.Log("퀵슬롯이 가득 찼습니다.");
+        }
+    }
 }

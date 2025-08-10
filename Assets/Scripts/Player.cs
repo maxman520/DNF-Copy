@@ -140,7 +140,16 @@ public class Player : Singleton<Player>
                 }
             }
 
-            // 2. 저장된 장비 아이템 장착
+            // 2. 퀵슬롯 아이템 로드
+            for (int i = 0; i < data.quickSlotItemIDs.Count; i++)
+            {
+                if (i < PlayerInventory.QuickSlotItemIDs.Length)
+                {
+                    PlayerInventory.QuickSlotItemIDs[i] = data.quickSlotItemIDs[i];
+                }
+            }
+
+            // 3. 저장된 장비 아이템 장착
             foreach (string itemID in data.equippedItemIDs)
             {
                 EquipmentData equipment = DataManager.Instance.GetItemByID(itemID) as EquipmentData;
@@ -153,10 +162,11 @@ public class Player : Singleton<Player>
         
         Debug.Log("플레이어 데이터 초기화 완료");
 
-        // UI 업데이트 요청
+        // HUD UI 업데이트 요청
         UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
         UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
         UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
+
     }
 
     private void Update()

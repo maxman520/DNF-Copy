@@ -166,6 +166,60 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "QuickSlot_1",
+                    "type": "Button",
+                    "id": "95efec58-9566-4235-965e-27fc41af92cb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QuickSlot_2",
+                    "type": "Button",
+                    "id": "1278b9b1-4604-4435-be49-aa277fd1e44a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QuickSlot_3",
+                    "type": "Button",
+                    "id": "08648d84-ecf5-4a1c-b9a9-ed262f6073a1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QuickSlot_4",
+                    "type": "Button",
+                    "id": "603f0095-7f02-4d43-8b5b-2233c6d4dc47",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QuickSlot_5",
+                    "type": "Button",
+                    "id": "8a370163-006c-4810-8150-ca38a633bf67",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QuickSlot_6",
+                    "type": "Button",
+                    "id": "0757a4ec-70f9-4fea-b5ad-31961542a22e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -419,6 +473,72 @@
                     "processors": "",
                     "groups": "",
                     "action": "SkillSlot_14",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6c7d8e9f-b7ba-42d1-a27e-f5a6b7c8d9e0",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "QuickSlot_1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7d8e9f0a-c8cb-43e2-b38f-a6b7c8d9e0f1",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "QuickSlot_2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8e9f0a1b-d9dc-44f3-c49a-b7c8d9e0f1a2",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "QuickSlot_3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9f0a1b2c-eadd-4504-d5ab-c8d9e0f1a2b3",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "QuickSlot_4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0a1b2c3d-fbee-4615-e6bc-d9e0f1a2b3c4",
+                    "path": "<Keyboard>/5",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "QuickSlot_5",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1b2c3d4e-0cff-4726-f7cd-e0f1a2b3c4d5",
+                    "path": "<Keyboard>/6",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "QuickSlot_6",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
