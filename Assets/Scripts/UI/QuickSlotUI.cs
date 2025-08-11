@@ -119,19 +119,19 @@ public class QuickSlotUI : MonoBehaviour
         UpdateAllSlots();
     }
 
-    // 퀵슬롯 아이템 사용
-    public void UseItem(int slotIndex)
+    // 퀵슬롯 아이템 사용. 실패하면 false 반환
+    public bool UseItem(int slotIndex)
     {
-        if (slotIndex < 0 || slotIndex >= inventory.QuickSlotItemIDs.Length) return;
+        if (slotIndex < 0 || slotIndex >= inventory.QuickSlotItemIDs.Length) return false;
 
         string itemID = inventory.QuickSlotItemIDs[slotIndex];
-        if (string.IsNullOrEmpty(itemID)) return;
+        if (string.IsNullOrEmpty(itemID)) return false;
 
         // 쿨타임 확인
         if (IsOnCooldown(itemID))
         {
             Debug.Log($"{DataManager.Instance.GetItemByID(itemID).ItemName}은(는) 아직 쿨타임입니다.");
-            return;
+            return false;
         }
 
         // 인벤토리에서 아이템 실제 사용 (수량 감소)
@@ -149,6 +149,8 @@ public class QuickSlotUI : MonoBehaviour
 
             UpdateAllSlots();
         }
+
+        return true;
     }
 
     private void SetCooldown(ConsumableData item)
@@ -164,6 +166,7 @@ public class QuickSlotUI : MonoBehaviour
         return itemCooldowns.ContainsKey(itemID) && Time.time < itemCooldowns[itemID];
     }
 
+    // itemID 에 해당하는 아이템의 남은 쿨타임(FillAmount)을 반환
     private float GetCooldownRemaining(string itemID)
     {
         if (!IsOnCooldown(itemID)) return 0;

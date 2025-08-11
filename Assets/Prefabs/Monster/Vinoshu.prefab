@@ -414,6 +414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monsterData: {fileID: 11400000, guid: c2a50298cea09df4381c2b2199bc25eb, type: 2}
+  dropTable: {fileID: 0}
   currentAttackDetails:
     attackName: 
     damageRate: 0
@@ -424,7 +425,7 @@ MonoBehaviour:
   attackHitboxObject: {fileID: 1897019175860110760}
   combatMinBoundary: {fileID: 0}
   combatMaxBoundary: {fileID: 0}
-  meteorPrefab: {fileID: 0}
+  meteorPrefab: {fileID: 2230765920653679949, guid: a0ef7d3a832793b42ba6908252c7a74e, type: 3}
 --- !u!1 &9219640952573525801
 GameObject:
   m_ObjectHideFlags: 0

@@ -355,7 +355,6 @@ public class Goblin : Monster
 
         // UIManager에 자신을 타겟으로 알림
         UIManager.Instance.OnMonsterDamaged(this);
-        //UIManager.Instance.UpdateMonsterHP();
 
     }
 

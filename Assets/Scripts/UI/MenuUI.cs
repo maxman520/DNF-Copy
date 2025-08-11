@@ -95,7 +95,7 @@ public class MenuUI : MonoBehaviour
         DeactivateMenu();
     }
 
-    // 5. 캐릭터 선택 버튼
+    // 캐릭터 선택 버튼
     public void OnCharacterSelectButtonClicked()
     {
         DeactivateMenu();

@@ -45,7 +45,7 @@ public class EffectManager : Singleton<EffectManager>
         }
     }
 
-    // 이펙트 재생 요청
+    // 이펙트 재생 요청 - 이 매니저를 부모로 설정
     public GameObject PlayEffect(string name, Vector3 position, Quaternion rotation)
     {
         if (!effectPrefabDict.ContainsKey(name))
@@ -70,6 +70,38 @@ public class EffectManager : Singleton<EffectManager>
         {
             // 풀에 없으면 새로 생성
             effectObject = Instantiate(effectPrefabDict[name], position, rotation, this.transform);
+        }
+
+        activeEffects[name].Add(effectObject);
+
+        return effectObject;
+    }
+    
+    // 이펙트 재생 요청 - 부모 설정도 함께
+    public GameObject PlayEffect(string name, Vector3 position, Quaternion rotation, Transform parent)
+    {
+        if (!effectPrefabDict.ContainsKey(name))
+        {
+            Debug.LogWarning($"EffectManager: '{name}' 이라는 이름의 이펙트를 찾을 수 없습니다.");
+            return null;
+        }
+
+        GameObject effectObject;
+
+        // 풀에 사용 가능한 오브젝트가 있는지 확인
+        if (effectPool.ContainsKey(name) && effectPool[name].Count > 0)
+        {
+            effectObject = effectPool[name].Dequeue(); // 풀에서 꺼내옴
+
+            effectObject.transform.position = position;
+            effectObject.transform.rotation = rotation;
+            effectObject.SetActive(true); // 다시 활성화
+
+        }
+        else
+        {
+            // 풀에 없으면 새로 생성
+            effectObject = Instantiate(effectPrefabDict[name], position, rotation, parent);
         }
 
         activeEffects[name].Add(effectObject);

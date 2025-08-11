@@ -15,8 +15,9 @@ MonoBehaviour:
   itemID: Consumable_0000
   ItemName: "\uCD08\uBCF4\uC790\uC6A9 HP \uD3EC\uC158"
   ItemIcon: {fileID: 21300000, guid: 4331a735d0e10e343b0bee6add70c9cd, type: 3}
-  DropSprite: {fileID: 21300000, guid: c0dbe3908c9f1654f891fb30ddf39594, type: 3}
+  DropSprite: {fileID: 21300000, guid: d37f294a51ea6b8468bb877b592f74a2, type: 3}
   ItemKind: 1
   ItemDescription: "HP 70\uD68C\uBCF5"
   EffectType: 0
   EffectValue: 70
+  Cooldown: 10

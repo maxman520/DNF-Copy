@@ -8,6 +8,8 @@ public class AnimController
     private readonly int isWalking = Animator.StringToHash("isWalking");
     private readonly int isRunning = Animator.StringToHash("isRunning");
 
+    private readonly int isDead = Animator.StringToHash("isDead");
+
     private readonly int jump = Animator.StringToHash("jump");
     private readonly int yVelocity = Animator.StringToHash("yVelocity");
 
@@ -33,6 +35,7 @@ public class AnimController
         player.Anim.SetBool(isGrounded, player.IsGrounded);
         player.Anim.SetBool(isWalking, player.IsMoving && !player.IsRunning);
         player.Anim.SetBool(isRunning, player.IsMoving && player.IsRunning);
+        player.Anim.SetBool(isDead, player.IsDead);
             
     }
 
@@ -41,6 +44,7 @@ public class AnimController
         player.Anim.SetBool(isGrounded, true);
         player.Anim.SetBool(isWalking, false);
         player.Anim.SetBool(isRunning, false);
+        player.Anim.SetBool(isDead, false);
     }
     public void PlayHurt(int value)
     {

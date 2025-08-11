@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: HurtDamageFont
   m_EditorClassIdentifier: 
   numberSprites:
-  - {fileID: 21300000, guid: df5517fe54df2a341841de17d6313525, type: 3}
-  - {fileID: 21300000, guid: aa0a6bdc5c7bc3e4eaca65fef6b03949, type: 3}
-  - {fileID: 21300000, guid: cd80047b2da2e484fa94825e74444b36, type: 3}
-  - {fileID: 21300000, guid: a6bca9c8faa8ad94baab128ae863889e, type: 3}
-  - {fileID: 21300000, guid: 4c7d7d71c519a244f8a558ddc251f611, type: 3}
-  - {fileID: 21300000, guid: f5c7e5f871df0ed4681234339df3c708, type: 3}
-  - {fileID: 21300000, guid: d4932110bfdd9c64d8caa830d290f3b7, type: 3}
-  - {fileID: 21300000, guid: 0daa1eabdb8f8d04f96d13a6afe6d2bc, type: 3}
-  - {fileID: 21300000, guid: fdece300d7a16b445a26886682b49d87, type: 3}
-  - {fileID: 21300000, guid: 8af426e164ddc8a43b6a9e1cddcb96b7, type: 3}
+  - {fileID: 21300000, guid: e88dfc062f8fd63418103d5bde6259d7, type: 3}
+  - {fileID: 21300000, guid: 88e04f32ab0839f40be4da6a1ad172d8, type: 3}
+  - {fileID: 21300000, guid: 08dd16d66acd4d54495b275cfcd9d59b, type: 3}
+  - {fileID: 21300000, guid: b18b362db89331744943867beb50753d, type: 3}
+  - {fileID: 21300000, guid: ae6f2d2d035b1cf4baed0a46e44caa7f, type: 3}
+  - {fileID: 21300000, guid: 681e878eeff1d9e4ab91dfebd57552ae, type: 3}
+  - {fileID: 21300000, guid: 31c29fb2052b84f40955abdd291b12d2, type: 3}
+  - {fileID: 21300000, guid: 06e13695d168dc24fb459bfe2e334869, type: 3}
+  - {fileID: 21300000, guid: a007075cb875e5a41823ad4074e00c07, type: 3}
+  - {fileID: 21300000, guid: c301917bde419b04c93b32343b517938, type: 3}

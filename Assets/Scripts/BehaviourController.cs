@@ -8,6 +8,7 @@ public class BehaviourController
     private readonly InputHandler inputHandler;
     private readonly AnimController animController;
     private readonly SkillManager skillManager;
+    private readonly QuickSlotUI quickSlotUI;
     Vector3 startPos;
 
     // 가상 물리 변수
@@ -24,6 +25,7 @@ public class BehaviourController
         this.animController = animController;
         this.skillManager = skillManager;
         startPos = player.VisualsTransform.localPosition;
+        quickSlotUI = GameObject.FindFirstObjectByType<QuickSlotUI>();
     }
 
     // 캐릭터 방향 조절
@@ -203,8 +205,7 @@ public class BehaviourController
                 player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
                 // 공중에 뜨는 힘 적용
-                verticalVelocity = attackDetails.launchForce;
-                player.IsGrounded = false;
+                ApplyVerticalForce(attackDetails.launchForce);
                 animController.PlayAirborne(); // 또는 AnimController를 통해 애니메이션 직접 제어
             }
             else // 일반 공격
@@ -212,7 +213,6 @@ public class BehaviourController
                 // 짧은 수평 넉백
                 player.Rb.linearVelocity = Vector2.zero; // 기존 속도 초기화
                 player.transform.position += new Vector3(direction * attackDetails.knockbackForce * 0.1f, 0);
-                // player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
 
                 animController.PlayHurt(Random.Range(1, 3)); // hurt 애니메이션 재생
             }
@@ -221,18 +221,25 @@ public class BehaviourController
         {
             // 수평 넉백
             player.Rb.AddForce(new Vector2(direction * attackDetails.knockbackForce, 0), ForceMode2D.Impulse);
-            animController.PlayAirborne(); // hurt 애니메이션 재생
+            animController.PlayAirborne(); // Airborne 애니메이션 재생
 
-            // 공중 콤보 보정. 플레이어는 필요없음
-            // if (attackDetails.launchForce > 0) airHitCounter++;
-
-            // 공중 피격 반응 로직 적용. 플레이어는 필요없음
-            // float heightDecayFactor = Mathf.Max(0, 1f - (airHitCounter * 0.2f));
-            // float finalLaunchForce = attackDetails.launchForce * heightDecayFactor;
-            // float airHitReactionForce = 4f; // 공중에서 맞았을 때 살짝 튀어오르는 기본 힘
-
-            verticalVelocity = 4f;
+            ApplyVerticalForce(4f);
         }
+    }
+
+    public void ApplyVerticalForce(float launchForce) {
+        verticalVelocity = launchForce;
+        player.IsGrounded = false;
+    }
+    
+
+    public bool PerformQuickSlot(InputAction.CallbackContext context, int index)
+    {
+        if (quickSlotUI != null)
+        {
+            return quickSlotUI.UseItem(index);
+        }
+        return false;
     }
 
     #region Jump
@@ -263,16 +270,22 @@ public class BehaviourController
         // Visuals의 Y 좌표가 바닥(0)보다 아래로 내려갔다면 착지로 간주
         if (player.VisualsTransform.localPosition.y <= startPos.y)
         {
-            // 위치와 속도, 중력 초기화
-            player.VisualsTransform.localPosition = startPos;
-            verticalVelocity = 0f;
-            gravity = ORIGINAL_GRAVITY;
-
+            if (verticalVelocity < -1.5f)
+            {
+                verticalVelocity *= -0.5f;
+                return;
+            }
             // 상태 초기화
             player.Rb.linearVelocity = Vector3.zero;
             player.IsGrounded = true;
             player.IsRunning = false;
             animController.ResetJumpAttackTrigger();
+
+            // 위치와 속도, 중력 초기화
+            player.VisualsTransform.localPosition = startPos;
+            verticalVelocity = 0f;
+            gravity = ORIGINAL_GRAVITY;
+
         }
     }
     #endregion Jump

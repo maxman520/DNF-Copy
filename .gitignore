@@ -75,4 +75,10 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # 던파 리소스 제외
-/Assets/Sprites/
+# Sprites 원본 이미지 무시
+/Assets/Sprites/*.png
+/Assets/Sprites/*.jpg
+/Assets/Sprites/*.psd
+
+# 단, meta 파일은 추적
+!/Assets/Sprites/*.meta

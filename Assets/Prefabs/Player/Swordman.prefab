@@ -653,7 +653,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6477115556182667879}
   - component: {fileID: 8363455015952167485}
-  - component: {fileID: 1736060071626903860}
   - component: {fileID: 5430105359018025099}
   - component: {fileID: 3055021017743792710}
   - component: {fileID: 8706804157195505001}
@@ -713,20 +712,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1736060071626903860
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3789476897413128150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c29cff538c195c249b69c6f2236de67b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Library: []
-  m_SpriteLibraryAsset: {fileID: 7108339969198208228, guid: f9e0d3af3ee4413439f245333ebefb1f, type: 3}
 --- !u!210 &5430105359018025099
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -960,6 +945,8 @@ MonoBehaviour:
   RequiredEXP: 1000
   IsGrounded: 1
   IsRunning: 0
+  IsMoving: 0
+  IsDead: 0
   AttackCounter: 0
   AttackDetails:
   - attackName: Attack_1
@@ -1051,6 +1038,13 @@ MonoBehaviour:
     SpriteLibraryComponent: {fileID: 2753686839073187782}
     DefaultSpriteLibraryAsset: {fileID: 7108339969198208228, guid: f9e0d3af3ee4413439f245333ebefb1f, type: 3}
   Items: []
+  QuickSlotItemIDs:
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
   Gold: 0
   Coin: 0
 --- !u!1 &4748995416912863023

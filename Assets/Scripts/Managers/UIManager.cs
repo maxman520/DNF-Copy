@@ -42,6 +42,9 @@ public class UIManager : Singleton<UIManager>
     [Header("아이템 설명 창")]
     [SerializeField] private ItemDescriptionPanel itemDescriptionPanel; // 아이템 설명 창
 
+    [Header("플레이어 사망 UI")]
+    [SerializeField] private GhostStatePanel ghostStatePanel; // 플레이어 사망 시 띄워질 창
+
     private List<GameObject> openedUIList = new List<GameObject>(); // 열려있는 창의 리스트. Esc버튼을 누를 시 창을 닫는데에 사용
 
     private Monster currentTarget; // 현재 추적 중인 타겟 몬스터
@@ -58,6 +61,7 @@ public class UIManager : Singleton<UIManager>
         menuPanel?.gameObject.SetActive(false); // 메뉴 창 비활성화
         inventoryPanel?.gameObject.SetActive(false); // 인벤토리 창 비활성화
         itemDescriptionPanel?.gameObject.SetActive(false); // 아이템 설명 창 비활성화
+        ghostStatePanel?.gameObject.SetActive(false); // 플레이어 사망 UI 비활성화
 
         // RoomManager 이벤트 구독
         if (RoomManager.Instance != null) {
@@ -102,6 +106,22 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
+    public void SetMapName(string name)
+    {
+        if (this.mapName != null)
+            this.mapName.text = name;
+    }
+    
+    public void HideDungeonUI()
+    {
+        HideMonsterHPBar();
+        HideBossHPBar();
+        HideMinimap();
+        HideResultPanel();
+        HideGhostStatePanel();        
+    }
+    
+    #region Menu
     private void HandleEscapeKey()
     {
         // 열려있는 UI가 있다면 가장 마지막에 열린 UI를 닫음
@@ -117,12 +137,6 @@ public class UIManager : Singleton<UIManager>
             ToggleMenuUI();
         }
     }
-    public void SetResultPanelData(DungeonResultData resultData) {
-        if (resultPanel != null)
-            resultPanel.SetResultData(resultData);
-
-    }
-#region Toggle
 
     public void ToggleMenuUI()
     {
@@ -131,13 +145,18 @@ public class UIManager : Singleton<UIManager>
             menuPanel.gameObject.SetActive(!menuPanel.gameObject.activeSelf);
         }
     }
+    #endregion Menu
+
+    #region SkillShop Panel
     public void ToggleSkillShopUI() {
         if (skillShopUI != null)
         {
             skillShopUI.gameObject.SetActive(!skillShopUI.gameObject.activeSelf);
         }
     }
+    #endregion SkillShop
 
+    #region Inventory
     public void ToggleInventoryUI()
     {
         if (inventoryPanel != null && itemDescriptionPanel != null)
@@ -146,12 +165,28 @@ public class UIManager : Singleton<UIManager>
             itemDescriptionPanel.gameObject.SetActive(false); // 아이템 설명 창도 인벤토리와 함께 비활성화
         }
     }
+    #endregion Inventory
+
+    #region Result
+    public void SetResultPanelData(DungeonResultData resultData) {
+        if (resultPanel != null)
+            resultPanel.SetResultData(resultData);
+
+    }
     public void ToggleResultPanel()
     {
         if (resultPanel != null)
             resultPanel.gameObject.SetActive(!resultPanel.gameObject.activeSelf);
     }
-#endregion Toggle
+
+    public void HideResultPanel()
+    {
+        if (resultPanel != null && resultPanel.gameObject.activeSelf)
+            resultPanel.gameObject.SetActive(false);
+    }
+    #endregion Result
+
+
     // 몬스터가 데미지를 입었을 때 호출될 함수
     public void OnMonsterDamaged(Monster monster)
     {
@@ -165,7 +200,7 @@ public class UIManager : Singleton<UIManager>
             HandleMonsterDamaged(monster);
         }
     }
-    #region Boss
+    #region Boss HP Bar
     private void HandleBossDamaged(Monster boss)
     {
         // 1. 일반 몬스터 HP바가 켜져 있다면 즉시 숨김
@@ -209,9 +244,9 @@ public class UIManager : Singleton<UIManager>
 
         currentTarget = null;
     }
-    #endregion Boss 
+    #endregion Boss  HP Bar
 
-    #region Regular Monster
+    #region Regular Monster HP Bar
     // --- 일반 몬스터 HP 바 처리 ---
     private void HandleMonsterDamaged(Monster monster)
     {
@@ -288,7 +323,7 @@ public class UIManager : Singleton<UIManager>
             // 타이머가 리셋되면 여기로 들어옴. 정상적인 동작이므로 아무것도 안 함.
         }
     }
-    #endregion Regular Monster
+    #endregion Regular Monster HP Bar
 
 
 
@@ -361,12 +396,6 @@ public class UIManager : Singleton<UIManager>
     }
     #endregion Minimap
 
-    public void SetMapName(string name)
-    {
-        if (this.mapName != null)
-            this.mapName.text = name;
-    }
-
     #region Item Description
     public void ShowItemDescription(ItemData data, RectTransform slotRectTransform)
     {
@@ -378,4 +407,25 @@ public class UIManager : Singleton<UIManager>
         itemDescriptionPanel?.Hide();
     }
     #endregion
+
+    #region Ghost State
+    public void ShowGhostStatePanel()
+    {
+        if (ghostStatePanel == null) return;
+        ghostStatePanel.gameObject.SetActive(true);
+        ghostStatePanel.Initialize();
+    }
+
+    public void ShowCountdown()
+    {
+        if (ghostStatePanel == null || !ghostStatePanel.gameObject.activeSelf) return;
+        ghostStatePanel.StartCountdown();
+    }
+
+    public void HideGhostStatePanel()
+    {
+        if (ghostStatePanel == null) return;
+        ghostStatePanel.gameObject.SetActive(false);
+    }
+    #endregion  Ghost State
 }

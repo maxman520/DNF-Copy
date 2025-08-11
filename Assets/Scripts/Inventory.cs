@@ -213,6 +213,17 @@ public class Inventory : MonoBehaviour
         OnInventoryChanged?.Invoke();
     }
 
+    public bool UseCoin()
+    {
+        if (Coin > 0)
+        {
+            Coin--;
+            OnInventoryChanged?.Invoke();
+            return true;
+        }
+        return false;
+    }
+
     public int GetCurrentTotalAttack() { return currentTotalAttack; }
     public int GetCurrentTotalDefense() { return currentTotalDefense; }
 

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 
@@ -41,7 +43,8 @@ public class Player : Singleton<Player>
     // 상태 변수
     public bool IsGrounded = true;
     public bool IsRunning = false;
-    public bool IsMoving { get; set; } = false;
+    public bool IsMoving = false;
+    public bool IsDead = false;
 
     public bool CanMove { get; set; } = true;
     public bool CanAttack { get; set; } = true;
@@ -127,6 +130,7 @@ public class Player : Singleton<Player>
 
         // 재화 로드
         PlayerInventory.Gold = data.Gold;
+        PlayerInventory.Coin = data.Coin;
 
         // 인벤토리 및 장비 로드
         if (PlayerInventory != null && DataManager.Instance != null)
@@ -171,7 +175,7 @@ public class Player : Singleton<Player>
 
     private void Update()
     {
-        HandleCommands();
+        HandleCommands(); // 입력된 커맨드 처리
         behaviourController.Flip(); // 방향 전환 처리
         behaviourController.HandleGravity(); // 플레이어 visuals의 localPosition.y에 따라 중력 처리
         animController.UpdateAnimations(); // 애니메이션 처리
@@ -202,6 +206,7 @@ public class Player : Singleton<Player>
 
     public void OnDamaged(AttackDetails attackDetails, Vector3 attackPosition)
     {
+
         // 입을 데미지 계산
         float damage = CalculateDamage(attackDetails);
 
@@ -212,13 +217,76 @@ public class Player : Singleton<Player>
         behaviourController.HandleHurt(attackDetails, attackPosition);
 
         // 이미 죽었다면 데미지 적용X. return
+        if (IsDead) return;
 
         // 데미지 적용
-        // ex) health -= damage;
-        // Debug.Log(damage + " 만큼의 피해를 입음");
-        // ex) behaviourController.ApplyKnockback(...); // 넉백 및 피격 반응 처리
-        // BehaviourController에 위임하는 것이 좋음
+        CurrentHP -= damage;
+        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+        Debug.Log($"플레이어가 {damage}의 데미지를 입었습니다. 현재 체력: {CurrentHP}");
+
+        if (CurrentHP <= 0 && !IsDead)
+        {
+            CurrentHP = 0;
+            UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+            IsDead = true;
+            DieSequence().Forget();
+        }
     }
+
+    private async UniTask DieSequence()
+    {
+        Debug.Log("플레이어 사망 시퀀스 시작");
+        CanMove = false;
+        CanAttack = false;
+
+        // 만약 땅에 붙어있다면, GetDown 애니메이션 재생을 위해 살짝 띄움
+        if (IsGrounded)
+        {
+            // 공중에 뜨는 힘 적용
+            behaviourController.ApplyVerticalForce(4f);
+            animController.PlayAirborne();
+        }
+
+        // 땅에 착지할 때까지 대기
+        await UniTask.WaitUntil(() => IsGrounded, cancellationToken: this.GetCancellationTokenOnDestroy());
+
+        // 유령 상태 UI 표시
+        UIManager.Instance.ShowGhostStatePanel();
+
+        // 3초 동안 0.5초 간격으로 깜빡임
+        await BlinkPlayerVisuals(3f, 0.5f, this.GetCancellationTokenOnDestroy());
+
+        // 카운트다운 시작
+        UIManager.Instance.ShowCountdown();
+    }
+
+    private async UniTask BlinkPlayerVisuals(float duration, float interval, CancellationToken token)
+    {
+        await UniTask.Delay(500);
+        var renderers = VisualsTransform.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
+        {
+            Debug.LogWarning("깜빡일 Renderer가 VisualsTransform 아래에 없습니다.");
+            return;
+        }
+
+        float endTime = Time.time + duration;
+        while (Time.time < endTime)
+        {
+            foreach (var renderer in renderers)
+            {
+                renderer.enabled = !renderer.enabled;
+            }
+            await UniTask.Delay(TimeSpan.FromSeconds(interval), cancellationToken: token);
+        }
+
+        // 시퀀스가 끝나면 모든 렌더러를 반드시 보이도록 설정
+        foreach (var renderer in renderers)
+        {
+            renderer.enabled = true;
+        }
+    }
+
     private float CalculateDamage(AttackDetails attackDetails)
     {
         // !! 데미지 배율에 몬스터의 공격력이 이미 곱해져있음 !!
@@ -226,6 +294,17 @@ public class Player : Singleton<Player>
         finalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage * UnityEngine.Random.Range(0.8f, 1.2f)));
 
         return finalDamage;
+    }
+
+    public void Revive()
+    {
+        Debug.Log("플레이어 부활!");
+
+        IsDead = false;
+        OnEnterDungeon(); // 던전 입장 시의 상태로 초기화
+
+        // 부활 이펙트 재생
+        EffectManager.Instance.PlayEffect("Revive", transform.position, Quaternion.identity, transform);
     }
 
 
@@ -238,6 +317,14 @@ public class Player : Singleton<Player>
         // 던전으로 이동시 체력, 마나 회복 (던전에서 바로 다음 던전으로 이동 시 대비)
         CurrentHP = MaxHP;
         CurrentMP = MaxMP;
+
+        // UI 업데이트
+        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
+
+        // 상태 초기화
+        CanMove = true;
+        CanAttack = true;
     }
     // 던전 퇴장, 마을 입장 시 GameManager에 의해 호출
     public void OnEnterTown()
@@ -248,6 +335,14 @@ public class Player : Singleton<Player>
         // 마을로 이동시 체력, 마나 회복
         CurrentHP = MaxHP;
         CurrentMP = MaxMP;
+
+        // UI 업데이트
+        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
+
+        // 상태 초기화
+        CanMove = true;
+        CanAttack = false;
     }
 
     // Inventory 에서 호출하여 장비로 인한 스탯 변동을 최종 스탯에 반영
@@ -304,8 +399,11 @@ public class Player : Singleton<Player>
 
     public void HealHP(int amount)
     {
+        int healAmount = Mathf.RoundToInt(Mathf.Min(MaxHP, CurrentHP + amount) - CurrentHP);
         CurrentHP = Mathf.Min(MaxHP, CurrentHP + amount);
         UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+        EffectManager.Instance.PlayEffect("Heal", HurtboxTransform.transform.position, Quaternion.identity);
+        EffectManager.Instance.PlayEffect("HealDamageText",HurtboxTransform.position, Quaternion.identity, healAmount);
     }
 
     public void HealMP(int amount)

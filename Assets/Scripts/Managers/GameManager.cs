@@ -80,6 +80,7 @@ public class GameManager : Singleton<GameManager>
             // case Town2, Town3, ...
                 CurrentState = GameState.Town;
                 Player.Instance.OnEnterTown();
+                UIManager.Instance.HideDungeonUI(); // 던전 관련 UI를 모두 숨김
                 break;
         }
     }
@@ -208,7 +209,7 @@ public class GameManager : Singleton<GameManager>
         };
     }
 
-    // "마을로 돌아가기" 버튼이 호출할 함수
+    // 던전 결과 창 "마을로 돌아가기" 버튼이 호출
     public void ReturnToTown()
     {
         Debug.Log("마을로 돌아갑니다.");
@@ -217,7 +218,6 @@ public class GameManager : Singleton<GameManager>
         // 다음 씬에서 사용할 스폰 위치 저장
         nextSpawnPosition = CurrentDungeon.TownSpawnPosition;
 
-        UIManager.Instance.ToggleResultPanel(); // 던전 결과 창 숨김
         CurrentDungeon = null;
         LoadScene(townToReturn); // 돌아가야할 마을 씬으로 변경
     }
@@ -234,6 +234,7 @@ public class GameManager : Singleton<GameManager>
     }
     #endregion Result Panel
 
+    // 메뉴 창 "마을로 가기" 버튼이 호출
     public void GoToTown()
     {
         ReturnToTown();
@@ -262,7 +263,7 @@ public class GameManager : Singleton<GameManager>
     {
         if (Player.Instance == null || DataManager.Instance == null) return;
 
-        Inventory inventory = Player.Instance.GetComponent<Inventory>();
+        Inventory inventory = Player.Instance.PlayerInventory;
         if (inventory == null) return;
 
         // 현재 플레이어의 데이터를 기반으로 새로운 CharacterData 생성
@@ -282,7 +283,8 @@ public class GameManager : Singleton<GameManager>
             MaxHP = Player.Instance.MaxHP,
             MaxMP = Player.Instance.MaxMP,
             MoveSpeed = Player.Instance.WalkSpeed,
-            Gold = inventory.Gold
+            Gold = inventory.Gold,
+            Coin = inventory.Coin
         };
 
         // 인벤토리 아이템 저장

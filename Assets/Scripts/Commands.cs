@@ -60,3 +60,19 @@ public class SkillCommand : ICommand
         return behaviourController.PerformSkill(context, skillIndex);
     }
 }
+
+public class QuickSlotCommand : ICommand
+{
+    InputAction.CallbackContext context;
+    private int quickSlotIndex;
+    public QuickSlotCommand(InputAction.CallbackContext context, int quickSlotIndex)
+    {
+        this.context = context;
+        this.quickSlotIndex = quickSlotIndex;
+    }
+    public bool Execute(BehaviourController behaviourController)
+    {
+        // behaviourController의 스킬 시전 로직을 호출
+        return behaviourController.PerformQuickSlot(context, quickSlotIndex);
+    }
+}

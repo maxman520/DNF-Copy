@@ -22,6 +22,7 @@ public class CharacterData
 
     // 재화 정보
     public int Gold = 0;
+    public int Coin = 10;
 
     // 인벤토리 정보
     public List<SavedItem> inventoryItems = new List<SavedItem>();
