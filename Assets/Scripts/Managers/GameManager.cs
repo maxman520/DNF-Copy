@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public enum GameState
 {
+    CharacterSelect,
+    CharacterCreate,
     Town,
     Dungeon,
     Loading
@@ -16,7 +18,7 @@ public class GameManager : Singleton<GameManager>
     [Header("플레이어 설정")]
     public GameObject playerPrefab; // 인스펙터에서 할당할 플레이어 프리팹
 
-    public GameState CurrentState { get; private set; } = GameState.Town;
+    public GameState CurrentState { get; private set; } = GameState.CharacterSelect;
 
     public Dungeon CurrentDungeon { get; private set; }
     private float dungeonStartTime;
@@ -39,10 +41,6 @@ public class GameManager : Singleton<GameManager>
             Player.Instance.name = "Player"; // 인스턴스 이름 설정
         }
     }
-    private void Start()
-    {
-        
-    }
 
     private void OnEnable()
     {
@@ -54,23 +52,43 @@ public class GameManager : Singleton<GameManager>
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    public void LoadScene(string sceneName)
+    public async void LoadScene(string sceneName)
     {
         if (string.IsNullOrEmpty(sceneName))
             return;
-            
-        CurrentState = GameState.Loading;
-        // UIManager.Instance.ShowLoadingScreen();
-        SceneManager.LoadScene(sceneName);
+        
+        // 로딩 씬 Additive 비동기 로드
+        var loadLoadingScene = SceneManager.LoadSceneAsync("Loading_Scene", LoadSceneMode.Additive);
+        await UniTask.WaitUntil(() => loadLoadingScene.isDone);
+        Debug.Log("Loading_Scene 로드 완료");
+
+        // 메인 씬을 비동기적으로 로드하고 완료될 때까지 기다립니다.
+        var loadSceneOperation = SceneManager.LoadSceneAsync(sceneName);
+        loadSceneOperation.allowSceneActivation = false; // 씬 활성화를 수동으로 제어
+        Debug.Log("메인 Scene 로드 후 비활성화");
+
+        // !! Unity에서 씬 비동기 로드의 progress는 최대 0.9까지만 오르고, 실제 씬 활성화는 allowSceneActivation = true가 되었을 때 이뤄짐 !!
+        // 로딩 진행 상황 업데이트 (필요시)
+        while (loadSceneOperation.progress < 0.9f)
+        {
+            // 구현 예: 로딩 UI에 진행 상황 표시
+            Debug.Log($"로딩 진행 중: {loadSceneOperation.progress * 100}%");
+            await UniTask.Yield();
+        }
+
+        // 씬 활성화
+        loadSceneOperation.allowSceneActivation = true;
+        Debug.Log("메인 Scene 활성화");
     }
 
     // 씬이 로드된 '후'에 호출되는 정리 함수
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // 로딩 UI 끄기
-        // UIManager.Instance.HideLoadingScreen();
         switch(scene.name)
         {
+            case "Loading_Scene":
+                CurrentState = GameState.Loading;
+                break;
             case "Dungeon1_Scene":
             // case Dungeon2, Dungeon3, ...
                 CurrentState = GameState.Dungeon;
@@ -81,6 +99,12 @@ public class GameManager : Singleton<GameManager>
                 CurrentState = GameState.Town;
                 Player.Instance.OnEnterTown();
                 UIManager.Instance.HideDungeonUI(); // 던전 관련 UI를 모두 숨김
+                break;
+            case "CharacterSelect_Scene":
+                CurrentState = GameState.CharacterSelect;
+                break;
+            case "CharacterCreate_Scene":
+                CurrentState = GameState.CharacterCreate;
                 break;
         }
     }
@@ -256,7 +280,7 @@ public class GameManager : Singleton<GameManager>
         Destroy(gameObject);
 
         // 캐릭터 선택 씬 로드
-        SceneManager.LoadScene("CharacterSelect_Scene");
+        LoadScene("CharacterSelect_Scene");
     }
 
     public void SavePlayerData()

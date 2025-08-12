@@ -20,6 +20,10 @@ public enum PlayerAnimState
 
 public class Player : Singleton<Player>
 {
+    public event Action<float, float> OnHPChanged;
+    public event Action<float, float> OnMPChanged;
+    public event Action<float, float> OnEXPChanged;
+
     [Header("플레이어 스탯")]
     // 최종 스탯 (기본 + 장비)
     public float Atk;
@@ -31,11 +35,33 @@ public class Player : Singleton<Player>
 
     public float MaxHP;
     public float MaxMP;
-    public float CurrentHP;
-    public float CurrentMP;
+
+    private float _currentHP;
+    public float CurrentHP
+    {
+        get => _currentHP;
+        set
+        {
+            _currentHP = Mathf.Clamp(value, 0, MaxHP);
+            OnHPChanged?.Invoke(MaxHP, _currentHP);
+        }
+    }
+
+    private float _currentMP;
+    public float CurrentMP
+    {
+        get => _currentMP;
+        set
+        {
+            _currentMP = Mathf.Clamp(value, 0, MaxMP);
+            OnMPChanged?.Invoke(MaxMP, _currentMP);
+        }
+    }
+
     public float WalkSpeed;
     public float RunSpeed;
-    public int CurrentEXP;
+
+    public int CurrentEXP; // 레벨업 로직 때문에 EXP는 AddExp에서 별도 처리
     public int Level = 1;
     public int RequiredEXP = 1000; // 1레벨에서 2레벨로 가는 데 필요한 경험치
 
@@ -127,6 +153,7 @@ public class Player : Singleton<Player>
         this.Level = data.Level;
         this.CurrentEXP = data.CurrentEXP;
         this.RequiredEXP = data.RequiredEXP;
+        OnEXPChanged?.Invoke(RequiredEXP, CurrentEXP);
 
         // 재화 로드
         PlayerInventory.Gold = data.Gold;
@@ -165,11 +192,7 @@ public class Player : Singleton<Player>
         }
         
         Debug.Log("플레이어 데이터 초기화 완료");
-
-        // HUD UI 업데이트 요청
-        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
-        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
-        UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
+       
 
     }
 
@@ -221,13 +244,10 @@ public class Player : Singleton<Player>
 
         // 데미지 적용
         CurrentHP -= damage;
-        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
         Debug.Log($"플레이어가 {damage}의 데미지를 입었습니다. 현재 체력: {CurrentHP}");
 
         if (CurrentHP <= 0 && !IsDead)
         {
-            CurrentHP = 0;
-            UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
             IsDead = true;
             DieSequence().Forget();
         }
@@ -239,7 +259,7 @@ public class Player : Singleton<Player>
         CanMove = false;
         CanAttack = false;
 
-        // 만약 땅에 붙어있다면, GetDown 애니메이션 재생을 위해 살짝 띄움
+        // 만약 땅에 붙어있다면, GetDown 애니메이션이 보이도록 살짝 띄움
         if (IsGrounded)
         {
             // 공중에 뜨는 힘 적용
@@ -318,10 +338,6 @@ public class Player : Singleton<Player>
         CurrentHP = MaxHP;
         CurrentMP = MaxMP;
 
-        // UI 업데이트
-        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
-        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
-
         // 상태 초기화
         CanMove = true;
         CanAttack = true;
@@ -335,10 +351,6 @@ public class Player : Singleton<Player>
         // 마을로 이동시 체력, 마나 회복
         CurrentHP = MaxHP;
         CurrentMP = MaxMP;
-
-        // UI 업데이트
-        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
-        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
 
         // 상태 초기화
         CanMove = true;
@@ -359,8 +371,7 @@ public class Player : Singleton<Player>
     {
         CurrentEXP += expAmount;
         Debug.Log($"경험치 {expAmount} 획득! 현재 경험치: {CurrentEXP}");
-        // UI 업데이트 요청
-        UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
+        OnEXPChanged?.Invoke(RequiredEXP, CurrentEXP); // UI 업데이트 요청
 
         while (CurrentEXP >= RequiredEXP)
         {
@@ -383,33 +394,29 @@ public class Player : Singleton<Player>
         MaxMP = Mathf.RoundToInt(MaxMP * 1.1f);
         baseAtk = Mathf.RoundToInt(baseAtk * 1.1f);
         baseDef = Mathf.RoundToInt(baseDef * 1.1f);
-        CurrentHP = MaxHP; // 레벨업 시 체력, 마나 회복
+        // 체력, 마나 회복 및 UI 업데이트
+        CurrentHP = MaxHP; 
         CurrentMP = MaxMP;
-
+        OnEXPChanged?.Invoke(RequiredEXP, CurrentEXP);
+        
         // 장비로 인한 추가 스탯을 다시 계산하여 최종 스탯에 반영
         int totalAttackFromItems = PlayerInventory.GetCurrentTotalAttack();
         int totalDefenseFromItems = PlayerInventory.GetCurrentTotalDefense();
         UpdateEquipmentStats(totalAttackFromItems, totalDefenseFromItems);
-
-        // UI 업데이트 요청
-        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
-        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
-        UIManager.Instance.UpdateEXP(RequiredEXP, CurrentEXP);
+        
     }
 
     public void HealHP(int amount)
     {
         int healAmount = Mathf.RoundToInt(Mathf.Min(MaxHP, CurrentHP + amount) - CurrentHP);
-        CurrentHP = Mathf.Min(MaxHP, CurrentHP + amount);
-        UIManager.Instance.UpdateHP(MaxHP, CurrentHP);
+        CurrentHP += amount;
         EffectManager.Instance.PlayEffect("Heal", HurtboxTransform.transform.position, Quaternion.identity);
         EffectManager.Instance.PlayEffect("HealDamageText",HurtboxTransform.position, Quaternion.identity, healAmount);
     }
 
     public void HealMP(int amount)
     {
-        CurrentMP = Mathf.Min(MaxMP, CurrentMP + amount);
-        UIManager.Instance.UpdateMP(MaxMP, CurrentMP);
+        CurrentMP += amount;
     }
 
 

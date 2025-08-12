@@ -34,14 +34,21 @@ public class DamageText : MonoBehaviour
             renderer.color = color;
         }
 
-        // 데미지 문자열의 각 숫자에 해당하는 스프라이트를 설정하고 활성화
-        for (int i = 0; i < damageString.Length; i++)
+        // 데미지 문자열의 각 숫자에 해당하는 스프라이트를 설정하고 활성화 (뒤에서부터)
+        int stringLength = damageString.Length;
+        int rendererCount = numberRenderers.Count;
+        
+        for (int i = 0; i < stringLength; i++)
         {
-            if (i >= numberRenderers.Count) break; // 준비된 자릿수를 넘으면 중단
+            // 뒤에서부터 매칭: damageString의 마지막 문자부터, numberRenderers의 마지막부터
+            int stringIndex = stringLength - 1 - i; // damageString의 인덱스 (뒤에서부터)
+            int rendererIndex = rendererCount - 1 - i; // numberRenderers의 인덱스 (뒤에서부터)
 
-            int number = int.Parse(damageString[i].ToString());
-            numberRenderers[i].sprite = fontData.numberSprites[number];
-            numberRenderers[i].gameObject.SetActive(true);
+            if (rendererIndex < 0) break; // 준비된 자릿수를 넘으면 중단
+
+            int number = int.Parse(damageString[stringIndex].ToString());
+            numberRenderers[rendererIndex].sprite = fontData.numberSprites[number];
+            numberRenderers[rendererIndex].gameObject.SetActive(true);
         }
 
         // 애니메이션 시작
@@ -80,10 +87,6 @@ public class DamageText : MonoBehaviour
         {
             // 진행률 (0 -> 1)
             float progress = elapsedTime / scaleInDuration;
-
-            // Ease-Out 효과를 위해 진행률을 보정 (처음엔 빠르고 나중에 느리게)
-            // 1 - (1-x)^n 공식 사용
-            // float easedProgress = 1 - Mathf.Pow(1 - progress, 3); // 3은 강도 조절
 
             // 크기를 시작 크기에서 목표 크기로 보간
             transform.localScale = Vector3.Lerp(startScale, originalScale, progress);

@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -105,12 +106,12 @@ public class CharacterSelect : MonoBehaviour
     {
         if (selectedSlot == null) return;
         DataManager.Instance.SelectCharacter(selectedSlot.GetCharacterData());
-        SceneManager.LoadScene("Town_Scene");
+        LoadScene("Town_Scene");
     }
 
     public void CreateCharacter()
     {
-        SceneManager.LoadScene("CharacterCreate_Scene");
+        LoadScene("CharacterCreate_Scene");
     }
 
     public void DeleteCharacter()
@@ -127,5 +128,34 @@ public class CharacterSelect : MonoBehaviour
         // 데이터와 UI를 새로고침
         LoadCharacterData();
         PopulateCharacterSlots();
+    }
+
+    private async void LoadScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+            return;
+        
+        // 로딩 씬 Additive 비동기 로드
+        var loadLoadingScene = SceneManager.LoadSceneAsync("Loading_Scene", LoadSceneMode.Additive);
+        await UniTask.WaitUntil(() => loadLoadingScene.isDone);
+        Debug.Log("Loading_Scene 로드 완료");
+
+        // 메인 씬을 비동기적으로 로드하고 완료될 때까지 기다립니다.
+        var loadSceneOperation = SceneManager.LoadSceneAsync(sceneName);
+        loadSceneOperation.allowSceneActivation = false; // 씬 활성화를 수동으로 제어
+        Debug.Log("메인 Scene 로드 후 비활성화");
+
+        // !! Unity에서 씬 비동기 로드의 progress는 최대 0.9까지만 오르고, 실제 씬 활성화는 allowSceneActivation = true가 되었을 때 이뤄짐 !!
+        // 로딩 진행 상황 업데이트 (필요시)
+        while (loadSceneOperation.progress < 0.9f)
+        {
+            // 구현 예: 로딩 UI에 진행 상황 표시
+            Debug.Log($"로딩 진행 중: {loadSceneOperation.progress * 100}%");
+            await UniTask.Yield();
+        }
+
+        // 씬 활성화
+        loadSceneOperation.allowSceneActivation = true;
+        Debug.Log("메인 Scene 활성화");
     }
 }

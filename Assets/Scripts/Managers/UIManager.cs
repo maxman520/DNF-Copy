@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using TMPro;
 using UnityEngine;
@@ -12,7 +11,9 @@ public class UIManager : Singleton<UIManager>
 
     [Header("HP, MP, EXP 게이지")]
     [SerializeField] private Image hpGauge;
+    [SerializeField] private TextMeshProUGUI hpPercentageText;
     [SerializeField] private Image mpGauge;
+    [SerializeField] private TextMeshProUGUI mpPercentageText;
     [SerializeField] private Image expGauge;
 
     [Header("몬스터 UI")]
@@ -49,6 +50,7 @@ public class UIManager : Singleton<UIManager>
 
     private Monster currentTarget; // 현재 추적 중인 타겟 몬스터
     private CancellationTokenSource monsterHPBarCts; // 몬스터 HP바 자동 숨김 작업을 위한 토큰
+
     private void Start()
     {
         // 시작할 때 모든 몬스터 HP바는 숨겨둠
@@ -66,6 +68,14 @@ public class UIManager : Singleton<UIManager>
         // RoomManager 이벤트 구독
         if (RoomManager.Instance != null) {
             RoomManager.Instance.OnRoomEntered += HandleRoomEntered;
+        }
+
+        // Player 이벤트 구독
+        if (Player.Instance != null)
+        {
+            Player.Instance.OnHPChanged += UpdateHP;
+            Player.Instance.OnMPChanged += UpdateMP;
+            Player.Instance.OnEXPChanged += UpdateEXP;
         }
     }
 
@@ -85,6 +95,16 @@ public class UIManager : Singleton<UIManager>
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             HandleEscapeKey();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (Player.Instance != null)
+        {
+            Player.Instance.OnHPChanged -= UpdateHP;
+            Player.Instance.OnMPChanged -= UpdateMP;
+            Player.Instance.OnEXPChanged -= UpdateEXP;
         }
     }
 
@@ -329,24 +349,41 @@ public class UIManager : Singleton<UIManager>
 
     #region Player
     // HP 게이지 업데이트
-    public void UpdateHP(float maxHP, float currentHP)
+    private void UpdateHP(float maxHP, float currentHP)
     {
-        if (hpGauge != null)
-        {
-            hpGauge.fillAmount = currentHP / maxHP;
-        }
+        UpdateGaugeAndText(hpGauge, hpPercentageText, maxHP, currentHP);
     }
 
     // MP 게이지 업데이트
-    public void UpdateMP(float maxMP, float currentMP)
+    private void UpdateMP(float maxMP, float currentMP)
     {
-        if (mpGauge != null)
+        UpdateGaugeAndText(mpGauge, mpPercentageText, maxMP, currentMP);
+    }
+
+    // 게이지와 텍스트를 업데이트하는 공통 메소드
+    private void UpdateGaugeAndText(Image gauge, TextMeshProUGUI percentageText, float maxValue, float currentValue)
+    {
+        if (gauge != null)
         {
-            mpGauge.fillAmount = currentMP / maxMP;
+            float ratio = (maxValue > 0) ? currentValue / maxValue : 0;
+            gauge.fillAmount = ratio;
+
+            if (percentageText != null)
+            {
+                float percentage = ratio * 100;
+                if (percentage <= 0f || percentage >= 100f)
+                {
+                    percentageText.text = $"{Mathf.RoundToInt(percentage)}%";
+                }
+                else
+                {
+                    percentageText.text = $"{percentage:F1}%";
+                }
+            }
         }
     }
 
-    public void UpdateEXP(float requiredEXP, float currentEXP)
+    private void UpdateEXP(float requiredEXP, float currentEXP)
     {   
         if (expGauge != null)
         {

@@ -73,6 +73,10 @@ public class DropGold : MonoBehaviour
             if (inv != null)
             {
                 inv.AddGold(Amount);
+                Vector3 position = Player.Instance.HurtboxTransform.position;
+                position = new Vector3(position.x, position.y + 0.8f, 0);
+                
+                EffectManager.Instance.PlayEffect("GoldGainText", position, Quaternion.identity, Amount);
             }
             Destroy(gameObject);
         }
