@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 public class MenuUI : MonoBehaviour
 {
     [Header("세부 메뉴 버튼 목록")]
-    [SerializeField] private Button myInfoButton;
+    [FormerlySerializedAs("myInfoButton")]
+    [SerializeField] private Button profileButton;
     [SerializeField] private Button inventoryButton;
     [SerializeField] private Button skillButton;
     [Header("하단 버튼 목록")]
@@ -17,7 +19,7 @@ public class MenuUI : MonoBehaviour
     private void Start()
     {
         // 각 버튼에 리스너 연결
-        myInfoButton?.onClick.AddListener(OnMyInfoButtonClicked);
+        profileButton?.onClick.AddListener(OnProfileButtonClicked);
         inventoryButton?.onClick.AddListener(OnInventoryButtonClicked);
         skillButton?.onClick.AddListener(OnSkillButtonClicked);
         gameSettingsButton?.onClick.AddListener(OnGameSettingsButtonClicked);
@@ -59,10 +61,13 @@ public class MenuUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    // 내 정보 버튼 (구현 예정)
-    public void OnMyInfoButtonClicked()
+    // 프로필 버튼
+    public void OnProfileButtonClicked()
     {
-        Debug.Log("내 정보창 열기 (구현 예정)");
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ToggleProfilePanel();
+        }
         DeactivateMenu();
     }
 

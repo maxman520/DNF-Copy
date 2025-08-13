@@ -80,4 +80,17 @@ public class Room : MonoBehaviour
                 portal.Activate();
         }
     }
+
+    // 보스 사망 등으로 인해 방 내의 다른 몬스터를 모두 처치(강제 사망)시킴
+    public void ForceKillOtherMonsters(Monster except)
+    {
+        foreach (var monster in monsters)
+        {
+            if (monster == null || monster == except) continue;
+            if (!monster.gameObject.activeSelf) continue;
+
+            // 데미지 연출 없이 즉시 사망 처리 (경험치 및 결과 합산은 각 몬스터 Die에서 처리)
+            monster.ForceDie();
+        }
+    }
 }

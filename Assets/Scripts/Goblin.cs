@@ -430,7 +430,7 @@ public class Goblin : Monster
     protected override void Die()
     {
         StopAILoop(); // 모든 비동기 작업 중단
-        isActing = false;
+        isActing = true;
         UIManager.Instance.HideMonsterHPBar(); // HP바를 숨기도록 요청
 
         Debug.Log($"{monsterData.MonsterName}이(가) 죽었습니다.");

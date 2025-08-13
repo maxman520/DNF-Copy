@@ -88,6 +88,22 @@ public abstract class Monster : MonoBehaviour
     protected abstract void Hurt(AttackDetails attackDetails, Vector2 attackPosition);
     protected abstract void Die();
 
+    // 현재 자신이 속한 방(Room)의 다른 몬스터들을 강제 처치
+    protected void ForceKillOtherMonstersInRoom()
+    {
+        Room room = GetComponentInParent<Room>();
+        if (room != null)
+        {
+            room.ForceKillOtherMonsters(this);
+        }
+    }
+
+    // 외부에서 사망 처리를 직접 호출하기 위한 공개 메서드 (데미지 텍스트 등 부가 연출 없음)
+    public void ForceDie()
+    {
+        Die();
+    }
+
     protected void SpawnDrops()
     {
         if (dropTable == null) return;

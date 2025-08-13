@@ -22,7 +22,6 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
     private Inventory inventory;
     private Canvas parentCanvas;
     protected static InventorySlot draggedSlot;
-    [SerializeField] private QuickSlotUI quickSlotUI; // 퀵슬롯 참조
 
     private void Awake()
     {

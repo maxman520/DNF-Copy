@@ -39,6 +39,9 @@ public class UIManager : Singleton<UIManager>
     [Header("인벤토리 창")]
     [SerializeField] private InventoryUI inventoryPanel; // 인벤토리 창
 
+    [Header("프로필 창")]
+    [SerializeField] private ProfilePanel profilePanel; // 캐릭터 프로필 창
+
     
     [Header("아이템 설명 창")]
     [SerializeField] private ItemDescriptionPanel itemDescriptionPanel; // 아이템 설명 창
@@ -62,6 +65,7 @@ public class UIManager : Singleton<UIManager>
         minimapUI?.gameObject.SetActive(false); // 미니맵 비활성화
         menuPanel?.gameObject.SetActive(false); // 메뉴 창 비활성화
         inventoryPanel?.gameObject.SetActive(false); // 인벤토리 창 비활성화
+        profilePanel?.gameObject.SetActive(false); // 프로필(내 정보) 창 비활성화
         itemDescriptionPanel?.gameObject.SetActive(false); // 아이템 설명 창 비활성화
         ghostStatePanel?.gameObject.SetActive(false); // 플레이어 사망 UI 비활성화
 
@@ -90,6 +94,11 @@ public class UIManager : Singleton<UIManager>
         if (Input.GetKeyDown(KeyCode.I))
         {
             ToggleInventoryUI();
+        }
+        // 'M' 키를 누르면 프로필 창을 토글
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            ToggleProfilePanel();
         }
         // 'Escape' 키를 누르면 메뉴 창을 토글
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -186,6 +195,16 @@ public class UIManager : Singleton<UIManager>
         }
     }
     #endregion Inventory
+
+    #region Profile
+    public void ToggleProfilePanel()
+    {
+        if (profilePanel != null)
+        {
+            profilePanel.gameObject.SetActive(!profilePanel.gameObject.activeSelf);
+        }
+    }
+    #endregion Profile
 
     #region Result
     public void SetResultPanelData(DungeonResultData resultData) {

@@ -520,7 +520,7 @@ public class Vinoshu : Monster
     protected override async void Die()
     {
         StopAILoop(); // 모든 비동기 작업 중단
-        isActing = false;
+        isActing = true;
         UIManager.Instance.HideBossHPBar(); // HP바를 숨기도록 요청
 
         Debug.Log($"{monsterData.MonsterName}이(가) 죽었습니다.");
@@ -528,6 +528,9 @@ public class Vinoshu : Monster
         // 플레이어에게 경험치 지급
         GameManager.Instance.AddExp(monsterData.EXP);
         GameManager.Instance.AddHuntExp(monsterData.EXP);
+
+        // 동일 방 내 다른 몬스터도 즉시 처치 (경험치 포함)
+        ForceKillOtherMonstersInRoom();
 
         // 물리적 움직임과 충돌을 중지
         if (rb != null)
