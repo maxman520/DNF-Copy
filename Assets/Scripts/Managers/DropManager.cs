@@ -68,7 +68,7 @@ public class DropManager : Singleton<DropManager>
     {
         if (rb == null) return;
         float dir = Random.value < 0.5f ? -1f : 1f;
-        float h = Random.Range(0.5f, 1f) * dir;
+        float h = Random.Range(2f, 3f) * dir;
         // 수평 이동은 Rigidbody가 담당
         rb.AddForce(new Vector2(h, 0f), ForceMode2D.Impulse);
     }

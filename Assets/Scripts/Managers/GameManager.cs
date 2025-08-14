@@ -90,6 +90,7 @@ public class GameManager : Singleton<GameManager>
                 CurrentState = GameState.Loading;
                 break;
             case "Dungeon1_Scene":
+            case "Dungeon3_Scene":
             // case Dungeon2, Dungeon3, ...
                 CurrentState = GameState.Dungeon;
                 Player.Instance.OnEnterDungeon();
@@ -262,6 +263,21 @@ public class GameManager : Singleton<GameManager>
     public void GoToTown()
     {
         ReturnToTown();
+    }
+
+    // 임의의 마을로 이동(스폰 위치 지정)
+    public void GoToTown(string townSceneName, Vector3 spawnPosition)
+    {
+        if (string.IsNullOrEmpty(townSceneName))
+        {
+            Debug.LogWarning("GoToTown: 이동할 마을 씬 이름이 비어있습니다");
+            return;
+        }
+
+        // 다음 씬에서 사용할 스폰 위치 저장
+        nextSpawnPosition = spawnPosition;
+        CurrentDungeon = null;
+        LoadScene(townSceneName);
     }
 
     public void ResetGameAndGoToCharacterSelect()

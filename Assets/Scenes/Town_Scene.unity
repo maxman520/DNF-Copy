@@ -5187,7 +5187,7 @@ GameObject:
   - component: {fileID: 201522016}
   - component: {fileID: 201522015}
   m_Layer: 0
-  m_Name: Portal_Dungeon_01
+  m_Name: Portal_SelectDungeon_Granfloris
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5225,7 +5225,7 @@ MonoBehaviour:
   visualActive: {fileID: 0}
   targetRoom: {fileID: 0}
   targetPortal: {fileID: 0}
-  destinationSceneName: Dungeon1_Scene
+  destinationSceneName: SelectDungeon_Granfloris_Scene
 --- !u!61 &201522016
 BoxCollider2D:
   m_ObjectHideFlags: 0
