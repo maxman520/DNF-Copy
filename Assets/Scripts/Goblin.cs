@@ -390,6 +390,14 @@ public class Goblin : Monster
         EffectManager.Instance.PlayEffect(effectToPlay, hurtPoint, Quaternion.identity);
         EffectManager.Instance.PlayEffect("BloodLarge", hurtPoint, effectRotation);
 
+        // 50% 확률로 SFX 재생 (Gbn_Dmg_01 ~ Gbn_Dmg_04 중 랜덤)
+        if (Random.value <= 0.5f)
+        {
+            int idx = Random.Range(1, 5); // 1~4
+            string sfxKey = "Gbn_Dmg_" + idx.ToString("00");
+            AudioManager.Instance.PlaySFX(sfxKey);
+        }
+
 
         // 넉백 적용 방향 결정. attackPosition은 플레이어 히트박스의 위치
         float direction = (transform.position.x > attackPosition.x) ? 1 : -1;
@@ -448,6 +456,11 @@ public class Goblin : Monster
 
     private async UniTask DeathSequenceAsync(CancellationToken token)
     {
+        // 0. 죽을 때 효과음 재생
+        string sfxKey = Random.value < 0.5f ? "Gbn_Die_01" : "Gbn_Die_02";
+        AudioManager.Instance.PlaySFX(sfxKey);
+
+
         // 1. 하얗게 변하고 점점 투명하게
         var mat = sr.material;
         mat.SetFloat("_Blend", 1f);

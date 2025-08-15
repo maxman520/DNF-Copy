@@ -171,6 +171,7 @@ public class UIManager : Singleton<UIManager>
     {
         if (menuPanel != null)
         {
+            AudioManager.Instance.PlaySFX("Click1");
             menuPanel.gameObject.SetActive(!menuPanel.gameObject.activeSelf);
         }
     }
@@ -180,6 +181,7 @@ public class UIManager : Singleton<UIManager>
     public void ToggleSkillShopUI() {
         if (skillShopUI != null)
         {
+            AudioManager.Instance.PlaySFX("Click1");
             skillShopUI.gameObject.SetActive(!skillShopUI.gameObject.activeSelf);
         }
     }
@@ -190,6 +192,7 @@ public class UIManager : Singleton<UIManager>
     {
         if (inventoryPanel != null && itemDescriptionPanel != null)
         {
+            AudioManager.Instance.PlaySFX("Click1");
             inventoryPanel.gameObject.SetActive(!inventoryPanel.gameObject.activeSelf);
             itemDescriptionPanel.gameObject.SetActive(false); // 아이템 설명 창도 인벤토리와 함께 비활성화
         }
@@ -201,6 +204,7 @@ public class UIManager : Singleton<UIManager>
     {
         if (profilePanel != null)
         {
+            AudioManager.Instance.PlaySFX("Click1");
             profilePanel.gameObject.SetActive(!profilePanel.gameObject.activeSelf);
         }
     }
@@ -215,7 +219,12 @@ public class UIManager : Singleton<UIManager>
     public void ToggleResultPanel()
     {
         if (resultPanel != null)
+        {
+            if (resultPanel.gameObject.activeSelf == false)
+                AudioManager.Instance.PlaySFX("Result_Flash");
             resultPanel.gameObject.SetActive(!resultPanel.gameObject.activeSelf);
+        }
+            
     }
 
     public void HideResultPanel()

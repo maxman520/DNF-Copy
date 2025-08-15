@@ -32,6 +32,7 @@ public class DungeonSelectButton : MonoBehaviour, ISelectHandler, IDeselectHandl
     public void OnSelect(BaseEventData eventData)
     {
         isSelected = true;
+        AudioManager.Instance.PlaySFX("Click2");
     }
 
     public void OnDeselect(BaseEventData eventData)
@@ -117,7 +118,9 @@ public class DungeonSelectButton : MonoBehaviour, ISelectHandler, IDeselectHandl
             Debug.LogWarning($"[DungeonSelectButton] {name} 에서 씬 이름이 비어있습니다");
             return;
         }
-
+        // 던전 선택 종료 연출 사운드
+        AudioManager.Instance.PlaySFX("Map_Select");
+        AudioManager.Instance.PlaySFX("Map_Disappear");
         SceneManager.LoadScene(sceneName);
     }
 }

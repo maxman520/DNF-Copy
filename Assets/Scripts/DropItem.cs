@@ -11,6 +11,7 @@ public class DropItem: MonoBehaviour
     private Transform visuals;
     private Rigidbody2D rb;
     private float visualsAngularVelocity;
+    private bool landedSfxPlayed = false;
 
     // 플레이어 근접 및 획득 관련
     private DropNameLabel nameLabel;
@@ -81,6 +82,19 @@ public class DropItem: MonoBehaviour
             // 착지 시 회전 초기화
             transform.rotation = Quaternion.identity;
             visuals.localRotation = Quaternion.identity;
+            // 아이템 착지 사운드 1회 재생: 소비아이템이면 Jewel, 장비면 Iron_Touch
+            if (!landedSfxPlayed)
+            {
+                if (Item is ConsumableData)
+                {
+                    AudioManager.Instance.PlaySFX("Jewel");
+                }
+                else if (Item is EquipmentData)
+                {
+                    AudioManager.Instance.PlaySFX("Iron_Touch");
+                }
+                landedSfxPlayed = true;
+            }
             return;
         }
         // 중력 적용 및 이동

@@ -30,8 +30,10 @@ MonoBehaviour:
     knockbackForce: 0.5
     launchForce: 0
     yOffset: 0.5
+    kind: 0
   - attackName: Meteor
     damageRate: 2
     knockbackForce: 3
     launchForce: 6
     yOffset: 0.5
+    kind: 8

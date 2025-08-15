@@ -17804,6 +17804,7 @@ MonoBehaviour:
   monsters: []
   portals:
   - {fileID: 872737052}
+  BgmKeyOverride: Seria_Gate
   coordinates: {x: 0, y: 0}
 --- !u!1 &840269688
 GameObject:
@@ -25902,6 +25903,8 @@ MonoBehaviour:
     prefab: {fileID: 345330374214512100, guid: 5de85c97446c3a24b9c1e21eaa86ed66, type: 3}
   - name: Revive
     prefab: {fileID: 852939633493616910, guid: 28ba7ffb902cb574b81d6a40068b65ae, type: 3}
+  - name: LevelUp
+    prefab: {fileID: 2614843544740705997, guid: 29a137afbfc8d9c4e949137e366e7fb8, type: 3}
 --- !u!4 &1231408414
 Transform:
   m_ObjectHideFlags: 0
@@ -27713,6 +27716,7 @@ MonoBehaviour:
   portals:
   - {fileID: 201522015}
   - {fileID: 358475421}
+  BgmKeyOverride: Elven_Guard
   coordinates: {x: 0, y: 0}
 --- !u!1 &1316278681
 GameObject:

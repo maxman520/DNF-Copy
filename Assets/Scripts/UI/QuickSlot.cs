@@ -98,6 +98,10 @@ public class QuickSlot : MonoBehaviour, IDropHandler, IPointerClickHandler, IPoi
             if (droppedItem != null)
             {
                 controller.RegisterItem(droppedItem, this.Index);
+                // 유효한 슬롯에 드롭 사운드
+                AudioManager.Instance.PlaySFX("Iconset");
+                // 퀵슬롯 등록 시 장착감 사운드도 재생
+                AudioManager.Instance.PlaySFX("Scrap_Touch");
             }
         }
     }

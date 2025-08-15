@@ -17,6 +17,8 @@ public class BehaviourController
     private const float JUMP_MOVEMENT_PENALTY = 0.5f;
     private float verticalVelocity; // 수직 '힘'의 결과로 나타나는 현재 속도
     private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
+    private float cooldownSfxInterval = 1f; // 쿨타임 SFX 최소 간격
+    private float lastCooldownSfxTime = -999f;
 
     public BehaviourController(Player player, InputHandler inputHandler, AnimController animController, SkillManager skillManager)
     {
@@ -85,6 +87,9 @@ public class BehaviourController
         player.IsGrounded = false;
         animController.PlayJump();
 
+        // 점프 SFX 재생
+        AudioManager.Instance.PlaySFX("Sm_Jump");
+
         return true;
     }
     #region Attack
@@ -113,6 +118,8 @@ public class BehaviourController
         if (player.ItemToPickUp != null && !player.HasState(PlayerAnimState.Attack) && !player.HasState(PlayerAnimState.Jump))
         {
             animController.PlayPickUp();
+            // 아이템 줍기 SFX
+            AudioManager.Instance.PlaySFX("Item_Pick");
             player.ItemToPickUp.Pickup();
             player.ItemToPickUp = null; // 아이템을 주웠으므로 참조 제거
             return true;
@@ -149,6 +156,10 @@ public class BehaviourController
 
         player.CanContinueAttack = false; // 다음 공격을 위해 일단 닫아둠
         animController.PlayAttack(player.AttackCounter);
+
+        // 콤보 공격 SFX 재생 (Sm_Atk_01 ~ 03)
+        int stage = Mathf.Clamp(player.AttackCounter, 1, 3);
+        AudioManager.Instance.PlaySFX($"Sm_Atk_{stage:00}");
     }
 
     public void PerformRunAttack()
@@ -165,6 +176,9 @@ public class BehaviourController
             && player.HasState(PlayerAnimState.Attack)) return;
 
         // 점프 공격 실행
+        // 점프 공격 SFX 재생 (Sm_Jumpatk_01 또는 02 랜덤)
+        string sfxKey = UnityEngine.Random.value < 0.5f ? "Sm_Jumpatk_01" : "Sm_Jumpatk_02";
+        AudioManager.Instance.PlaySFX(sfxKey);
         animController.PlayAttack(player.AttackCounter);
     }
 
@@ -270,7 +284,7 @@ public class BehaviourController
         // Visuals의 Y 좌표가 바닥(0)보다 아래로 내려갔다면 착지로 간주
         if (player.VisualsTransform.localPosition.y <= startPos.y)
         {
-            if (verticalVelocity < -1.5f)
+            if (verticalVelocity < -1.5f && player.HasState(PlayerAnimState.Hurt))
             {
                 verticalVelocity *= -0.5f;
                 return;
@@ -280,6 +294,12 @@ public class BehaviourController
             player.IsGrounded = true;
             player.IsRunning = false;
             animController.ResetJumpAttackTrigger();
+
+            // 착지 SFX 재생 (랜덤)
+            {
+                string key = Random.value < 0.5f ? "Pub_Landing_01" : "Pub_Landing_02";
+                AudioManager.Instance.PlaySFX(key);
+            }
 
             // 위치와 속도, 중력 초기화
             player.VisualsTransform.localPosition = startPos;
@@ -308,16 +328,22 @@ public class BehaviourController
             player.Anim.Play(skillToExecute.animName);
 
             // 마나 소모
-            // player.ConsumeMana(skillToExecute.manaCost);
+            player.CurrentMP -= skillToExecute.manaCost;
 
             // 스킬 쿨타임을 시작
             skillManager.StartCooldown(slotIndex);
+
+            // 스킬 보이스 재생(스킬마다 상이, 딜레이 지원)
+            PlaySkillVoice(skillToExecute).Forget();
 
             return true;
         }
 
        // 스킬 사용이 불가능함을 애니메이션으로 플레이어에게 인식시킴
-        CooldownShake().Forget();
+        if (skillManager.LastFailReason != SkillFailReason.Mana)
+        {
+            CooldownShake().Forget();
+        }
 
         // 스킬 사용이 불가능하므로 false
         return false;
@@ -326,6 +352,14 @@ public class BehaviourController
     // 스킬이 쿨타임일시 부들부들 떠는 애니메이션
     private async UniTask CooldownShake()
     {
+        // 스킬 쿨타임 애니메이션 SFX 재생(중복 재생 방지)
+        if (Time.unscaledTime - lastCooldownSfxTime >= Mathf.Max(0.05f, cooldownSfxInterval))
+        {
+            AudioManager.Instance.PlaySFX("Sm_Cooltime");
+            lastCooldownSfxTime = Time.unscaledTime;
+        }
+
+        
         float shakeDuration = 0.05f; // 전체 떨림 시간
         float shakeAmount = 0.04f;   // 떨림의 강도 (움직이는 거리)
         float elapsedTime = 0f;
@@ -345,4 +379,22 @@ public class BehaviourController
         player.VisualsTransform.localPosition = startPos;
     }
     #endregion Skill
+
+    private async UniTaskVoid PlaySkillVoice(SkillData skill)
+    {
+        if (skill == null || skill.voiceKeys == null || skill.voiceKeys.Length == 0)
+            return;
+
+        if (skill.voiceDelay > 0f)
+        {
+            await UniTask.Delay(System.TimeSpan.FromSeconds(skill.voiceDelay));
+        }
+
+        int idx = Mathf.Clamp(Mathf.FloorToInt(Random.value * skill.voiceKeys.Length), 0, skill.voiceKeys.Length - 1);
+        string key = skill.voiceKeys[idx];
+        if (!string.IsNullOrEmpty(key))
+        {
+            AudioManager.Instance.PlaySFX(key);
+        }
+    }
 }

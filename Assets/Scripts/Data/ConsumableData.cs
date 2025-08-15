@@ -31,10 +31,12 @@ public class ConsumableData : ItemData
             case ConsumableEffectType.HealHP:
                 player.HealHP(EffectValue);
                 Debug.Log($"{ItemName}을(를) 사용하여 HP를 {EffectValue}만큼 회복했습니다.");
+                AudioManager.Instance.PlaySFX("Hp_Recovered");
                 break;
             case ConsumableEffectType.HealMP:
                 player.HealMP(EffectValue);
                 Debug.Log($"{ItemName}을(를) 사용하여 MP를 {EffectValue}만큼 회복했습니다.");
+                AudioManager.Instance.PlaySFX("Mp_Recovered");
                 break;
         }
     }

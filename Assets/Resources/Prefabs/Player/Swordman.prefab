@@ -358,6 +358,7 @@ MonoBehaviour:
     knockbackForce: 0
     launchForce: 0
     yOffset: 0
+    kind: 0
 --- !u!1 &1743484477180029451
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,8 +937,6 @@ MonoBehaviour:
   Def: 10
   MaxHP: 100
   MaxMP: 100
-  CurrentHP: 0
-  CurrentMP: 0
   WalkSpeed: 0
   RunSpeed: 0
   CurrentEXP: 0
@@ -954,32 +953,39 @@ MonoBehaviour:
     knockbackForce: 0.5
     launchForce: 0
     yOffset: 0.4
+    kind: 1
   - attackName: Attack_2
     damageRate: 1.1
     knockbackForce: 0.5
     launchForce: 0
     yOffset: 0.4
+    kind: 1
   - attackName: Attack_3
     damageRate: 1.2
     knockbackForce: 1
     launchForce: 4
     yOffset: 0.4
+    kind: 1
   - attackName: Jump_Attack
     damageRate: 1
     knockbackForce: 0.5
     launchForce: 0
     yOffset: 0.5
+    kind: 1
   - attackName: Upper_Slash
     damageRate: 2.5
     knockbackForce: 1
     launchForce: 7
     yOffset: 0.4
+    kind: 1
   - attackName: Hard_Attack_Blade
     damageRate: 5
     knockbackForce: 3
     launchForce: 2
     yOffset: 0.6
+    kind: 2
   comboHitbox: {fileID: 4347397419877877149}
+  runSfxInterval: 0.18
   showInputBufferUI: 1
 --- !u!50 &6472395573752494184
 Rigidbody2D:

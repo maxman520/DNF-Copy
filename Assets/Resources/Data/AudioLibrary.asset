@@ -1,0 +1,291 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e287f4c75b270c4f8541480a7ae2aff, type: 3}
+  m_Name: AudioLibrary
+  m_EditorClassIdentifier: 
+  _categories:
+  - name: BGM
+    entries:
+    - key: Characterselectstage
+      clip: {fileID: 8300000, guid: c1f4bd5f38506df40af93d6fbb9ba45f, type: 3}
+    - key: Elven_Guard
+      clip: {fileID: 8300000, guid: 6b7abac370aee8b4692ab37d07161830, type: 3}
+    - key: Grakkarak_New
+      clip: {fileID: 8300000, guid: 50824671f5a5b574bbef6d66ff50f3b3, type: 3}
+    - key: Grakkarak_New_Boss
+      clip: {fileID: 8300000, guid: 7ca08988d30abd942afab53d025ae37d, type: 3}
+    - key: Seria_Gate
+      clip: {fileID: 8300000, guid: b4f64620db6e1e940b8bb3bd57e84be2, type: 3}
+    - key: Thorn_Garden
+      clip: {fileID: 8300000, guid: ab8e4d651a705e04ab5c2bda0a507061, type: 3}
+    - key: Thorn_Garden_Boss
+      clip: {fileID: 8300000, guid: d74b42613dea8eb44badbcf4507642c1, type: 3}
+  - name: Character
+    entries:
+    - key: Sm_Atk_01
+      clip: {fileID: 8300000, guid: 673e1bf01fdb7b54dad86e31e1473ad0, type: 3}
+    - key: Sm_Atk_02
+      clip: {fileID: 8300000, guid: b3f5b32eb04fb544d8519ccc677ec1cd, type: 3}
+    - key: Sm_Atk_03
+      clip: {fileID: 8300000, guid: 70197e1fbaeb2f14da923ac8a88d9009, type: 3}
+    - key: Sm_Back
+      clip: {fileID: 8300000, guid: 2512c8b5c3cc07a4e90d5be5e6adcf5c, type: 3}
+    - key: Sm_Bal1
+      clip: {fileID: 8300000, guid: 0087efe7c7873f14299c37317d157e1c, type: 3}
+    - key: Sm_Bal2
+      clip: {fileID: 8300000, guid: c14452ba09765dd41b8f9b585441cd2e, type: 3}
+    - key: Sm_Boongsan
+      clip: {fileID: 8300000, guid: 48e099010a8115643b93cc780ceaa9fa, type: 3}
+    - key: Sm_Cooltime
+      clip: {fileID: 8300000, guid: 080dfa9501282c54bb73563daad9c083, type: 3}
+    - key: Sm_Die
+      clip: {fileID: 8300000, guid: bb7239a8bda82a84382d07b42a688b0e, type: 3}
+    - key: Sm_Dmg_01
+      clip: {fileID: 8300000, guid: 7c13db68a3d548b4cbcba22fd70e2a7d, type: 3}
+    - key: Sm_Dmg_02
+      clip: {fileID: 8300000, guid: 3cba1ad355e8e9449a7e85e39c287a14, type: 3}
+    - key: Sm_Dmg_03
+      clip: {fileID: 8300000, guid: 893b05e230c1acf408147467ff982c9f, type: 3}
+    - key: Sm_Gue_01
+      clip: {fileID: 8300000, guid: 5401e416acc3cb94daf434e03ce407d6, type: 3}
+    - key: Sm_Gue_02
+      clip: {fileID: 8300000, guid: 13f0f030f69223b49b5ebc41e0100abf, type: 3}
+    - key: Sm_Jump
+      clip: {fileID: 8300000, guid: 31a38ae64629bf44f922a1a9092db671, type: 3}
+    - key: Sm_Jumpatk_01
+      clip: {fileID: 8300000, guid: df5c9673faaaf734d9973af3502398cf, type: 3}
+    - key: Sm_Jumpatk_02
+      clip: {fileID: 8300000, guid: 2ba63734a033fd14795e07d1400944f7, type: 3}
+    - key: Sm_Moon_Atk
+      clip: {fileID: 8300000, guid: 915e902c0ee49ed4eba41c0157bfb35c, type: 3}
+    - key: Sm_Nomana
+      clip: {fileID: 8300000, guid: fbc5d46fb0fa2544896b0301c936ef03, type: 3}
+    - key: Sm_Triple1
+      clip: {fileID: 8300000, guid: 79125cb11b0485545a0a2022eb8e4621, type: 3}
+    - key: Sm_Triple2
+      clip: {fileID: 8300000, guid: 875724f466579ce449fbf3c06846c13e, type: 3}
+    - key: Sm_Triple3
+      clip: {fileID: 8300000, guid: 514959b4695c393418a3efd943fac067, type: 3}
+    - key: Sm_Upslash
+      clip: {fileID: 8300000, guid: 0b1ec8fc07f64e543bb19edd1032b47e, type: 3}
+  - name: Effect
+    entries:
+    - key: Golddrop1
+      clip: {fileID: 8300000, guid: 13a96684d2443c2439993613437802b4, type: 3}
+    - key: Golddrop2
+      clip: {fileID: 8300000, guid: 1d0636db72f72ec4cb21e4bc7f375a73, type: 3}
+    - key: Hp_Recovered
+      clip: {fileID: 8300000, guid: 4527d15a25c31da47ad452b75d547cb9, type: 3}
+    - key: Iron_Touch
+      clip: {fileID: 8300000, guid: 77a11777347d164469d6b6b3b3239846, type: 3}
+    - key: Item_Pick
+      clip: {fileID: 8300000, guid: 7f522b5a20a58b34eaa68abe9353fd86, type: 3}
+    - key: Jewel
+      clip: {fileID: 8300000, guid: 52ed25268dcea2442be20f297590cb99, type: 3}
+    - key: Kat_Touch
+      clip: {fileID: 8300000, guid: 002718f78b9cd964b9400003da4f3275, type: 3}
+    - key: Kata_01
+      clip: {fileID: 8300000, guid: 5ac060dea56ac7744a8fc0798ced2f03, type: 3}
+    - key: Kata_02
+      clip: {fileID: 8300000, guid: 38f030edf7874e04c999ae779f2475c8, type: 3}
+    - key: Kata_03
+      clip: {fileID: 8300000, guid: 04d94fcfef0bec640b5524107ca10458, type: 3}
+    - key: Kata_Hit_01
+      clip: {fileID: 8300000, guid: ba3e8065dab43694aa43a40c9bbfd492, type: 3}
+    - key: Kata_Hit_02
+      clip: {fileID: 8300000, guid: 6212634074d8a014a8f479c1593e8b58, type: 3}
+    - key: Katb
+      clip: {fileID: 8300000, guid: 24a56c3402ef7a244b7d451089a66b9e, type: 3}
+    - key: Katb_Hit
+      clip: {fileID: 8300000, guid: 1637cc98ff044f74b8b6f3cc487ad053, type: 3}
+    - key: Katc_01
+      clip: {fileID: 8300000, guid: 71ef51148cd1fc24592e952c6b473ba6, type: 3}
+    - key: Katc_02
+      clip: {fileID: 8300000, guid: 40e3de46981fbd540bf7172c19d256b8, type: 3}
+    - key: Katc_Hit_01
+      clip: {fileID: 8300000, guid: a1893d898b885de4199621cb88403784, type: 3}
+    - key: Mon_Comm_Fire_Exp_M_01
+      clip: {fileID: 8300000, guid: 949a9d005e4d95647bc339571f28648e, type: 3}
+    - key: Mon_Comm_Fire_Exp_M_02
+      clip: {fileID: 8300000, guid: f03211d83b6303c40a1982b50e3a2bbd, type: 3}
+    - key: Mon_Comm_Fire_Exp_M_03
+      clip: {fileID: 8300000, guid: f97e6c8d8cc9d1b42b12e973626f529d, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_01
+      clip: {fileID: 8300000, guid: 8190f18c7b44b3749b98969c30f8067f, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_02
+      clip: {fileID: 8300000, guid: a81d67d404d5acf44ba32cd2f0ecaeef, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_03
+      clip: {fileID: 8300000, guid: dafebe1bcf4d4714092b8ba3a21edaf0, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_04
+      clip: {fileID: 8300000, guid: 8f36105e7b7ad4f469f46efbd0bdb920, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_05
+      clip: {fileID: 8300000, guid: d804d9d149ddc0841bc5ce5654bba470, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_06
+      clip: {fileID: 8300000, guid: a1d2625362901cd4ea576fc759b44ff6, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_07
+      clip: {fileID: 8300000, guid: 5ff0074780526ab438faf0843c0b68e0, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_08
+      clip: {fileID: 8300000, guid: 84cca1b38bb4d0b41bb0b5ded4c6179a, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_09
+      clip: {fileID: 8300000, guid: ebbd02c8e0e623948bfba45d29962830, type: 3}
+    - key: Mon_Comm_Fire_Exp_S_10
+      clip: {fileID: 8300000, guid: 97464560c270b234e8dbc7257dc255cc, type: 3}
+    - key: Mp_Recovered
+      clip: {fileID: 8300000, guid: 3fdc91781a87e1345949752c958eb0fa, type: 3}
+    - key: Pub_Hit_01
+      clip: {fileID: 8300000, guid: 9b525adc686e9b34e82a72a3b4402008, type: 3}
+    - key: Pub_Landing_01
+      clip: {fileID: 8300000, guid: 0bfd748e4b757d3479a17e917e83aaa8, type: 3}
+    - key: Pub_Landing_02
+      clip: {fileID: 8300000, guid: 4f01315dbc2b5b74ab481a6a117a968d, type: 3}
+    - key: Pub_Run_01
+      clip: {fileID: 8300000, guid: aa1641212d032414eaf95aa36300631a, type: 3}
+    - key: Pub_Wrk_01
+      clip: {fileID: 8300000, guid: cfa05ffdb9663774e876faaa3cb48f55, type: 3}
+    - key: Scrap_Touch
+      clip: {fileID: 8300000, guid: 1d21a30382ae4694e9f94a6f4a3c66da, type: 3}
+    - key: Sstar_Drop
+      clip: {fileID: 8300000, guid: de7d859b4d77a4e49aa9e5de9258e24c, type: 3}
+    - key: Sstar_Hit
+      clip: {fileID: 8300000, guid: de4a226df10e3974582c9f75b86c5eda, type: 3}
+    - key: Stick_Touch
+      clip: {fileID: 8300000, guid: 9d2da523173ad2249b821990ce0d60d4, type: 3}
+    - key: Sticka_01
+      clip: {fileID: 8300000, guid: 2e0610ba6e0e06b479d06b1acb4699cd, type: 3}
+    - key: Sticka_02
+      clip: {fileID: 8300000, guid: e12087ae9c2ea9744a5a476531f30597, type: 3}
+    - key: Sticka_Hit_01
+      clip: {fileID: 8300000, guid: 9aca0b566b02ae445bab5fd2056ad2a5, type: 3}
+    - key: Sticka_Hit_02
+      clip: {fileID: 8300000, guid: 4fa6ce84a30b40349af3c8d768aa14f4, type: 3}
+    - key: Stickb_01
+      clip: {fileID: 8300000, guid: b8251eab481f11e4a8aa04c66d1ef689, type: 3}
+    - key: Stickb_Hit_01
+      clip: {fileID: 8300000, guid: c53421dccf68ec04b99011a75bb7af8f, type: 3}
+    - key: Stickc_01
+      clip: {fileID: 8300000, guid: c8f06b66f7c42544f97400fb764daaa7, type: 3}
+    - key: Stickc_Hit_01
+      clip: {fileID: 8300000, guid: 949a301598aaa794fb4b69a0f9c0eeaa, type: 3}
+    - key: Stickc_Hit_02
+      clip: {fileID: 8300000, guid: 2d3514f01b36c6649b7a7b7ff19c8973, type: 3}
+    - key: Swd_Bal_03
+      clip: {fileID: 8300000, guid: 03b25d56e804a5b4485ade5966175185, type: 3}
+  - name: Monster
+    entries:
+    - key: Gbn_Comm
+      clip: {fileID: 8300000, guid: 8cf05825b861b4140a3cbe9f3475db4d, type: 3}
+    - key: Gbn_Die_01
+      clip: {fileID: 8300000, guid: 8c35a277b4628dc4ab5fa3c5dabd1135, type: 3}
+    - key: Gbn_Die_02
+      clip: {fileID: 8300000, guid: 384ef8a05ffcc2b4982a876b1b584f20, type: 3}
+    - key: Gbn_Dmg_01
+      clip: {fileID: 8300000, guid: c7c0377d3c3f6944a9a7ccb88f1a434e, type: 3}
+    - key: Gbn_Dmg_02
+      clip: {fileID: 8300000, guid: 444a1cf9efeec07468a50bd7460640a8, type: 3}
+    - key: Gbn_Dmg_03
+      clip: {fileID: 8300000, guid: de291b4ed47a51e45a06c499f4f89b14, type: 3}
+    - key: Gbn_Dmg_04
+      clip: {fileID: 8300000, guid: 1e56a69d79848df4a9a1f529f5a847b3, type: 3}
+    - key: Gbn_Thw
+      clip: {fileID: 8300000, guid: a191a1076bd92a145aeac57fc4640ba7, type: 3}
+    - key: Vino
+      clip: {fileID: 8300000, guid: 1747e704abcb1e44b8b6fde2f3ad4ca1, type: 3}
+    - key: Vino_Atk_01
+      clip: {fileID: 8300000, guid: 0408f99e615c29748ba9111ad9c455d4, type: 3}
+    - key: Vino_Atk_02
+      clip: {fileID: 8300000, guid: d53ada5cefec6cb488f566a6ec375c07, type: 3}
+    - key: Vino_Cast
+      clip: {fileID: 8300000, guid: 4c9f1062bbf42e84f81a4d1ab1b6a6e6, type: 3}
+    - key: Vino_Comm
+      clip: {fileID: 8300000, guid: 59ecbd80237b3e745b006d9c169c71d3, type: 3}
+    - key: Vino_Die_01
+      clip: {fileID: 8300000, guid: 7b80f7166609f9e4cb753c5379bb934e, type: 3}
+    - key: Vino_Dmg_01
+      clip: {fileID: 8300000, guid: f91df87e95104584bbc0658ad2155f35, type: 3}
+    - key: Vino_Dmg_02
+      clip: {fileID: 8300000, guid: d8841bbedaaf0874f80cd8f1522bc6a8, type: 3}
+  - name: UI
+    entries:
+    - key: Buy_Item
+      clip: {fileID: 8300000, guid: e3c2fa148c15e5f47b8fb6d2121b120d, type: 3}
+    - key: Char_Create
+      clip: {fileID: 8300000, guid: ffd7029e850384d489f3f53f49e0fbab, type: 3}
+    - key: Char_Delete
+      clip: {fileID: 8300000, guid: 324d3f6db5f6f3342afa0ea3120a9fa3, type: 3}
+    - key: Click_Tag_02
+      clip: {fileID: 8300000, guid: 09a72935e66a6934881c7c41b1d52ea3, type: 3}
+    - key: Click1
+      clip: {fileID: 8300000, guid: c95acf26d64c2204f927f179c3520d64, type: 3}
+    - key: Click2
+      clip: {fileID: 8300000, guid: c68c5a0cb09182a4d81ab03387bdbf76, type: 3}
+    - key: Click3
+      clip: {fileID: 8300000, guid: 6e81af9cc083a21449bf3369e1a0f4cf, type: 3}
+    - key: Commandselect
+      clip: {fileID: 8300000, guid: 45e7bcb6097e0cf48bea27f4f6f69540, type: 3}
+    - key: Commandselect_1
+      clip: {fileID: 8300000, guid: 23752167eddb1504c8826c55a8834e14, type: 3}
+    - key: Commandshow
+      clip: {fileID: 8300000, guid: 1bdc690d8598c3b43b2bc001d2c3d87b, type: 3}
+    - key: Dissolved
+      clip: {fileID: 8300000, guid: 6dc245de7431c7c40bca6eb62dfe815e, type: 3}
+    - key: Get_Item
+      clip: {fileID: 8300000, guid: 64cee6a95bb8b8e49b785f7902262aa9, type: 3}
+    - key: Icondrop
+      clip: {fileID: 8300000, guid: a08adf24ab775284ab0fe4d389b245cf, type: 3}
+    - key: Iconpick
+      clip: {fileID: 8300000, guid: 18bc7af6f8ed1e044b482f058754839a, type: 3}
+    - key: Iconset
+      clip: {fileID: 8300000, guid: cd09ead745e3bed40bedfa910892d860, type: 3}
+    - key: Level_Flash
+      clip: {fileID: 8300000, guid: 4680dd1029d9cd442a9b31a75b3f2a66, type: 3}
+    - key: Level_Off
+      clip: {fileID: 8300000, guid: db38f7c5ffcf88348952c55e029bbb0b, type: 3}
+    - key: Map_Appear
+      clip: {fileID: 8300000, guid: 6766f70262f31db4aa431d04f6064049, type: 3}
+    - key: Map_Disappear
+      clip: {fileID: 8300000, guid: 2b8f9a430bfdaa84a9863778fabd41a6, type: 3}
+    - key: Map_Mouse
+      clip: {fileID: 8300000, guid: a92e7cebb3f85c441be5c8eb5c6f316f, type: 3}
+    - key: Map_Select
+      clip: {fileID: 8300000, guid: 040c5198a496dea4590cca5d475b41d0, type: 3}
+    - key: Next_Page_Button
+      clip: {fileID: 8300000, guid: 60317221052a27d49a85b17f4bd788ee, type: 3}
+    - key: Ptn
+      clip: {fileID: 8300000, guid: 38c28a6071bf8b24c9953f7562700947, type: 3}
+    - key: Ptn_Use
+      clip: {fileID: 8300000, guid: dcf671b76516f42409389e01a20ec329, type: 3}
+    - key: Qcomplete1
+      clip: {fileID: 8300000, guid: cecb68da655a49540bfd52bb221900fd, type: 3}
+    - key: Qcomplete2
+      clip: {fileID: 8300000, guid: c73e72f939d199a4cbc47d74290d1c63, type: 3}
+    - key: Quest_Accept
+      clip: {fileID: 8300000, guid: de564e18d9439884db76958cc294f6f6, type: 3}
+    - key: Repair
+      clip: {fileID: 8300000, guid: bc73a887ce53c4546a54161fe67f5f2b, type: 3}
+    - key: Result_Flash
+      clip: {fileID: 8300000, guid: 3ad3e50512fb8e74cbf279268baa5316, type: 3}
+    - key: Seal_Off
+      clip: {fileID: 8300000, guid: 36358b3d2629a0d4ca407dabee45591d, type: 3}
+    - key: Seal_On
+      clip: {fileID: 8300000, guid: 2468cc98aa8cbe54395e50609cf65d34, type: 3}
+    - key: Selectcharacter
+      clip: {fileID: 8300000, guid: a1dba422ad7167e45a6466845a793a8c, type: 3}
+    - key: Spget
+      clip: {fileID: 8300000, guid: 1fb8946580547f24eaa7efe263013f70, type: 3}
+    - key: System_Ui_Click_01
+      clip: {fileID: 8300000, guid: 4c55b5e6f52cca64cb72699d7458278b, type: 3}
+    - key: System_Ui_Click_02
+      clip: {fileID: 8300000, guid: eb94a407d06598e49a0ed621c1aec49f, type: 3}
+    - key: Winclose
+      clip: {fileID: 8300000, guid: 191e5ba7a5709944c8ea484ee88467a6, type: 3}
+    - key: Winshow
+      clip: {fileID: 8300000, guid: 3151cba131a90fc419c4d618bdd82c12, type: 3}

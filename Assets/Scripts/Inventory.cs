@@ -163,6 +163,9 @@ public class Inventory : MonoBehaviour
         currentTotalDefense += equip.DefensePower;
         playerStats.UpdateEquipmentStats(currentTotalAttack, currentTotalDefense);
 
+        // 장착 사운드 재생
+        AudioManager.Instance.PlaySFX("Scrap_Touch");
+
         // 외형 변경
         EquipmentPart partToEquip = equipmentParts.FirstOrDefault(p => p.EquipmentType == equip.EquipType);
         if (partToEquip != null && equip is WeaponData weaponData && weaponData.WeaponSpriteLibrary != null)

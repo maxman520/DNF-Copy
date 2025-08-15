@@ -89,6 +89,21 @@ public class Vinoshu : Monster
             attackHitbox = attackHitboxObject.GetComponent<MonsterHitbox>();
         }
     }
+    private void OnEnable()
+    {
+        // 보스방 입장 시점에만 조우 SFX가 재생되도록 Room 이벤트 구독
+        if (RoomManager.Instance != null)
+        {
+            RoomManager.Instance.OnRoomEntered += OnRoomEnteredHandler;
+        }
+    }
+    private void OnDisable()
+    {
+        if (RoomManager.Instance != null)
+        {
+            RoomManager.Instance.OnRoomEntered -= OnRoomEnteredHandler;
+        }
+    }
     protected override void Start()
     {
         base.Start();
@@ -108,6 +123,21 @@ public class Vinoshu : Monster
         GUI.Label(new Rect(10, 150, 200, 20), "Vinoshu isActing: " + isActing);
     }
     #endregion Unity Lifecycle
+
+    private bool encounterPlayed = false;
+    [SerializeField] private string encounterSfxKey = "Vino"; // 보스 조우 SFX 키
+
+    private void OnRoomEnteredHandler(Room room)
+    {
+        if (encounterPlayed) return;
+        var myRoom = GetComponentInParent<Room>();
+        if (myRoom == null) return;
+        if (room != myRoom) return; // 자신의 방이 아닐 때 무시
+
+        // 보스방에 입장하여 비노슈를 맞닥뜨렸을 때만 재생
+        AudioManager.Instance.PlaySFX(encounterSfxKey);
+        encounterPlayed = true;
+    }
 
 
     #region AI System
@@ -263,6 +293,13 @@ public class Vinoshu : Monster
             FlipTowardsPlayer();
             anim.SetTrigger("attack");
             Debug.Log("비노슈의 근접 공격!");
+            
+            // 50% 확률로 SFX 재생 (Vino_Atk_01 또는 Vino_Atk_02 랜덤)
+            if (Random.value <= 0.5f)
+            {
+                string sfxKey = Random.value < 0.5f ? "Vino_Atk_01" : "Vino_Atk_02";
+                AudioManager.Instance.PlaySFX(sfxKey);
+            }
 
             // 다른 행동 진행을 막기 위해 attack 애니메이션 길이만큼 대기
             await UniTask.Delay(1100, cancellationToken: token);
@@ -287,6 +324,7 @@ public class Vinoshu : Monster
             currentAttackDetails.damageRate *= this.atk; // 공격력이 곱해진 정보를 메테오에게 전달할 것임
             FlipTowardsPlayer();
             anim.SetTrigger("cast");
+            AudioManager.Instance.PlaySFX("Vino_Cast");
 
             // 마법진 생성. MagicCircle 이펙트의 visuals가 0.4f 만큼 밑으로 내려가있어 그만큼 offset을 넣어줘야함
             Vector3 targetPosition = new Vector3(playerTransform.position.x, playerTransform.position.y + 0.4f, playerTransform.position.z);
@@ -301,6 +339,7 @@ public class Vinoshu : Monster
             if (meteorPrefab != null)
             {
                 GameObject meteorInstance = Instantiate(meteorPrefab, targetPosition, Quaternion.identity);
+                AudioManager.Instance.PlaySFX("Sstar_Drop");
 
                 // 메테오가 타겟을 향하도록 현재 공격 정보와 함께 초기화
                 meteorInstance.GetComponent<VinoshuMeteor>().Initialize(currentAttackDetails, targetPosition);
@@ -425,11 +464,11 @@ public class Vinoshu : Monster
         // 데미지 텍스트 출력
         EffectManager.Instance.PlayEffect("DefaultDamageText", hurtboxTransform.position, Quaternion.identity, damage);
 
+        // 이미 죽었다면 피격 반응과 데미지 적용X. return
+        if (isDead) return;
+
         // 피격 반응
         Hurt(attackDetails, attackPosition);
-
-        // 이미 죽었다면 데미지 적용X. return
-        if (isDead) return;
 
         // 데미지 적용
         previousHP = currentHP;
@@ -478,6 +517,13 @@ public class Vinoshu : Monster
         string effectToPlay = "SlashSmall" + Random.Range(1, 4);
         EffectManager.Instance.PlayEffect(effectToPlay, hurtPoint, Quaternion.identity);
         EffectManager.Instance.PlayEffect("BloodLarge", hurtPoint, effectRotation);
+
+        // 50% 확률로 SFX 재생 (Vino_Dmg_01 또는 Vino_Dmg_02 랜덤)
+        if (Random.value <= 0.5f)
+        {
+            string sfxKey = Random.value < 0.5f ? "Vino_Dmg_01" : "Vino_Dmg_02";
+            AudioManager.Instance.PlaySFX(sfxKey);
+        }
 
 
         float direction = (transform.position.x > attackPosition.x) ? 1 : -1;
@@ -543,6 +589,9 @@ public class Vinoshu : Monster
 
     private async UniTask DeathSequenceAsync(CancellationToken token)
     {
+        // 0. 죽을 때 효과음 재생
+        AudioManager.Instance.PlaySFX("Vino_Die_01");
+
         // 1. 하얗게 변하고 점점 투명하게
         var mat = sr.material;
         mat.SetFloat("_Blend", 1f);

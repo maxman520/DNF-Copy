@@ -2592,6 +2592,7 @@ MonoBehaviour:
   portals:
   - {fileID: 1819839816}
   - {fileID: 2128254115}
+  BgmKeyOverride: 
   coordinates: {x: 0, y: 1}
 --- !u!1 &197059183
 GameObject:
@@ -7724,6 +7725,7 @@ MonoBehaviour:
   - {fileID: 0}
   portals:
   - {fileID: 160440919}
+  BgmKeyOverride: Thorn_Garden
   coordinates: {x: 0, y: 0}
 --- !u!1 &569683864
 GameObject:
@@ -9262,6 +9264,7 @@ MonoBehaviour:
   portals:
   - {fileID: 971886317}
   - {fileID: 1566529898}
+  BgmKeyOverride: 
   coordinates: {x: 1, y: 1}
 --- !u!4 &693223264
 Transform:
@@ -15561,6 +15564,7 @@ MonoBehaviour:
   portals:
   - {fileID: 672278845}
   - {fileID: 367553539}
+  BgmKeyOverride: 
   coordinates: {x: 2, y: 1}
 --- !u!4 &1160196969
 Transform:
@@ -21231,6 +21235,7 @@ MonoBehaviour:
   - {fileID: 1266649660}
   portals:
   - {fileID: 1925663337}
+  BgmKeyOverride: Thorn_Garden_Boss
   coordinates: {x: 3, y: 1}
 --- !u!4 &1515570758
 Transform:

@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 
 public enum GameState
 {
-    CharacterSelect,
-    CharacterCreate,
     Town,
     Dungeon,
     Loading
@@ -18,7 +16,7 @@ public class GameManager : Singleton<GameManager>
     [Header("플레이어 설정")]
     public GameObject playerPrefab; // 인스펙터에서 할당할 플레이어 프리팹
 
-    public GameState CurrentState { get; private set; } = GameState.CharacterSelect;
+    public GameState CurrentState { get; private set; } = GameState.Town;
 
     public Dungeon CurrentDungeon { get; private set; }
     private float dungeonStartTime;
@@ -45,11 +43,19 @@ public class GameManager : Singleton<GameManager>
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        if (RoomManager.Instance != null)
+        {
+            RoomManager.Instance.OnRoomEntered += OnRoomEntered; // 방 전환 시 BGM 제어
+        }
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        if (RoomManager.Instance != null)
+        {
+            RoomManager.Instance.OnRoomEntered -= OnRoomEntered;
+        }
     }
 
     public async void LoadScene(string sceneName)
@@ -84,8 +90,19 @@ public class GameManager : Singleton<GameManager>
     // 씬이 로드된 '후'에 호출되는 정리 함수
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // 씬이 바뀔 때마다 RoomManager 이벤트 구독 재확인
+        if (RoomManager.Instance != null)
+        {
+            RoomManager.Instance.OnRoomEntered -= OnRoomEntered;
+            RoomManager.Instance.OnRoomEntered += OnRoomEntered;
+        }
+
         switch(scene.name)
         {
+            case "SelectDungeon_Granfloris_Scene":
+                // 던전 선택 씬 진입 시 맵 등장 사운드
+                AudioManager.Instance.PlaySFX("Map_Appear");
+                break;
             case "Loading_Scene":
                 CurrentState = GameState.Loading;
                 break;
@@ -101,13 +118,33 @@ public class GameManager : Singleton<GameManager>
                 Player.Instance.OnEnterTown();
                 UIManager.Instance.HideDungeonUI(); // 던전 관련 UI를 모두 숨김
                 break;
-            case "CharacterSelect_Scene":
-                CurrentState = GameState.CharacterSelect;
-                break;
-            case "CharacterCreate_Scene":
-                CurrentState = GameState.CharacterCreate;
-                break;
         }
+    }
+
+    // 방 입장 시 BGM 전환 처리(던전/타운 공통)
+    private void OnRoomEntered(Room room)
+    {
+        if (room == null)
+        {
+            Debug.LogWarning("방 전환 이벤트 수신: room이 없습니다");
+            return;
+        }
+
+        // 방 오버라이드 키 우선: 동일 키면 재시작 없이 그대로 유지
+        if (!string.IsNullOrEmpty(room.BgmKeyOverride))
+        {
+            Debug.Log($"방 전환으로 BGM 변경: {room.BgmKeyOverride}");
+            AudioManager.Instance.PlayBGMIfChanged(room.BgmKeyOverride, true, 1.0f);
+            return;
+        }
+
+        // 보스 방인데 키가 비어있으면 알림
+        if (room.roomType == Room.RoomType.Boss)
+        {
+            Debug.LogWarning("보스 방 BGM 키가 설정되지 않았습니다. Room의 BgmKeyOverride를 지정하세요");
+            return;
+        }
+        // 오버라이드가 없으면 BGM 변경 없음(이전 재생 유지)
     }
 
     private void InitializeMap(string mapName, List<Room> rooms, Vector3 startPosition)
@@ -153,6 +190,9 @@ public class GameManager : Singleton<GameManager>
             if (room != startRoom)
                 room.gameObject.SetActive(false);
         }
+
+        // 시작 방에 대한 BGM 규칙 적용(오버라이드가 있으면 반영)
+        OnRoomEntered(startRoom);
     }
 
     // 마을 씬 시작 시 Town.cs가 호출

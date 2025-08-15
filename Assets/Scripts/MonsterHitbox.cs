@@ -45,6 +45,8 @@ public class MonsterHitbox : MonoBehaviour
 
             if (player != null)
             {
+                // 임팩트 SFX: 몬스터 → 플레이어 (공격 성향에 따라)
+                HitSfxRouter.PlayImpact_MonsterToPlayer(GetComponentInParent<Monster>(), player, attackDetails);
                 player.OnDamaged(attackDetails, originPosition);
             }
         }

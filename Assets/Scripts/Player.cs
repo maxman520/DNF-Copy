@@ -100,6 +100,9 @@ public class Player : Singleton<Player>
     public Transform HurtboxTransform { get; private set; }
     public Inventory PlayerInventory { get; private set; }
 
+    [Header("SFX 설정")]
+    [SerializeField] private float runSfxInterval = 0.28f; // 달리기 발소리 간격(초)
+
     protected override void Awake()
     {
         // 싱글턴 패턴
@@ -132,6 +135,8 @@ public class Player : Singleton<Player>
     private void Start()
     {
         InitializeStats(DataManager.Instance.SelectedCharacter);
+        // 달리기 발소리 루프 시작
+        RunRunSfxLoop(this.GetCancellationTokenOnDestroy()).Forget();
     }
     public void InitializeStats(CharacterData data)
     {
@@ -236,6 +241,13 @@ public class Player : Singleton<Player>
         // 데미지 텍스트 출력
         EffectManager.Instance.PlayEffect("HurtDamageText",HurtboxTransform.position, Quaternion.identity, damage);
 
+        // 플레이어 피격 SFX 재생 (Sm_Dmg_01 ~ 03 중 랜덤)
+        {
+            int idx = UnityEngine.Random.Range(1, 4);
+            string sfxKey = $"Sm_Dmg_{idx:00}";
+            AudioManager.Instance.PlaySFX(sfxKey);
+        }
+
         // 피격 반응
         behaviourController.HandleHurt(attackDetails, attackPosition);
 
@@ -258,6 +270,9 @@ public class Player : Singleton<Player>
         Debug.Log("플레이어 사망 시퀀스 시작");
         CanMove = false;
         CanAttack = false;
+
+        // 플레이어 사망 SFX 재생
+        AudioManager.Instance.PlaySFX("Sm_Die");
 
         // 만약 땅에 붙어있다면, GetDown 애니메이션이 보이도록 살짝 띄움
         if (IsGrounded)
@@ -387,7 +402,7 @@ public class Player : Singleton<Player>
         RequiredEXP = Mathf.RoundToInt(RequiredEXP * 1.25f);
         Debug.Log($"레벨업! 현재 레벨: {Level}, 다음 레벨업까지 필요한 경험치: {RequiredEXP}");
         // 레벨업 이펙트 호출
-        // ..
+        EffectManager.Instance.PlayEffect("LevelUp", transform.position, Quaternion.identity, transform);
 
         // 레벨업에 따른 스탯 증가 로직 (MaxHP, Atk 등)
         MaxHP = Mathf.RoundToInt(MaxHP * 1.1f);
@@ -428,6 +443,24 @@ public class Player : Singleton<Player>
     private void OnDestroy()
     {
         inputHandler?.Dispose();
+    }
+
+    // 달리기 발소리 루프: 달리는 중/이동 중/지면에서만 주기적으로 재생
+    private async UniTask RunRunSfxLoop(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            await UniTask.WaitUntil(() => IsRunning && IsMoving && IsGrounded && CanMove && !HasState(PlayerAnimState.Attack), cancellationToken: token);
+            AudioManager.Instance.PlaySFX("Pub_Run_01");
+            try
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Max(0.05f, runSfxInterval)), cancellationToken: token);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+        }
     }
     #region Animation Event Receivers
     public void AnimEvent_OnComboWindowOpen()

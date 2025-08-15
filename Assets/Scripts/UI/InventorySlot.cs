@@ -112,6 +112,8 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
             else if (itemData is ConsumableData)
             {
                 inventory.RegisterItemToEmptyQuickSlot(itemData);
+                // 우클릭으로 퀵슬롯 등록 시 장착감 사운드 재생
+                AudioManager.Instance.PlaySFX("Scrap_Touch");
             }
         }
     }
@@ -143,6 +145,8 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (itemData == null) return;
+        // 드래그 시작 사운드
+        AudioManager.Instance.PlaySFX("Iconpick");
         draggedSlot = this;
         // 아이콘을 최상위로 옮겨 다른 UI 위에 그려지게 함
         Icon.transform.SetParent(parentCanvas.transform);
@@ -187,6 +191,8 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
             if (invSlot != this)
             {
                 inventory.SwapItems(invSlot.Index, this.Index);
+                // 유효한 슬롯에 드롭 사운드
+                AudioManager.Instance.PlaySFX("Iconset");
             }
         }
     }

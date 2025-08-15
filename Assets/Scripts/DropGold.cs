@@ -10,6 +10,7 @@ public class DropGold : MonoBehaviour
     private Transform visuals;
     private Rigidbody2D rb;
     private float visualsAngularVelocity;
+    private bool landedSfxPlayed = false;
 
     private void Awake()
     {
@@ -51,6 +52,12 @@ public class DropGold : MonoBehaviour
             // 착지 시 회전 초기화
             transform.rotation = Quaternion.identity;
             visuals.localRotation = Quaternion.identity;
+            // 골드 착지 사운드 1회 재생
+            if (!landedSfxPlayed)
+            {
+                AudioManager.Instance.PlaySFX("Golddrop1");
+                landedSfxPlayed = true;
+            }
             return;
         }
         // 중력 적용 및 이동
@@ -77,6 +84,8 @@ public class DropGold : MonoBehaviour
                 position = new Vector3(position.x, position.y + 0.8f, 0);
                 
                 EffectManager.Instance.PlayEffect("GoldGainText", position, Quaternion.identity, Amount);
+                // 골드 획득 사운드 재생
+                AudioManager.Instance.PlaySFX("Golddrop2");
             }
             Destroy(gameObject);
         }

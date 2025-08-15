@@ -1,6 +1,14 @@
 using UnityEngine;
 using System;
 
+public enum SkillFailReason
+{
+    None,
+    NotAssigned,
+    Cooldown,
+    Mana
+}
+
 public class SkillManager : MonoBehaviour
 {
     private const int SKILL_SLOT_COUNT = 14;
@@ -16,6 +24,7 @@ public class SkillManager : MonoBehaviour
     private float[] coolTimers = new float[SKILL_SLOT_COUNT];
 
     private Player player;
+    public SkillFailReason LastFailReason { get; private set; } = SkillFailReason.None;
 
     private void Awake()
     {
@@ -89,6 +98,7 @@ public class SkillManager : MonoBehaviour
     public bool IsSkillReady(int slotIndex, out SkillData skill)
     {
         skill = null;
+        LastFailReason = SkillFailReason.None;
         if (slotIndex < 0 || slotIndex >= SKILL_SLOT_COUNT) return false;
 
         skill = AssignedSkills[slotIndex];
@@ -98,18 +108,26 @@ public class SkillManager : MonoBehaviour
         if (skill == null)
         {
             Debug.Log($"{slotIndex}번 슬롯에 할당된 스킬 이 없습니다.");
+            LastFailReason = SkillFailReason.NotAssigned;
             return false;
         }
         // 쿨타임 체크
         if (coolTimers[slotIndex] > 0)
         {
             Debug.Log($"'{skill.skillName}' 쿨타임 ({coolTimers[slotIndex]:F1}초 남음)");
+            LastFailReason = SkillFailReason.Cooldown;
             return false;
         }
         // 마나 체크
-        if (player.CurrentMP < skill.manaCost) return false;
+        if (player.CurrentMP < skill.manaCost)
+        {
+            LastFailReason = SkillFailReason.Mana;
+            AudioManager.Instance.PlaySFX("Sm_Nomana");
+            return false;
+        }
 
         // 모든 조건을 통과하면 true 반환
+        LastFailReason = SkillFailReason.None;
         return true;
     }
 

@@ -64,6 +64,7 @@ public class VinoshuMeteor : MonoBehaviour
     private void Explode()
     {
         GameObject meteorExplosion = EffectManager.Instance.PlayEffect("FireExplosion", transform.position, Quaternion.identity);
+        AudioManager.Instance.PlaySFX("Sstar_Hit");
         attackDetails.yOffset += 0.3f; // 폭발 이펙트의 y축 범위는 메테오 자체의 y축 범위보다 넓게
         if (meteorExplosion != null)
             meteorExplosion?.GetComponentInChildren<MonsterHitbox>().Initialize(attackDetails, origin);

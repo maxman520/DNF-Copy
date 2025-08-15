@@ -22,6 +22,9 @@ public class Room : MonoBehaviour
     [SerializeField] public BoxCollider2D CameraBound; // 이 방에서 사용할 카메라 경계
     [SerializeField] private List<Monster> monsters; // 이 방에 있는 모든 몬스터 리스트
     [SerializeField] private List<Portal> portals; // 이 방의 모든 포탈 리스트
+    
+    [Header("오디오")]
+    [SerializeField] public string BgmKeyOverride; // 이 방에서 강제 재생할 BGM 키(비우면 기본 씬 BGM 사용)
 
     [Header("미니맵 좌표")]
     public Vector2Int coordinates; // 이 방의 미니맵 상 좌표

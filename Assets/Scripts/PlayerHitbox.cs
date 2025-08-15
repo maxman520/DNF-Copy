@@ -50,7 +50,7 @@ public class PlayerHitbox : MonoBehaviour
 
             // 때린 적으로 기록
             alreadyHit.Add(other);
-
+            
 
             if (monster != null)
             {
@@ -58,6 +58,8 @@ public class PlayerHitbox : MonoBehaviour
                 AttackDetails finalAttackDetails = attackDetails;
                 finalAttackDetails.damageRate *= player.Atk;
 
+                // 임팩트 SFX: 플레이어 → 몬스터
+                HitSfxRouter.PlayImpact_PlayerToMonster(player, monster, finalAttackDetails);
 
                 monster.OnDamaged(finalAttackDetails, transform.position); // 히트박스의 위치 값도 전달
                 Debug.Log($"{monster.name}에게 데미지를 가함!");

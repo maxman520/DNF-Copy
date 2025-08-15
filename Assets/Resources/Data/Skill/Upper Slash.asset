@@ -20,3 +20,6 @@ MonoBehaviour:
   manaCost: 10
   skillEffectPrefab: {fileID: 0}
   animName: Upper_Slash
+  voiceKeys:
+  - Sm_Upslash
+  voiceDelay: 0

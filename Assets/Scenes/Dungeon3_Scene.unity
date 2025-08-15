@@ -4677,7 +4677,7 @@ Transform:
   m_GameObject: {fileID: 359734309}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.07, y: -4.21, z: 0}
+  m_LocalPosition: {x: -4.62, y: -3.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6627,6 +6627,7 @@ MonoBehaviour:
   portals:
   - {fileID: 1172956263}
   - {fileID: 2104221766}
+  BgmKeyOverride: 
   coordinates: {x: 1, y: 1}
 --- !u!4 &447680789
 Transform:
@@ -7565,6 +7566,7 @@ MonoBehaviour:
   - {fileID: 0}
   portals:
   - {fileID: 160440919}
+  BgmKeyOverride: Grakkarak_New
   coordinates: {x: 0, y: 0}
 --- !u!1 &539694215
 GameObject:
@@ -15762,7 +15764,7 @@ Transform:
   m_GameObject: {fileID: 1038424313}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.3, y: -3.92, z: 0}
+  m_LocalPosition: {x: -5.17, y: -3.81, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19417,6 +19419,7 @@ MonoBehaviour:
   portals:
   - {fileID: 1620703628}
   - {fileID: 1558812525}
+  BgmKeyOverride: 
   coordinates: {x: 0, y: 1}
 --- !u!1 &1305720485
 GameObject:
@@ -23770,7 +23773,7 @@ Transform:
   m_GameObject: {fileID: 1567579284}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8.03, y: -1.17, z: 0}
+  m_LocalPosition: {x: 5.9, y: -2.33, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25772,6 +25775,7 @@ MonoBehaviour:
   portals:
   - {fileID: 1788903845}
   - {fileID: 1535007403}
+  BgmKeyOverride: 
   coordinates: {x: 1, y: 2}
 --- !u!4 &1727366512
 Transform:
@@ -28942,6 +28946,7 @@ MonoBehaviour:
   monsters:
   - {fileID: 773891153}
   portals: []
+  BgmKeyOverride: Grakkarak_New_Boss
   coordinates: {x: 2, y: 2}
 --- !u!4 &2000855168
 Transform:

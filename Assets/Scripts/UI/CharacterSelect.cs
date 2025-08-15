@@ -6,6 +6,10 @@ using UnityEngine.UI;
 
 public class CharacterSelect : MonoBehaviour
 {
+    [Header("BGM")]
+    [SerializeField] private string bgmKey = "Characterselectstage";
+    [SerializeField] private bool bgmLoop = true;
+    [SerializeField] private float bgmFade = 1.0f;
     [Header("UI 요소")]
     public List<CharacterSlot> CharacterSlots; // 씬에 미리 배치된 캐릭터 슬롯들
     public Button StartGameButton;
@@ -32,7 +36,13 @@ public class CharacterSelect : MonoBehaviour
 
         if (DeleteCharacterButton != null) DeleteCharacterButton.onClick.AddListener(DeleteCharacter);
         else Debug.LogError("캐릭터 삭제 버튼이 인스펙터에서 할당되지 않음");
-        
+
+        // 4. BGM 재생
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBGMIfChanged(bgmKey, bgmLoop, bgmFade);
+        }
+
     }
 
     void LoadCharacterData()
@@ -89,6 +99,7 @@ public class CharacterSelect : MonoBehaviour
         {
             selectedSlot.Select();
         }
+        AudioManager.Instance.PlaySFX("Selectcharacter");
 
         // 버튼 활성화 상태는 항상 현재 선택된 슬롯을 기준으로 결정
         bool isCharacterSelected = selectedSlot != null;
@@ -106,11 +117,13 @@ public class CharacterSelect : MonoBehaviour
     {
         if (selectedSlot == null) return;
         DataManager.Instance.SelectCharacter(selectedSlot.GetCharacterData());
+        AudioManager.Instance.PlaySFX("Click2");
         LoadScene("Town_Scene");
     }
 
     public void CreateCharacter()
     {
+        AudioManager.Instance.PlaySFX("Click2");
         LoadScene("CharacterCreate_Scene");
     }
 
@@ -121,9 +134,12 @@ public class CharacterSelect : MonoBehaviour
             Debug.LogWarning("삭제할 캐릭터가 선택되지 않았습니다.");
             return;
         }
+        AudioManager.Instance.PlaySFX("Click2");
 
         // DataManager에 캐릭터 삭제 요청 (영구 데이터 삭제)
         DataManager.Instance.DeleteCharacter(selectedSlot.GetCharacterData());
+
+        AudioManager.Instance.PlaySFX("Char_Delete");
 
         // 데이터와 UI를 새로고침
         LoadCharacterData();

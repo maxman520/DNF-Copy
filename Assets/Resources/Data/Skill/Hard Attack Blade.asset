@@ -20,3 +20,7 @@ MonoBehaviour:
   manaCost: 15
   skillEffectPrefab: {fileID: 0}
   animName: Hard_Attack_Blade
+  voiceKeys:
+  - Sm_Gue_01
+  - Sm_Gue_02
+  voiceDelay: 0

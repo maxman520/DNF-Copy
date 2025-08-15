@@ -28,6 +28,8 @@ public class EquipmentSlot : InventorySlot, IPointerClickHandler, IDropHandler
         if (draggedSlot is InventorySlot invSlot)
         {
             inv.Equip(invSlot.Index);
+            // 유효한 슬롯에 드롭 사운드
+            AudioManager.Instance.PlaySFX("Iconset");
             return;
         }
 

@@ -22,3 +22,4 @@ MonoBehaviour:
   AttackPower: 20
   DefensePower: 0
   WeaponSpriteLibrary: {fileID: 7108339969198208228, guid: 21a39f85f93bcf84db1b1365ee5d2926, type: 3}
+  WeaponKind: 2

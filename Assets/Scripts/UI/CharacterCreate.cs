@@ -168,6 +168,7 @@ public class CharacterCreate : MonoBehaviour
     #region Button - OnClick
     public void CreateCharacter()
     {
+        AudioManager.Instance.PlaySFX("Click2");
         string characterName = CharacterNameInputField.text;
         if (!IsValidNickname(characterName, true))
         {
@@ -195,23 +196,28 @@ public class CharacterCreate : MonoBehaviour
 
         Debug.Log($"캐릭터 '{characterName}' ({selectedInfo.Name}) 생성 완료");
         
+        AudioManager.Instance.PlaySFX("Char_Create");
+        
         LoadScene("CharacterSelect_Scene");
     }
 
     public void ShowNicknamePanel()
     {
+        AudioManager.Instance.PlaySFX("Click2");
         if (NicknamePanel != null) NicknamePanel.SetActive(true);
         else Debug.LogError("Nickname Panel이 할당되지 않았습니다.");
     }
 
     public void HideNicknamePanel()
     {
+        AudioManager.Instance.PlaySFX("Click2");
         if (NicknamePanel != null) NicknamePanel.SetActive(false);
         else Debug.LogError("Nickname Panel이 할당되지 않았습니다.");
     }
 
     public void ReturnToSelect()
     {
+        AudioManager.Instance.PlaySFX("Click2");
         LoadScene("CharacterSelect_Scene");
     }
     
