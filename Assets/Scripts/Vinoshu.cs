@@ -145,6 +145,12 @@ public class Vinoshu : Monster
     {
         // 이전 CancellationTokenSource가 있다면. 실행중이던 AI Loop가 있다면 return
         if (aiLoopCts != null) return;
+        // 사망 상태에서는 루프를 시작하지 않음
+        if (isDead)
+        {
+            Debug.Log("사망 상태이므로 AI 루프를 시작하지 않음");
+            return;
+        }
 
         // 오브젝트 파괴 시 취소되는 토큰과 연결된 새로운 CancellationTokenSource 생성
         var destroyToken = this.GetCancellationTokenOnDestroy();
@@ -478,6 +484,8 @@ public class Vinoshu : Monster
         if (currentHP <= 0)
         {
             isDead = true; // 죽음 절차 시작 플래그
+            // 즉시 AI 루프 중단 및 이동 정지 (착지 대기 중에도 움직이지 않도록)
+            StopAILoop();
             WaitUntilGroundedAndDie(this.GetCancellationTokenOnDestroy()).Forget();
             GameManager.Instance.DoSlowMotion(3f, 0.2f); // 1.5초 동안, 게임 속도를 20%로
         }
@@ -512,8 +520,7 @@ public class Vinoshu : Monster
         // 이펙트의 방향은 플레이어가 바라보는 방향을 따르거나, 기본 방향으로 설정
         Quaternion effectRotation = (transform.position.x > attackPosition.x) ? Quaternion.identity : Quaternion.Euler(0, 180, 0);
 
-        // attackDetails에 이펙트 이름이 있다면 그걸 사용, 없다면 기본 이펙트 사용
-        // string effectToPlay = string.IsNullOrEmpty(attackDetails.effectName) ? "NormalHit_Slash" : attackDetails.effectName;
+        // 이펙트 재생
         string effectToPlay = "SlashSmall" + Random.Range(1, 4);
         EffectManager.Instance.PlayEffect(effectToPlay, hurtPoint, Quaternion.identity);
         EffectManager.Instance.PlayEffect("BloodLarge", hurtPoint, effectRotation);
@@ -566,7 +573,6 @@ public class Vinoshu : Monster
     protected override async void Die()
     {
         StopAILoop(); // 모든 비동기 작업 중단
-        isActing = true;
         UIManager.Instance.HideBossHPBar(); // HP바를 숨기도록 요청
 
         Debug.Log($"{monsterData.MonsterName}이(가) 죽었습니다.");

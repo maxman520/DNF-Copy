@@ -79,6 +79,8 @@ MonoBehaviour:
       clip: {fileID: 8300000, guid: 0b1ec8fc07f64e543bb19edd1032b47e, type: 3}
   - name: Effect
     entries:
+    - key: Coin_In
+      clip: {fileID: 8300000, guid: 753fdce9534502e47ae5bbed7c9b8188, type: 3}
     - key: Golddrop1
       clip: {fileID: 8300000, guid: 13a96684d2443c2439993613437802b4, type: 3}
     - key: Golddrop2

@@ -23,6 +23,7 @@ public class Player : Singleton<Player>
     public event Action<float, float> OnHPChanged;
     public event Action<float, float> OnMPChanged;
     public event Action<float, float> OnEXPChanged;
+    public event Action<int> OnLevelChanged;
 
     [Header("플레이어 스탯")]
     // 최종 스탯 (기본 + 장비)
@@ -62,7 +63,16 @@ public class Player : Singleton<Player>
     public float RunSpeed;
 
     public int CurrentEXP; // 레벨업 로직 때문에 EXP는 AddExp에서 별도 처리
-    public int Level = 1;
+    private int _level = 1;
+    public int Level
+    {
+        get => _level;
+        set
+        {
+            _level = value;
+            OnLevelChanged?.Invoke(_level);
+        }
+    }
     public int RequiredEXP = 1000; // 1레벨에서 2레벨로 가는 데 필요한 경험치
 
 
@@ -271,8 +281,7 @@ public class Player : Singleton<Player>
         CanMove = false;
         CanAttack = false;
 
-        // 플레이어 사망 SFX 재생
-        AudioManager.Instance.PlaySFX("Sm_Die");
+        // 사망 즉시가 아닌, 착지 순간에 SFX 재생하도록 변경
 
         // 만약 땅에 붙어있다면, GetDown 애니메이션이 보이도록 살짝 띄움
         if (IsGrounded)
@@ -284,6 +293,9 @@ public class Player : Singleton<Player>
 
         // 땅에 착지할 때까지 대기
         await UniTask.WaitUntil(() => IsGrounded, cancellationToken: this.GetCancellationTokenOnDestroy());
+
+        // 착지한 순간에 사망 SFX 재생
+        AudioManager.Instance.PlaySFX("Sm_Die");
 
         // 유령 상태 UI 표시
         UIManager.Instance.ShowGhostStatePanel();
@@ -340,6 +352,7 @@ public class Player : Singleton<Player>
 
         // 부활 이펙트 재생
         EffectManager.Instance.PlayEffect("Revive", transform.position, Quaternion.identity, transform);
+        AudioManager.Instance.PlaySFX("Coin_In");
     }
 
 

@@ -15,6 +15,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private Image mpGauge;
     [SerializeField] private TextMeshProUGUI mpPercentageText;
     [SerializeField] private Image expGauge;
+    [SerializeField] private TextMeshProUGUI levelText; // 레벨 표시 텍스트
 
     [Header("몬스터 UI")]
     [Tooltip("일반 몬스터용 HP바")]
@@ -80,6 +81,10 @@ public class UIManager : Singleton<UIManager>
             Player.Instance.OnHPChanged += UpdateHP;
             Player.Instance.OnMPChanged += UpdateMP;
             Player.Instance.OnEXPChanged += UpdateEXP;
+            Player.Instance.OnLevelChanged += UpdateLevel;
+
+            // 레벨 초기 표시
+            UpdateLevel(Player.Instance.Level);
         }
     }
 
@@ -114,6 +119,7 @@ public class UIManager : Singleton<UIManager>
             Player.Instance.OnHPChanged -= UpdateHP;
             Player.Instance.OnMPChanged -= UpdateMP;
             Player.Instance.OnEXPChanged -= UpdateEXP;
+            Player.Instance.OnLevelChanged -= UpdateLevel;
         }
     }
 
@@ -416,6 +422,15 @@ public class UIManager : Singleton<UIManager>
         if (expGauge != null)
         {
             expGauge.fillAmount = currentEXP / requiredEXP;
+        }
+    }
+
+    // 레벨 텍스트 업데이트
+    private void UpdateLevel(int level)
+    {
+        if (levelText != null)
+        {
+            levelText.text = "Lv." + level.ToString();
         }
     }
     #endregion Player

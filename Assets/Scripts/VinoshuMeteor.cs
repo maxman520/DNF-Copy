@@ -55,8 +55,8 @@ public class VinoshuMeteor : MonoBehaviour
             // 타겟에 거의 도착했다면 폭발
             if (Vector3.Distance(visualsTransform.localPosition, Vector3.zero) < 0.1f)
             {
-                Explode();
                 isFalling = false; // 중복 폭발 방지
+                Explode();
             }
         }
     }
@@ -65,9 +65,16 @@ public class VinoshuMeteor : MonoBehaviour
     {
         GameObject meteorExplosion = EffectManager.Instance.PlayEffect("FireExplosion", transform.position, Quaternion.identity);
         AudioManager.Instance.PlaySFX("Sstar_Hit");
+        MonsterHitbox explosionHitbox = null;
         attackDetails.yOffset += 0.3f; // 폭발 이펙트의 y축 범위는 메테오 자체의 y축 범위보다 넓게
+        
         if (meteorExplosion != null)
-            meteorExplosion?.GetComponentInChildren<MonsterHitbox>().Initialize(attackDetails, origin);
+            // 비활성화된 자식까지 포함하여 검색
+            explosionHitbox = meteorExplosion.GetComponentInChildren<MonsterHitbox>(true);
+        
+        if (explosionHitbox != null)
+            explosionHitbox.Initialize(attackDetails, origin);
+        else Debug.Log("폭발의 히트박스가 Initialize되지 않음");
         
         if (impulseSource != null) // 카메라 흔들림. 흔들림의 x방향은 랜덤으로
             impulseSource.GenerateImpulse(new Vector3((Random.value < 0.5f ? -1 : 1), 1, 0));
