@@ -940,7 +940,6 @@ MonoBehaviour:
   WalkSpeed: 0
   RunSpeed: 0
   CurrentEXP: 0
-  Level: 1
   RequiredEXP: 1000
   IsGrounded: 1
   IsRunning: 0
@@ -971,6 +970,12 @@ MonoBehaviour:
     knockbackForce: 0.5
     launchForce: 0
     yOffset: 0.5
+    kind: 1
+  - attackName: Run_Attack
+    damageRate: 2
+    knockbackForce: 3
+    launchForce: 0
+    yOffset: 0.4
     kind: 1
   - attackName: Upper_Slash
     damageRate: 2.5
@@ -1130,7 +1135,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e2759a07892504642abd144c5f2dc201, type: 3}
+  m_Sprite: {fileID: 5621732263570787698, guid: 0a51f6e1c3161424aa0afcae55e43ad8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1421,7 +1426,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 741e88f5c39f2b14884c7778609f21ec, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4be28504363602f4a9df0cbf308e2912, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

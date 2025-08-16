@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
     public SkillData skillData; // 이 아이콘이 어떤 스킬인지
-    private SkillShopUI skillShopUI;
+    private SkillShopPanel skillShopUI;
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
@@ -19,7 +19,7 @@ public class SkillIconDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         parentCanvas = GetComponentInParent<Canvas>();
-        skillShopUI = GetComponentInParent<SkillShopUI>();
+        skillShopUI = GetComponentInParent<SkillShopPanel>();
     }
 
     // 아이콘이 클릭되었을 때 호출

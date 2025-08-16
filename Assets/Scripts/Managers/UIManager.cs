@@ -5,6 +5,7 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -24,21 +25,21 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private MonsterHPBar bossHPBar; // 보스 몬스터 HP 바
 
     [Header("스킬 창")]
-    [SerializeField] private SkillShopUI skillShopUI; // 스킬샵 창
+    [SerializeField] private SkillShopPanel skillShopPanel; // 스킬샵 창
 
 
     [Header("미니맵")]
-    [SerializeField] private MinimapUI minimapUI; // 미니맵
+    [SerializeField] private MinimapPanel minimapPanel; // 미니맵
     [SerializeField] private TextMeshProUGUI mapName; // 맵 이름
 
     [Header("던전 결과 창")]
     [SerializeField] private ResultPanel resultPanel; // 던전 결과 창
 
     [Header("메뉴 창")]
-    [SerializeField] private MenuUI menuPanel; // 메뉴 창
+    [SerializeField] private MenuPanel menuPanel; // 메뉴 창
 
     [Header("인벤토리 창")]
-    [SerializeField] private InventoryUI inventoryPanel; // 인벤토리 창
+    [SerializeField] private InventoryPanel inventoryPanel; // 인벤토리 창
 
     [Header("프로필 창")]
     [SerializeField] private ProfilePanel profilePanel; // 캐릭터 프로필 창
@@ -62,8 +63,8 @@ public class UIManager : Singleton<UIManager>
         bossHPBar?.gameObject.SetActive(false);
 
         resultPanel?.gameObject.SetActive(false); // 던전 결과 창 비활성화
-        skillShopUI?.gameObject.SetActive(false); // 스킬샵 창 비활성화
-        minimapUI?.gameObject.SetActive(false); // 미니맵 비활성화
+        skillShopPanel?.gameObject.SetActive(false); // 스킬샵 창 비활성화
+        minimapPanel?.gameObject.SetActive(false); // 미니맵 비활성화
         menuPanel?.gameObject.SetActive(false); // 메뉴 창 비활성화
         inventoryPanel?.gameObject.SetActive(false); // 인벤토리 창 비활성화
         profilePanel?.gameObject.SetActive(false); // 프로필(내 정보) 창 비활성화
@@ -90,15 +91,15 @@ public class UIManager : Singleton<UIManager>
 
     private void Update()
     {
-        // 'K' 키를 누르면 스킬샵 창을 토글
+        // 'K' 키를 누르면 스킬샵 패널을 토글
         if (Input.GetKeyDown(KeyCode.K))
         {
-            ToggleSkillShopUI();
+            ToggleSkillShopPanel();
         }
-        // 'I' 키를 누르면 스킬샵 창을 토글
+        // 'I' 키를 누르면 인벤토리 패널을 토글
         if (Input.GetKeyDown(KeyCode.I))
         {
-            ToggleInventoryUI();
+            ToggleInventoryPanel();
         }
         // 'M' 키를 누르면 프로필 창을 토글
         if (Input.GetKeyDown(KeyCode.M))
@@ -169,11 +170,11 @@ public class UIManager : Singleton<UIManager>
         // 열려있는 UI가 없다면 메뉴창을 토글
         else
         {
-            ToggleMenuUI();
+            ToggleMenuPanel();
         }
     }
 
-    public void ToggleMenuUI()
+    public void ToggleMenuPanel()
     {
         if (menuPanel != null)
         {
@@ -184,17 +185,17 @@ public class UIManager : Singleton<UIManager>
     #endregion Menu
 
     #region SkillShop Panel
-    public void ToggleSkillShopUI() {
-        if (skillShopUI != null)
+    public void ToggleSkillShopPanel() {
+        if (skillShopPanel != null)
         {
             AudioManager.Instance.PlaySFX("Click1");
-            skillShopUI.gameObject.SetActive(!skillShopUI.gameObject.activeSelf);
+            skillShopPanel.gameObject.SetActive(!skillShopPanel.gameObject.activeSelf);
         }
     }
     #endregion SkillShop
 
     #region Inventory
-    public void ToggleInventoryUI()
+    public void ToggleInventoryPanel()
     {
         if (inventoryPanel != null && itemDescriptionPanel != null)
         {
@@ -454,25 +455,25 @@ public class UIManager : Singleton<UIManager>
     // 미니맵 생성 요청을 받는 함수''
     public void GenerateMinimap(Dungeon dungeonData)
     {
-        if (minimapUI != null)
+        if (minimapPanel != null)
         {
-            minimapUI.gameObject.SetActive(true); // 미니맵 활성화
-            minimapUI.GenerateMap(dungeonData);
+            minimapPanel.gameObject.SetActive(true); // 미니맵 활성화
+            minimapPanel.GenerateMap(dungeonData);
         }
     }
 
     // 플레이어 위치 업데이트 요청을 받는 함수
     public void UpdateMinimapPlayerPosition(int roomIndex)
     {
-        if (minimapUI != null && minimapUI.gameObject.activeSelf)
-            minimapUI.UpdatePlayerPosition(roomIndex);
+        if (minimapPanel != null && minimapPanel.gameObject.activeSelf)
+            minimapPanel.UpdatePlayerPosition(roomIndex);
     }
 
     // 던전 퇴장 시 미니맵을 숨기는 함수
     public void HideMinimap()
     {
-        if (minimapUI != null)
-            minimapUI.gameObject.SetActive(false);
+        if (minimapPanel != null)
+            minimapPanel.gameObject.SetActive(false);
     }
     #endregion Minimap
 

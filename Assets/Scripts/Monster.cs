@@ -7,7 +7,7 @@ public abstract class Monster : MonoBehaviour
     [SerializeField] protected DropTable dropTable; // 드랍 테이블 참조 (사망 시 사용)
 
     [Header("실시간 스탯")]
-    protected string name;
+    protected string monsterName;
     protected float maxHP;
     protected float previousHP;
     protected float currentHP;
@@ -19,7 +19,7 @@ public abstract class Monster : MonoBehaviour
     protected float attackRange;
 
     public MonsterData GetMonsterData() => monsterData;
-    public string GetName() => name;
+    public string GetName() => monsterName;
     public float GetMaxHP() => maxHP;
     public float GetPreviousHP() => previousHP;
     public float GetCurrentHP() => currentHP;
@@ -53,7 +53,7 @@ public abstract class Monster : MonoBehaviour
         startPos = visualsTransform.localPosition;
 
         // 데이터 초기화
-        name = monsterData.MonsterName;
+        monsterName = monsterData.MonsterName;
         maxHP = monsterData.MaxHP;
         currentHP = monsterData.MaxHP;
         previousHP = monsterData.MaxHP;

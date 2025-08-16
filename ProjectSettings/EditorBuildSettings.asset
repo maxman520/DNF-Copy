@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Loading_Scene.unity
-    guid: 326281d5a0534e544937b8c30c3a7bcc
-  - enabled: 1
     path: Assets/Scenes/CharacterSelect_Scene.unity
     guid: 24a698a8c4b7b544890601ad86182351
   - enabled: 1
@@ -21,11 +18,14 @@ EditorBuildSettings:
     path: Assets/Scenes/SelectDungeon_Granfloris_Scene.unity
     guid: 4fadbab6764009c458039e471383ec42
   - enabled: 1
-    path: Assets/Scenes/Dungeon1_Scene.unity
+    path: Assets/Scenes/Dungeon2_Scene.unity
     guid: d3f65e251db1d8d4fba48fa103573ace
   - enabled: 1
     path: Assets/Scenes/Dungeon3_Scene.unity
     guid: b22441cf272ec8c4a8cf31213654cff2
+  - enabled: 1
+    path: Assets/Scenes/Loading_Scene.unity
+    guid: 326281d5a0534e544937b8c30c3a7bcc
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: b9d3e2460e857a94bb7ef4be6f709f3e, type: 3}
   m_UseUCBPForAssetBundles: 0

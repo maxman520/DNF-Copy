@@ -107,6 +107,7 @@ public class GameManager : Singleton<GameManager>
                 CurrentState = GameState.Loading;
                 break;
             case "Dungeon1_Scene":
+            case "Dungeon2_Scene":
             case "Dungeon3_Scene":
             // case Dungeon2, Dungeon3, ...
                 CurrentState = GameState.Dungeon;

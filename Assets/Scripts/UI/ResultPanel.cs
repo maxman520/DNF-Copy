@@ -33,6 +33,12 @@ public class ResultPanel : MonoBehaviour
 
     private void Start()
     {   
+        // 버튼 클릭 시 공통 클릭 사운드 재생
+        if (returnTownButton != null)
+            returnTownButton.onClick.AddListener(() => { AudioManager.Instance.PlaySFX("Click2"); });
+        if (nextDungeonButton != null)
+            nextDungeonButton.onClick.AddListener(() => { AudioManager.Instance.PlaySFX("Click2"); });
+
         // 버튼 클릭 이벤트에 DungeonManager의 함수들을 연결
         if (GameManager.Instance != null)
         {

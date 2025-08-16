@@ -17,6 +17,7 @@ public class AnimController
     private readonly int attack1 = Animator.StringToHash("attack1");
     private readonly int attack2 = Animator.StringToHash("attack2");
     private readonly int attack3 = Animator.StringToHash("attack3");
+    private readonly int attackRun = Animator.StringToHash("attackRun");
 
     private readonly int hurt1 = Animator.StringToHash("hurt1");
     private readonly int hurt2 = Animator.StringToHash("hurt2");
@@ -79,6 +80,9 @@ public class AnimController
                 break;
             case 3:
                 player.Anim.SetTrigger(attack3);
+                break;
+            case 4:
+                player.Anim.SetTrigger(attackRun);
                 break;
         }
     }

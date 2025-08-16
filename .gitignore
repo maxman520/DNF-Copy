@@ -73,3 +73,15 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# 프로젝트 사운드 원본 파일(용량 큼) 커밋 방지
+/Assets/Sounds/*.ogg
+/Assets/Sounds/*.OGG
+/Assets/Sounds/**/*.ogg
+/Assets/Sounds/**/*.OGG
+
+# 스프라이트 원본 PNG 커밋 방지
+/Assets/Sprites/*.png
+/Assets/Sprites/*.PNG
+/Assets/Sprites/**/*.png
+/Assets/Sprites/**/*.PNG

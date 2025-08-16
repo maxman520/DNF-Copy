@@ -37,25 +37,25 @@ public class Player : Singleton<Player>
     public float MaxHP;
     public float MaxMP;
 
-    private float _currentHP;
+    private float currentHP;
     public float CurrentHP
     {
-        get => _currentHP;
+        get => currentHP;
         set
         {
-            _currentHP = Mathf.Clamp(value, 0, MaxHP);
-            OnHPChanged?.Invoke(MaxHP, _currentHP);
+            currentHP = Mathf.Clamp(value, 0, MaxHP);
+            OnHPChanged?.Invoke(MaxHP, currentHP);
         }
     }
 
-    private float _currentMP;
+    private float currentMP;
     public float CurrentMP
     {
-        get => _currentMP;
+        get => currentMP;
         set
         {
-            _currentMP = Mathf.Clamp(value, 0, MaxMP);
-            OnMPChanged?.Invoke(MaxMP, _currentMP);
+            currentMP = Mathf.Clamp(value, 0, MaxMP);
+            OnMPChanged?.Invoke(MaxMP, currentMP);
         }
     }
 
@@ -63,14 +63,14 @@ public class Player : Singleton<Player>
     public float RunSpeed;
 
     public int CurrentEXP; // 레벨업 로직 때문에 EXP는 AddExp에서 별도 처리
-    private int _level = 1;
+    private int level = 1;
     public int Level
     {
-        get => _level;
+        get => level;
         set
         {
-            _level = value;
-            OnLevelChanged?.Invoke(_level);
+            level = value;
+            OnLevelChanged?.Invoke(level);
         }
     }
     public int RequiredEXP = 1000; // 1레벨에서 2레벨로 가는 데 필요한 경험치
@@ -502,57 +502,4 @@ public class Player : Singleton<Player>
         }
     }
     #endregion Animation Event Receivers
-#if UNITY_EDITOR // 에디터에서만 실행되도록 전처리기 사용 (빌드 시 제외)
-    // 디버깅 UI를 켤지 말지 결정하는 변수
-    [Header("디버그 옵션")]
-    [SerializeField] private bool showInputBufferUI = true;
-
-    private void OnGUI()
-    {
-        if (!showInputBufferUI) return;
-
-        
-
-        // UI 스타일 설정
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 20;
-        style.normal.textColor = Color.white;
-        style.fontStyle = FontStyle.Bold;
-
-        // 화면 좌상단에 UI 영역을 만듦
-        GUILayout.BeginArea(new Rect(10, 10, 300, 500));
-
-        GUILayout.Label("--- Input Buffer ---", style);
-
-        if (inputHandler != null)
-        {
-            // InputHandler로부터 버퍼에 있는 커맨드 이름 목록을 가져옴
-            List<string> bufferedCommands = inputHandler.GetBufferedCommandNames();
-
-            if (bufferedCommands.Count == 0)
-            {
-                GUILayout.Label("(Empty)", style);
-            }
-            else
-            {
-                // 버퍼에 있는 각 커맨드를 화면에 표시
-                foreach (string commandName in bufferedCommands)
-                {
-                    GUILayout.Label(commandName, style);
-                }
-            }
-        }
-
-        int i = 100;
-        GUI.Label(new Rect(10, i+10, 200, 20), "IsRunning: " + IsRunning);
-        GUI.Label(new Rect(10, i+20, 200, 20), "CanMove: " + CanMove);
-        GUI.Label(new Rect(10, i+30, 200, 20), "CanAttack: " + CanAttack);
-        GUI.Label(new Rect(10, i+40, 200, 20), "CanContinueAttack: " + CanContinueAttack);
-        GUI.Label(new Rect(10, i+50, 200, 20), "AttackCounter: " + AttackCounter);
-
-
-        GUILayout.EndArea();
-
-    }
-#endif // UNITY_EDITOR
 }

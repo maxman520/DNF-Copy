@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Threading;
 
 public class BehaviourController
 {
@@ -19,6 +20,8 @@ public class BehaviourController
     private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
     private float cooldownSfxInterval = 1f; // 쿨타임 SFX 최소 간격
     private float lastCooldownSfxTime = -999f;
+    private CancellationTokenSource runSlideCts;
+    // 달리기 공격 후, 방향키를 "한번 놓았다 다시 누를 때"까지 Run 재개 금지
 
     public BehaviourController(Player player, InputHandler inputHandler, AnimController animController, SkillManager skillManager)
     {
@@ -114,9 +117,13 @@ public class BehaviourController
             return true;
         }
 
-        // 2. 콤보 중이 아닐 때, 아이템이 근처에 있고, 플레이어가 공격/점프 상태가 아니라면 아이템 줍기
-        if (player.ItemToPickUp != null && !player.HasState(PlayerAnimState.Attack) && !player.HasState(PlayerAnimState.Jump))
+        // 2. 콤보 중이 아닐 때, 아이템이 근처에 있고, 플레이어가 공격/점프/달리기 상태가 아니라면 아이템 줍기
+        if (player.ItemToPickUp != null
+        && !player.HasState(PlayerAnimState.Attack)
+        && !player.HasState(PlayerAnimState.Jump)
+        && !player.HasState(PlayerAnimState.Run))
         {
+            player.Rb.linearVelocity = Vector2.zero; // 기존 속도 초기화
             animController.PlayPickUp();
             // 아이템 줍기 SFX
             AudioManager.Instance.PlaySFX("Item_Pick");
@@ -164,9 +171,17 @@ public class BehaviourController
 
     public void PerformRunAttack()
     {
-        Debug.Log("달리기 공격");
-        return; // 임시로 작성
-        animController.PlayAttack(player.AttackCounter);
+        // 달리기 공격 애니메이션
+        animController.PlayAttack(4);
+
+        // 달리기 공격 보이스 SFX (Sm_Gue_01 또는 02 랜덤)
+        {
+            string key = UnityEngine.Random.value < 0.5f ? "Sm_Gue_01" : "Sm_Gue_02";
+            AudioManager.Instance.PlaySFX(key);
+        }
+
+        // 방향에 따른 초기 활주 속도 부여 후, 미끄러지듯 감속
+        RunAttackSlide().Forget();
     }
 
     public void PerformJumpAttack()
@@ -395,6 +410,51 @@ public class BehaviourController
         if (!string.IsNullOrEmpty(key))
         {
             AudioManager.Instance.PlaySFX(key);
+        }
+    }
+
+    // 달리기 공격 시, 짧게 활주하며 감속
+    private async UniTask RunAttackSlide()
+    {
+        // 이전 슬라이드 태스크가 있다면 취소
+        runSlideCts?.Cancel();
+        runSlideCts?.Dispose();
+        runSlideCts = new CancellationTokenSource();
+        var token = runSlideCts.Token;
+
+        try
+        {
+            // 초기 속도: 현재 바라보는 방향 기준 런 속도의 일부
+            float dir = Mathf.Sign(player.transform.localScale.x);
+            float initialSpeed = Mathf.Max(0.1f, player.RunSpeed * 0.4f);
+            player.Rb.linearVelocity = new Vector2(dir * initialSpeed, 0f);
+
+            // 감속 계수(시간당 속도 감소량)
+            float decel = player.RunSpeed * 2048f; // 약 0.2~0.3초 내 정지 감각
+
+            while (!token.IsCancellationRequested)
+            {
+                // 중단 조건: 공중/피격/사망 등
+                if (!player.IsGrounded || player.IsDead || player.HasState(PlayerAnimState.Hurt))
+                    break;
+
+                // 공격 상태 중에만 활주 유지, 아니면 루프 종료
+                if (!player.HasState(PlayerAnimState.Attack))
+                    break;
+
+                var v = player.Rb.linearVelocity;
+                float newSpeed = Mathf.MoveTowards(Mathf.Abs(v.x), 0f, decel * Time.deltaTime);
+                player.Rb.linearVelocity = new Vector2(dir * newSpeed, 0f);
+
+                if (newSpeed <= 0.01f)
+                    break;
+
+                await UniTask.Yield();
+            }
+        }
+        catch (System.OperationCanceledException)
+        {
+            // 취소 시 무시
         }
     }
 }
