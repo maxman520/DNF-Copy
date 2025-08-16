@@ -6664,7 +6664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgmVolume: 0.5
-  sfxVolume: 0.5
+  sfxVolume: 1
   muted: 0
   initialSfxPoolSize: 8
   sfxAutoExpand: 1

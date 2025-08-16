@@ -22,6 +22,9 @@ public class GameManager : Singleton<GameManager>
     private float dungeonStartTime;
     private int totalHuntExp;
     private Vector3? nextSpawnPosition = null;
+    
+    // 보스 처치(클리어) 시 BGM 임시 감쇄를 위한 백업
+    private float? preBgmVolume = null;
 
     public void AddExp(int expAmount)
     {
@@ -97,6 +100,11 @@ public class GameManager : Singleton<GameManager>
             RoomManager.Instance.OnRoomEntered += OnRoomEntered;
         }
 
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.HideDungeonUI(); // 던전 관련 UI를 모두 숨김
+        }
+
         switch(scene.name)
         {
             case "SelectDungeon_Granfloris_Scene":
@@ -117,7 +125,6 @@ public class GameManager : Singleton<GameManager>
             // case Town2, Town3, ...
                 CurrentState = GameState.Town;
                 Player.Instance.OnEnterTown();
-                UIManager.Instance.HideDungeonUI(); // 던전 관련 UI를 모두 숨김
                 break;
         }
     }
@@ -236,6 +243,14 @@ public class GameManager : Singleton<GameManager>
 
     public void ShowResultPanel()
     {
+        // BGM 볼륨을 일시적으로 낮춤(던전 클리어 연출)
+        if (AudioManager.Instance != null && preBgmVolume == null)
+        {
+            preBgmVolume = AudioManager.Instance.GetCurrentBgmVolume();
+            var ducked = (preBgmVolume ?? 0f) * 0.3f; // 30%로 감쇄
+            AudioManager.Instance.SetCurrentBgmVolume(ducked);
+        }
+
         DungeonResultData resultData = CalculateDungeonResult();
         UIManager.Instance.SetResultPanelData(resultData);
         UIManager.Instance.ToggleResultPanel();
@@ -279,6 +294,12 @@ public class GameManager : Singleton<GameManager>
     public void ReturnToTown()
     {
         Debug.Log("마을로 돌아갑니다.");
+        // 감쇄된 BGM을 원래대로 복원
+        if (AudioManager.Instance != null && preBgmVolume.HasValue)
+        {
+            AudioManager.Instance.SetCurrentBgmVolume(preBgmVolume.Value);
+            preBgmVolume = null;
+        }
         string townToReturn = CurrentDungeon.TownToReturn;
 
         // 다음 씬에서 사용할 스폰 위치 저장
@@ -292,6 +313,13 @@ public class GameManager : Singleton<GameManager>
     public void GoToNextDungeon()
     {
         Debug.Log("결과를 확인했습니다. 다음 던전으로 이동합니다.");
+
+        // 감쇄된 BGM을 원래대로 복원
+        if (AudioManager.Instance != null && preBgmVolume.HasValue)
+        {
+            AudioManager.Instance.SetCurrentBgmVolume(preBgmVolume.Value);
+            preBgmVolume = null;
+        }
 
         string nextDungeonSceneName = CurrentDungeon.NextDungeonName; // 임시 값. 현재 던전 데이터에 다음 던전 이름도 추가할 것
 
@@ -313,6 +341,13 @@ public class GameManager : Singleton<GameManager>
         {
             Debug.LogWarning("GoToTown: 이동할 마을 씬 이름이 비어있습니다");
             return;
+        }
+
+        // 감쇄된 BGM을 원래대로 복원 (메뉴 등으로 마을 이동 시)
+        if (AudioManager.Instance != null && preBgmVolume.HasValue)
+        {
+            AudioManager.Instance.SetCurrentBgmVolume(preBgmVolume.Value);
+            preBgmVolume = null;
         }
 
         // 다음 씬에서 사용할 스폰 위치 저장

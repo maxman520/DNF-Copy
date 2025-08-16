@@ -115,13 +115,7 @@ public class Vinoshu : Monster
     {
         HandleGravity();
     }
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 120, 200, 20), "Vinoshu IsGrounded: " + IsGrounded);
-        GUI.Label(new Rect(10, 130, 200, 20), "Vinoshu IsWalking: " + IsWalking);
-        GUI.Label(new Rect(10, 140, 200, 20), "Vinoshu isBackward: " + IsBackward);
-        GUI.Label(new Rect(10, 150, 200, 20), "Vinoshu isActing: " + isActing);
-    }
+    // 디버그용 GUI는 사용하지 않음
     #endregion Unity Lifecycle
 
     private bool encounterPlayed = false;

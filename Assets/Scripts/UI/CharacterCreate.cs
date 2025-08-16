@@ -225,6 +225,8 @@ public class CharacterCreate : MonoBehaviour
 
     public void OnCharacterButtonClick(int characterIndex)
     {
+        // 버튼 클릭 SFX 재생
+        AudioManager.Instance.PlaySFX("Click2");
         // 이미 선택된 버튼이면 아무것도 하지 않음
         if (currentSelectedIndex == characterIndex) return;
 

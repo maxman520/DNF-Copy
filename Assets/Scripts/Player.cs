@@ -431,7 +431,6 @@ public class Player : Singleton<Player>
         int totalAttackFromItems = PlayerInventory.GetCurrentTotalAttack();
         int totalDefenseFromItems = PlayerInventory.GetCurrentTotalDefense();
         UpdateEquipmentStats(totalAttackFromItems, totalDefenseFromItems);
-        
     }
 
     public void HealHP(int amount)

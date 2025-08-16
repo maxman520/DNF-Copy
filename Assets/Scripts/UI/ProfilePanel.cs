@@ -64,6 +64,8 @@ public class ProfilePanel : MonoBehaviour
         {
             player.OnHPChanged += OnHPChanged;
             player.OnMPChanged += OnMPChanged;
+            // 플레이어 레벨 변경 시 프로필 텍스트 갱신
+            player.OnLevelChanged += OnLevelChanged;
         }
         if (inventory != null)
         {
@@ -77,6 +79,7 @@ public class ProfilePanel : MonoBehaviour
         {
             player.OnHPChanged -= OnHPChanged;
             player.OnMPChanged -= OnMPChanged;
+            player.OnLevelChanged -= OnLevelChanged;
         }
         if (inventory != null)
         {
@@ -98,12 +101,12 @@ public class ProfilePanel : MonoBehaviour
 
     private void UpdateIdentityTexts()
     {
+        // 선택 캐릭터의 닉네임은 DataManager에서, 레벨은 Player의 현재 레벨을 사용
         var data = DataManager.Instance != null ? DataManager.Instance.SelectedCharacter : null;
-        if (data != null)
-        {
-            if (levelAndNicknameText != null)
-                levelAndNicknameText.text = $"Lv. {data.Level} {data.CharacterName}";
-        }
+        int level = player != null ? player.Level : (data != null ? data.Level : 1);
+        string name = data != null ? data.CharacterName : "";
+        if (levelAndNicknameText != null)
+            levelAndNicknameText.text = $"Lv. {level} {name}";
     }
 
     private void UpdateStatsAndCurrency()
@@ -136,5 +139,10 @@ public class ProfilePanel : MonoBehaviour
     {
         UpdateStatsAndCurrency();
     }
-}
 
+    // 레벨 변경 이벤트 핸들러: 프로필 상단 텍스트 즉시 반영
+    private void OnLevelChanged(int newLevel)
+    {
+        UpdateIdentityTexts();
+    }
+}

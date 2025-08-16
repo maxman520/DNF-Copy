@@ -18,7 +18,7 @@ public class BehaviourController
     private const float JUMP_MOVEMENT_PENALTY = 0.5f;
     private float verticalVelocity; // 수직 '힘'의 결과로 나타나는 현재 속도
     private float gravity = ORIGINAL_GRAVITY; // 가상 중력값
-    private float cooldownSfxInterval = 1f; // 쿨타임 SFX 최소 간격
+    private float cooldownSfxInterval = 1.5f; // 쿨타임 SFX 최소 간격
     private float lastCooldownSfxTime = -999f;
     private CancellationTokenSource runSlideCts;
     // 달리기 공격 후, 방향키를 "한번 놓았다 다시 누를 때"까지 Run 재개 금지

@@ -85,3 +85,6 @@ crashlytics-build.properties
 /Assets/Sprites/*.PNG
 /Assets/Sprites/**/*.png
 /Assets/Sprites/**/*.PNG
+
+# Codex
+AGENTS.md

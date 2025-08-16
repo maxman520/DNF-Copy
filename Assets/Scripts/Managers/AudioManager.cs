@@ -173,6 +173,27 @@ public sealed class AudioManager : Singleton<AudioManager>
             ApplyMute();
         }
 
+        /// <summary>
+        /// 현재 재생 중인 BGM 소스들의 절대 볼륨을 즉시 설정합니다.
+        /// bgmVolume 스케일과 무관하게 즉시 반영됩니다.
+        /// </summary>
+        public void SetCurrentBgmVolume(float volume)
+        {
+            float v = Mathf.Clamp01(volume);
+            if (activeBgm != null) activeBgm.volume = v;
+            if (inactiveBgm != null) inactiveBgm.volume = Mathf.Min(inactiveBgm.volume, v);
+        }
+
+        /// <summary>
+        /// 현재 재생 중인 BGM 절대 볼륨을 반환합니다. 재생 중이 아니면 0 반환.
+        /// </summary>
+        public float GetCurrentBgmVolume()
+        {
+            if (activeBgm != null && activeBgm.isPlaying)
+                return Mathf.Clamp01(activeBgm.volume);
+            return 0f;
+        }
+
         #endregion
 
         #region Public API - SFX
