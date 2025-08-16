@@ -32,13 +32,13 @@
 
 - YouTube: [![게임 플레이 영상](https://img.youtube.com/vi/WTC44ryTkNE/0.jpg)](https://www.youtube.com/watch?v=WTC44ryTkNE)
 - 스크린샷:
-  ![스크린샷]`Assets/Screenshots/00.png`
-  ![스크린샷]`Assets/Screenshots/01.png`
-  ![스크린샷]`Assets/Screenshots/02.png`
-  ![스크린샷]`Assets/Screenshots/03.png`
-  ![스크린샷]`Assets/Screenshots/04.png`
-  ![스크린샷]`Assets/Screenshots/05.png`
-  ![스크린샷]`Assets/Screenshots/06.png`
+  ![스크린샷](./Assets/Screenshots/00.png)
+  ![스크린샷](./Assets/Screenshots/01.png)
+  ![스크린샷](./Assets/Screenshots/02.png)
+  ![스크린샷](./Assets/Screenshots/03.png)
+  ![스크린샷](./Assets/Screenshots/04.png)
+  ![스크린샷](./Assets/Screenshots/05.png)
+  ![스크린샷](./Assets/Screenshots/06.png)
 
 ## 주요 폴더 구조
 
