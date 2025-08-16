@@ -28,17 +28,17 @@
 - 던전/룸: `Dungeon`/`Room` 데이터, `RoomManager` 이벤트로 미니맵/플레이 흐름 연동
 - 오디오/연출: 상황별 SFX 트리거(점프/공격/피격/결과창/버튼 클릭 등), 단순 이펙트 스폰
 
-## 시연 영상 & 스크린샷
+## 영상 & 스크린샷
 
-- YouTube: https://youtu.be/WTC44ryTkNE (추가 예정)
+- YouTube: [![게임 플레이 영상](https://img.youtube.com/vi/WTC44ryTkNE/0.jpg)](https://www.youtube.com/watch?v=WTC44ryTkNE)
 - 스크린샷:
-  `Assets/Screenshots/00.png`
-  `Assets/Screenshots/01.png`
-  `Assets/Screenshots/02.png`
-  `Assets/Screenshots/03.png`
-  `Assets/Screenshots/04.png`
-  `Assets/Screenshots/05.png`
-  `Assets/Screenshots/06.png`
+  ![스크린샷]`Assets/Screenshots/00.png`
+  ![스크린샷]`Assets/Screenshots/01.png`
+  ![스크린샷]`Assets/Screenshots/02.png`
+  ![스크린샷]`Assets/Screenshots/03.png`
+  ![스크린샷]`Assets/Screenshots/04.png`
+  ![스크린샷]`Assets/Screenshots/05.png`
+  ![스크린샷]`Assets/Screenshots/06.png`
 
 ## 주요 폴더 구조
 
